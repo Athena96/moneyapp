@@ -1,5 +1,5 @@
 import { Category } from "./Category";
-
+import { CategoryTypes } from "./Category";
 
 export class Budget {
 
@@ -16,7 +16,7 @@ export class Budget {
     }
 
   
-    getTypeSum(type: number) {
+    getTypeSum(type: CategoryTypes) {
         let sum = 0.0;
         for (const category of this.categories) {
             if (category.type === type) {

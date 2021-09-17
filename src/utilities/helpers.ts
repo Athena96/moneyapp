@@ -3,7 +3,7 @@
 
 
 
-export function dateRange(startDate: Date, endDate: Date, steps = 1) {
+export function dateRange(startDate: Date, endDate: Date, steps = 30) {
     const dateArray = [];
     let currentDate = new Date(startDate);
 

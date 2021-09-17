@@ -3,6 +3,7 @@ import './App.css';
 import { Event } from './model/Event';
 import { Budget } from './model/Budget';
 import { Account } from './model/Account';
+import { CategoryTypes } from './model/Category';
 
 import { getEvents, getBudgets } from './utilities/dataSetup';
 import { dateRange } from './utilities/helpers';
@@ -16,10 +17,11 @@ interface IState {
   budgets: Budget[];
   growth: number;
   inflation: number;
-  absoluteGrowth: number;
+  absoluteMonthlyGrowth: number;
   startDate: Date;
   endDate: Date;
   dateIm59 : Date;
+  retireDate : Date;
   accounts: Account[];
   balances: any;
 }
@@ -30,49 +32,35 @@ class App extends React.Component<IProps, IState> {
   
     super(props);
     let n = new Date();
-
     let brokerage = new Account('brokerage');
     let tax = new Account('tax');
     let theaccounts: Account[] = [];
     theaccounts.push(brokerage);
     theaccounts.push(tax);
 
-    const y = new Date();
-    y.setDate(n.getDate()-1);
-
-
     this.state = {
-      today: n ,
+      today: n,
       events: getEvents(),
       budgets: getBudgets(),
       growth: 10.49,
       inflation: 2.75,
-      absoluteGrowth: (10.49-2.75) / 100,
+      absoluteMonthlyGrowth: ((10.49-2.75) / 100)/12,
       startDate: n,
-      endDate: new Date('10/10/2021'),
+      endDate: new Date('10/10/2096'),
       dateIm59:  new Date('4/25/2055'),
+      retireDate: new Date('1/29/2024'),
       accounts: theaccounts,
       balances: {
         brokerage: {
-          [y.toString()]: 100,
-          [n.toString()]: 110
+          [0]: 200509.17,
+          
         },
         tax: {
-          [y.toString()]: 50,
-          [n.toString()]: 110
+          [0]: 16362.42,
         }
       }
     }
     this.render = this.render.bind(this);
-
-  }
-
-  getCurrentBudget(date: Date, budgets: Budget[]) {
-    for (const budget of budgets) {
-      if (date >= budget.startDate && date <= budget.endDate) {
-        return budget;
-      }
-    }
   }
 
   render() {
@@ -90,7 +78,7 @@ class App extends React.Component<IProps, IState> {
               <th>Note</th>
 
             </tr>
-            {this.generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteGrowth, this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59)}
+            {this.generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate)}
           </tbody>
 
         </table>
@@ -99,58 +87,90 @@ class App extends React.Component<IProps, IState> {
     );
   }
 
-  use(account: Account) {
-    return true;
+  getCurrentBudget(date: Date, budgets: Budget[]) {
+    for (const budget of budgets) {
+      if (date >= budget.startDate && date <= budget.endDate) {
+        return budget;
+      }
+    }
+  }
+  
+  use(account: Account, currentDate: Date, currentDateIndex: number, dateIm59: Date, balances: any, retireDate: Date) {
+    // don't USE any of my accounts before my retire date, only GROW them
+    if (currentDate < retireDate) {
+      return false;
+    }
+
+    // use brokerage before im 59, then use up my 401k, then go back to my brokerage
+    let accntToUse = null;
+    if (currentDate < dateIm59) {
+      accntToUse = 'brokerage';
+    } else if (currentDate >= dateIm59 && balances['tax'][currentDateIndex-1] > 0) {
+      accntToUse = 'tax';
+    } else if (currentDate >= dateIm59 && balances['tax'][currentDateIndex-1] <= 0) {
+      accntToUse = 'brokerage';
+    }
+
+    return account.name === accntToUse;
   }
 
-  generateTable(balances: any, events: Event[], budgets: Budget[], absoluteGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date) {
+  generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date) {
     
+    // create a list of dates incrementing by 1 month
     const dates = dateRange(startDate, endDate);
-
-    // for each date
     return dates.map( (date, i) => {
 
-      // for each account
+      // have the 1st entry be the starting balance
+      if (i === 0) {
+        return (
+        <tr>
+          <td>{date.toString().split("GMT")[0]}</td>
+          <td>${balances['brokerage'][i].toFixed(2)}</td>
+          <td>${balances['tax'][i].toFixed(2)}</td>
+          <td></td>
+        </tr>
+        )
+      }
+
+      // for each account, compute their currentDay balance, then return the entry to put it in the table
+      let eventDesc = "";
       for (const account of myaccounts) {
-        const yesterday = new Date(date.getTime());
-        yesterday.setDate(date.getDate() - 1);
- 
-        // IF use some Rule to determine if im using this Account now or now.
-          // USE
-        // else Not using the account now.
-          // GROW
-        if (this.use(account)) {
+
+        // USE or GROW the account?
+        if (this.use(account, date, i, dateIm59, balances, retireDate)) {
           const budget = this.getCurrentBudget(date, budgets)!;
-          
-          const afterSpending = balances[account.name][yesterday.toString()] - budget.getTypeSum(0)
-          balances[account.name][date.toString()] = afterSpending + absoluteGrowth * afterSpending + budget.getTypeSum(0)
+          const afterSpending = balances[account.name][i-1] - budget.getTypeSum(CategoryTypes.Expense);
+          balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
         } else {
-          balances[account.name][date.toString()] = balances[account.name][yesterday.toString()]  + absoluteGrowth * balances[account.name][yesterday.toString()];
+          balances[account.name][i] = balances[account.name][i-1]  + absoluteMonthlyGrowth * balances[account.name][i-1];
         }
 
         // Apply Events regardless if im using the account or not
         for (const event of events) {
-          if (event.category.type === 0) {
-            balances[account.name][date.toString()] -=  event.category.getValue();
-          }
 
-          if (event.category.type === 1) {
-            balances[account.name][date.toString()] +=  event.category.getValue();
+          // if the event is to be debited from the account, and it occurs this month/year then account for it
+          if (event.account === account.name) {
+            if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
+              if (event.category.type === CategoryTypes.Expense) {
+                balances[account.name][i] -= event.category.getValue();
+                eventDesc += event.name + '\nAccount: ' + account.name + ' ';
+              }
+    
+              if (event.category.type === CategoryTypes.Income) {
+                balances[account.name][i] += event.category.getValue();
+                eventDesc += event.name + '\nAccount: ' + account.name + ' ';
+              }
+            }
           }
         }
-
       }
 
-      let b: number = balances['brokerage'][date.toString()];
-      let t: number = balances['tax'][date.toString()];
       return (
-
         <tr>
           <td>{date.toString().split("GMT")[0]}</td>
-          <td>{b.toFixed(2)}</td>
-          <td>{t.toFixed(2)}</td>
-
-          <td>....</td>
+          <td>${balances['brokerage'][i].toFixed(2)}</td>
+          <td>${balances['tax'][i].toFixed(2)}</td>
+          <td>{eventDesc}</td>
         </tr>
       );
     });
