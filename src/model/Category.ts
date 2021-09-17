@@ -14,7 +14,7 @@ export class Category {
         this.security = security;
     }
 
-    async getValue() {
+     getValue() {
         return this.value;
     }
 
