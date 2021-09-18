@@ -1,5 +1,3 @@
-import { IncomingMessage } from "http";
-
 
 export enum CategoryTypes {
     Expense,
@@ -23,5 +21,12 @@ export class Category {
         return this.value;
     }
 
+    printCategory() {
+        console.log(`[Category] name: ${this.name} value: ${this.value} type: ${this.type === 1 ? 'Income' : 'Expense'}`)
+    }
+
+    getCategoryDescription() {
+        return `[Category] name: ${this.name} value: ${this.value} type: ${this.type === 1 ? 'Income' : 'Expense'}`;
+    }
 }
 

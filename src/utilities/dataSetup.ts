@@ -6,12 +6,101 @@ import { Category, CategoryTypes } from '../model/Category';
 
 
 export function getEvents() {
+    const AMZN = 3469.15;
+    const INVEST_SIGNON_BROK = 6417.26;
+    const INVEST_BROK = 5111.02;
+
+    const INVEST_SIGNON_TAX = 490.33 + 245.17;
+    const INVEST_TAX = 490.33 + 245.17;
     let events = [];
 
-    let amznStockCategory = new Category('amzn stock', 3500.0, 1, null);
-    let amznStock = new Event('earn amzn stock', new Date('04/25/2022'), 'brokerage', amznStockCategory);
+    // 2021
+    events.push(new Event('', new Date('10/27/2021'), 'brokerage', new Category('invest', INVEST_SIGNON_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2021'), 'brokerage', new Category('invest', INVEST_SIGNON_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2021'), 'brokerage', new Category('invest', INVEST_SIGNON_BROK, CategoryTypes.Income, null)));
 
-    events.push(amznStock);
+    events.push(new Event('', new Date('10/27/2021'), 'tax', new Category('invest', INVEST_SIGNON_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2021'), 'tax', new Category('invest', INVEST_SIGNON_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2021'), 'tax', new Category('invest', INVEST_SIGNON_TAX, CategoryTypes.Income, null)));
+
+    events.push(new Event('-$400 Moondog neuter', new Date('10/22/2021'), 'brokerage', new Category('-$400 Moondog neuter', 400.0, CategoryTypes.Expense, null)));
+    events.push(new Event('-$450 Catch up', new Date('10/22/2021'), 'brokerage', new Category('-$450 Catch up', 450.0, CategoryTypes.Expense, null)));
+    events.push(new Event('Moving Expenses $250', new Date('12/22/2021'), 'brokerage', new Category('Moving Expenses $250', 250.0, CategoryTypes.Expense, null)));
+    events.push(new Event('Christmas $140', new Date('12/22/2021'), 'brokerage', new Category('Christmas $140', 140.0, CategoryTypes.Expense, null)));
+
+
+    // 2022
+    events.push(new Event('', new Date('1/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('2/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('3/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('4/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('5/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('6/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('7/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('8/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('9/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('10/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2022'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+
+    events.push(new Event('', new Date('1/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('2/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('3/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('4/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('5/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('6/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('7/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('8/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('9/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('10/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+
+    events.push(new Event('earn 8 x amzn stock', new Date('01/15/2022'), 'brokerage', new Category('amzn stock', (8*AMZN)-0.3*(8*AMZN), CategoryTypes.Income, null)));
+    events.push(new Event('payoff loan or vacation $1294', new Date('06/15/2022'), 'brokerage', new Category('loan or vacation', 1294.0, CategoryTypes.Expense, null)));
+    events.push(new Event('earn 10 x amzn stock', new Date('07/15/2022'), 'brokerage', new Category('amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income, null)));
+    events.push(new Event('Christmas $140', new Date('12/22/2022'), 'brokerage', new Category('Christmas $140', 140.0, CategoryTypes.Expense, null)));
+
+    // 2023
+    events.push(new Event('', new Date('1/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('2/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('3/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('4/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('5/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('6/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('7/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('8/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('9/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('10/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+
+    events.push(new Event('', new Date('1/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('2/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('3/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('4/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('5/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('6/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('7/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('8/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('9/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('10/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+
+    events.push(new Event('earn 10 x amzn stock', new Date('01/15/2023'), 'brokerage', new Category('amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income, null)));
+    events.push(new Event('payoff loan or vacation $1100.56', new Date('06/15/2023'), 'brokerage', new Category('loan or vacation', 1100.56, CategoryTypes.Expense, null)));
+    events.push(new Event('earn 10 x amzn stock', new Date('07/15/2023'), 'brokerage', new Category('amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income, null)));
+    events.push(new Event('Christmas $140', new Date('12/22/2023'), 'brokerage', new Category('Christmas $140', 140.0, CategoryTypes.Expense, null)));
+
+    // 2024
+    events.push(new Event('', new Date('1/27/2024'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
+
+    events.push(new Event('', new Date('1/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+
+
+    events.push(new Event('earn 10 x amzn stock', new Date('01/15/2024'), 'brokerage', new Category('amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income, null)));
+    events.push(new Event('Retire', new Date('02/14/2024'), 'brokerage'));
 
     return events;
 
@@ -20,9 +109,14 @@ export function getEvents() {
 export function getBudgets() {
     let budgets = [];
 
+    budgets.push(getSignOnBonusBudget());
+    budgets.push(getDefaultBudget());
 
+    return budgets;
+}
+
+function getSignOnBonusBudget() {
     let budgetSpending = []
-
     budgetSpending.push(new Category('food-groceries', 218.03, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('date', 340.0, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('random', 50.0, CategoryTypes.Expense, null));
@@ -32,7 +126,6 @@ export function getBudgets() {
     budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
-
     
     budgetSpending.push(new Category('rent', 1398, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
@@ -40,15 +133,30 @@ export function getBudgets() {
     budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('student loans', 1452.5, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
-
     budgetSpending.push(new Category('saving', 6417.26, CategoryTypes.Income, null));
 
+    return new Budget('amzn sde y2', new Date('01/27/2021'), new Date('12/31/2021'), budgetSpending);
+}
 
+function getDefaultBudget() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 218.03, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('date', 340.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 50.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 100.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('rent', 1398, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 130, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('student loans', 1452.5, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('saving', 6417.26, CategoryTypes.Income, null));
 
-
-    let amznSDEy2Budget = new Budget('amzn sde y2', new Date('01/27/2021'), new Date('10/10/2096'), budgetSpending);
-
-    budgets.push(amznSDEy2Budget);
-
-    return budgets;
-  }
+    return new Budget('amzn sde y2', new Date('01/01/2022'), new Date('12/31/2096'), budgetSpending);
+}

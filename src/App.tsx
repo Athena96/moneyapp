@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
 import { Event } from './model/Event';
 import { Budget } from './model/Budget';
@@ -7,11 +7,14 @@ import { CategoryTypes } from './model/Category';
 
 import { getEvents, getBudgets } from './utilities/dataSetup';
 import { dateRange } from './utilities/helpers';
+import { Line } from "react-chartjs-2";
 
 interface IProps {
 }
 
 interface IState {
+  doneComputing: boolean,
+  chartData: any,
   today: Date;
   events: Event[];
   budgets: Budget[];
@@ -39,6 +42,25 @@ class App extends React.Component<IProps, IState> {
     theaccounts.push(tax);
 
     this.state = {
+      doneComputing: false,
+      chartData: {
+        labels: [],
+        datasets: [
+          {
+            label: "brokerage",
+            data: [],
+            fill: true,
+            backgroundColor: "rgba(75,192,192,0.2)",
+            borderColor: "rgba(75,192,192,1)"
+          },
+          {
+            label: "tax",
+            data: [],
+            fill: false,
+            borderColor: "#742774"
+          }
+        ]
+      },
       today: n,
       events: getEvents(),
       budgets: getBudgets(),
@@ -46,13 +68,13 @@ class App extends React.Component<IProps, IState> {
       inflation: 2.75,
       absoluteMonthlyGrowth: ((10.49-2.75) / 100)/12,
       startDate: n,
-      endDate: new Date('10/10/2096'),
+      endDate: new Date('12/31/2024'),
       dateIm59:  new Date('4/25/2055'),
       retireDate: new Date('1/29/2024'),
       accounts: theaccounts,
       balances: {
         brokerage: {
-          [0]: 200509.17,
+          [0]: 200131.22,
           
         },
         tax: {
@@ -60,29 +82,41 @@ class App extends React.Component<IProps, IState> {
         }
       }
     }
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.generateTable = this.generateTable.bind(this);
+
     this.render = this.render.bind(this);
   }
 
-  render() {
+  componentDidMount() {
 
+  }
+
+  render() {
+    const [balanceData,chartData] = this.generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, 
+      this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
     return (
       <div >
-        
-        <table>
-          <tbody>
+        <div>
+        <Line data={chartData} />
 
-            <tr>
-              <th>Date</th>
-              <th>Brokerage</th>
-              <th>Tax</th>
-              <th>Note</th>
+          </div>
+        <div>
+          <table>
+            <tbody>
 
-            </tr>
-            {this.generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate)}
-          </tbody>
+              <tr>
+                <th>Date</th>
+                <th>Brokerage</th>
+                <th>Tax</th>
+                <th>Note</th>
 
-        </table>
+              </tr>
+              {balanceData}
+            </tbody>
 
+          </table>
+        </div>
       </div>
     );
   }
@@ -115,65 +149,81 @@ class App extends React.Component<IProps, IState> {
   }
 
   generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date) {
-    
+    console.log("generateTable");
+    var tmpChartData:any = {
+      labels: [],
+      datasets: [
+        {
+          label: "brokerage",
+          data: [],
+          fill: true,
+          backgroundColor: "rgba(75,192,192,0.2)",
+          borderColor: "rgba(75,192,192,1)"
+        },
+        {
+          label: "tax",
+          data: [],
+          fill: false,
+          borderColor: "#742774"
+        }
+      ]
+    };
+
+
     // create a list of dates incrementing by 1 month
     const dates = dateRange(startDate, endDate);
-    return dates.map( (date, i) => {
-
-      // have the 1st entry be the starting balance
-      if (i === 0) {
-        return (
-        <tr>
-          <td>{date.toString().split("GMT")[0]}</td>
-          <td>${balances['brokerage'][i].toFixed(2)}</td>
-          <td>${balances['tax'][i].toFixed(2)}</td>
-          <td></td>
-        </tr>
-        )
-      }
-
-      // for each account, compute their currentDay balance, then return the entry to put it in the table
+    let data = dates.map( (date, i) => {
       let eventDesc = "";
-      for (const account of myaccounts) {
 
-        // USE or GROW the account?
-        if (this.use(account, date, i, dateIm59, balances, retireDate)) {
-          const budget = this.getCurrentBudget(date, budgets)!;
-          const afterSpending = balances[account.name][i-1] - budget.getTypeSum(CategoryTypes.Expense);
-          balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
-        } else {
-          balances[account.name][i] = balances[account.name][i-1]  + absoluteMonthlyGrowth * balances[account.name][i-1];
-        }
+      if (i > 0) {
+        // for each account, compute their currentDay balance, then return the entry to put it in the table
+        for (const account of myaccounts) {
 
-        // Apply Events regardless if im using the account or not
-        for (const event of events) {
+          // USE or GROW the account?
+          if (this.use(account, date, i, dateIm59, balances, retireDate)) {
+            const budget = this.getCurrentBudget(date, budgets)!;
+            const afterSpending = balances[account.name][i-1] - budget.getTypeSum(CategoryTypes.Expense);
+            balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
+          } else {
+            balances[account.name][i] = balances[account.name][i-1] + absoluteMonthlyGrowth * balances[account.name][i-1];
+          }
 
-          // if the event is to be debited from the account, and it occurs this month/year then account for it
-          if (event.account === account.name) {
-            if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
-              if (event.category.type === CategoryTypes.Expense) {
-                balances[account.name][i] -= event.category.getValue();
-                eventDesc += event.name + '\nAccount: ' + account.name + ' ';
-              }
-    
-              if (event.category.type === CategoryTypes.Income) {
-                balances[account.name][i] += event.category.getValue();
-                eventDesc += event.name + '\nAccount: ' + account.name + ' ';
+          // Apply Events regardless if im using the account or not
+          for (const event of events) {
+            // if the event is to be debited from the account, and it occurs this month/year then account for it
+            if (event.account === account.name) {
+              if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
+                eventDesc += event.name;
+                if (event.category) {
+                  if (event.category!.type === CategoryTypes.Expense) {
+                    balances[account.name][i] -= event.category!.getValue();
+                  }      
+                  if (event.category!.type === CategoryTypes.Income) {
+                    balances[account.name][i] += event.category!.getValue();
+                  }
+                }
+                if (event.name !== "") eventDesc += ' -- ';
               }
             }
           }
         }
       }
 
+      tmpChartData.labels.push(`${date.getMonth()+1}/${date.getFullYear()}`);
+      tmpChartData.datasets[0].data.push(balances['brokerage'][i].toFixed(2));
+      tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
+
       return (
         <tr>
-          <td>{date.toString().split("GMT")[0]}</td>
+          <td>{`${date.getMonth()+1}/${date.getFullYear()}`}</td>
           <td>${balances['brokerage'][i].toFixed(2)}</td>
           <td>${balances['tax'][i].toFixed(2)}</td>
           <td>{eventDesc}</td>
         </tr>
       );
     });
+
+    return [data,tmpChartData];
   }
 }
 
