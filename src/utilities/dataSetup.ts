@@ -4,14 +4,22 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Category, CategoryTypes } from '../model/Category';
 
+const AMZN = 3462.52;
+const INVEST_SIGNON_BROK = 6417.26;
+const INVEST_BROK = 5136.02;
+
+const INVEST_SIGNON_TAX = 490.33 + 245.17;
+const INVEST_TAX = 490.33 + 245.17;
+
+const LIFESTYLE_RENT = 1510.00;
+const HOME_RENT = 1800;
+
+const HOUSE_DP = 55000;
+
+const CAR_DP = 2400;
 
 export function getEvents() {
-    const AMZN = 3469.15;
-    const INVEST_SIGNON_BROK = 6417.26;
-    const INVEST_BROK = 5111.02;
 
-    const INVEST_SIGNON_TAX = 490.33 + 245.17;
-    const INVEST_TAX = 490.33 + 245.17;
     let events = [];
 
     // 2021
@@ -75,18 +83,18 @@ export function getEvents() {
     events.push(new Event('', new Date('11/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
     events.push(new Event('', new Date('12/27/2023'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
 
-    events.push(new Event('', new Date('1/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('2/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('3/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('4/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('5/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('6/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('7/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('8/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('9/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('10/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('11/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
-    events.push(new Event('', new Date('12/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('1/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('2/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('3/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('4/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('5/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('6/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('7/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('8/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('9/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('10/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('11/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('12/27/2023'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
 
     events.push(new Event('earn 10 x amzn stock', new Date('01/15/2023'), 'brokerage', new Category('amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income, null)));
     events.push(new Event('payoff loan or vacation $1100.56', new Date('06/15/2023'), 'brokerage', new Category('loan or vacation', 1100.56, CategoryTypes.Expense, null)));
@@ -96,11 +104,20 @@ export function getEvents() {
     // 2024
     events.push(new Event('', new Date('1/27/2024'), 'brokerage', new Category('invest', INVEST_BROK, CategoryTypes.Income, null)));
 
-    events.push(new Event('', new Date('1/27/2022'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
+    events.push(new Event('', new Date('1/27/2024'), 'tax', new Category('invest', INVEST_TAX, CategoryTypes.Income, null)));
 
 
     events.push(new Event('earn 10 x amzn stock', new Date('01/15/2024'), 'brokerage', new Category('amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income, null)));
     events.push(new Event('Retire', new Date('02/14/2024'), 'brokerage'));
+
+
+    // 2036
+    events.push(new Event('house DP', new Date('03/15/2036'), 'brokerage', new Category('house DP', HOUSE_DP * 0.60, CategoryTypes.Expense, null)));
+    events.push(new Event('house DP', new Date('03/15/2036'), 'tax', new Category('house DP', HOUSE_DP * (1-0.60), CategoryTypes.Expense, null)));
+
+    events.push(new Event('car DP', new Date('04/15/2036'), 'brokerage', new Category('car DP', CAR_DP, CategoryTypes.Expense, null)));
+
+
 
     return events;
 
@@ -110,10 +127,23 @@ export function getBudgets() {
     let budgets = [];
 
     budgets.push(getSignOnBonusBudget());
-    budgets.push(getDefaultBudget());
+    budgets.push(getY3NoBonusBudget());
+    
+    budgets.push(getRetireSingleDuringLoan());
+    budgets.push(getRetireSingleAfterLoan());
+    
+    budgets.push(getRetireFamilyB459());
+    budgets.push(getRetireFamilyB459Car());
+    budgets.push(getRetireFamilyAfter59());
+    
+    budgets.push(getGoldenYearsDuringHousePayment());
+    budgets.push(getGoldenYearsNOPayment());
+    
+    budgets.push(getEOL());
 
     return budgets;
 }
+
 
 function getSignOnBonusBudget() {
     let budgetSpending = []
@@ -138,7 +168,8 @@ function getSignOnBonusBudget() {
     return new Budget('amzn sde y2', new Date('01/27/2021'), new Date('12/31/2021'), budgetSpending);
 }
 
-function getDefaultBudget() {
+
+function getY3NoBonusBudget() {
     let budgetSpending = []
     budgetSpending.push(new Category('food-groceries', 218.03, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('date', 340.0, CategoryTypes.Expense, null));
@@ -150,13 +181,260 @@ function getDefaultBudget() {
     budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
     
-    budgetSpending.push(new Category('rent', 1398, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('rent', LIFESTYLE_RENT, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('utilities', 130, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('student loans', 1452.5, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
-    // budgetSpending.push(new Category('saving', 6417.26, CategoryTypes.Income, null));
+    budgetSpending.push(new Category('saving', 5111.02, CategoryTypes.Income, null));
 
-    return new Budget('amzn sde y2', new Date('01/01/2022'), new Date('12/31/2096'), budgetSpending);
+    return new Budget('amzn sde y2', new Date('01/01/2022'), new Date('01/31/2024'), budgetSpending);
+}
+
+function getRetireSingleDuringLoan() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 218.03, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('date', 340.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 50.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 100.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('rent', LIFESTYLE_RENT, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 130, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 75.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('MISC_TAXES', 200.00/12, CategoryTypes.Expense, null));
+
+    return new Budget('amzn sde y2', new Date('02/01/2024'), new Date('02/31/2027'), budgetSpending);
+}
+
+function getRetireSingleAfterLoan() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 227.11, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 50.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 100.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', LIFESTYLE_RENT, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 125.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 75.00, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('Travel', 355.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('MISC_TAXES', 200.00/12, CategoryTypes.Expense, null));
+
+    return new Budget('amzn sde y2', new Date('03/01/2027'), new Date('04/31/2036'), budgetSpending);
+}
+
+function getRetireFamilyB459Car() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 485.88, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('food-out', 160.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 120.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 75.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', HOME_RENT, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 120.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 355.00, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('Travel', 125.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Car', 120.0, CategoryTypes.Expense, null)); // till 2041
+
+    // budgetSpending.push(new Category('MISC_TAXES', 200.00, CategoryTypes.Expense, null));
+
+    return new Budget('amzn sde y2', new Date('05/01/2036'), new Date('04/31/2041'), budgetSpending);
+}
+
+function getRetireFamilyB459() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 485.88, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('food-out', 160.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 120.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 75.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', HOME_RENT, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 120.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 355.00, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('Travel', 125.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Car', 120.0, CategoryTypes.Expense, null)); // till 2041
+
+    // budgetSpending.push(new Category('MISC_TAXES', 200.00, CategoryTypes.Expense, null));
+
+    return new Budget('amzn sde y2', new Date('05/01/2041'), new Date('04/31/2055'), budgetSpending);
+}
+
+function getRetireFamilyAfter59() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 485.88, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('food-out', 160.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 120.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 75.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', HOME_RENT, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 120.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 355.00, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('Travel', 125.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Car', 120.0, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('TAXES (401k)', 5730.79/12, CategoryTypes.Expense, null));
+
+    return new Budget('getRetireFamilyAfter59', new Date('05/01/2055'), new Date('04/31/2058'), budgetSpending);
+}
+
+function getGoldenYearsDuringHousePayment() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 268.39, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('food-out', 118.80, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 115.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('amc sub', 23.5, CategoryTypes.Expense, null));
+
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 100.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', HOME_RENT, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 120.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 355.00, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('Travel', 150.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Car', 120.0, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('TAXES (401k)', 3307.98/12, CategoryTypes.Expense, null));
+
+    return new Budget('getGoldenYearsDuringHousePayment', new Date('05/01/2058'), new Date('04/31/2066'), budgetSpending);
+}
+
+function getGoldenYearsNOPayment() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 268.39, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('food-out', 118.80, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 115.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('amc sub', 23.5, CategoryTypes.Expense, null));
+
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 100.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', 500, CategoryTypes.Expense, null)); // payed off house, for taxes/repairs
+    // budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 120.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 355.00, CategoryTypes.Expense, null));
+    
+    budgetSpending.push(new Category('Travel', 150.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Car', 120.0, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('TAXES (401k)', 3307.98/12, CategoryTypes.Expense, null));
+
+    return new Budget('getGoldenYearsNOPayment', new Date('05/01/2066'), new Date('04/31/2082'), budgetSpending);
+}
+
+
+function getEOL() {
+    let budgetSpending = []
+    budgetSpending.push(new Category('food-groceries', 268.39, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('food-out', 118.80, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('date', 300.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('random', 75.0, CategoryTypes.Expense, null));
+
+    // budgetSpending.push(new Category('apple tv', 5.33, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('dog', 100.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('seattle times', 17.29, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('iCloud + apple music', 19.98, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('cellPhone', 17.47, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('internet', 55.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('gym', 30.75, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('rent', 500, CategoryTypes.Expense, null)); // payed off house, for taxes/repairs
+    // budgetSpending.push(new Category('pet rent', 50, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('utilities', 120.00, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('electric', 41, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('student loans', 1411.08, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
+    budgetSpending.push(new Category('Health insurance', 355.00, CategoryTypes.Expense, null));
+    
+    // budgetSpending.push(new Category('Travel', 150.0, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Venture', 125.00, CategoryTypes.Expense, null));
+    // budgetSpending.push(new Category('Car', 120.0, CategoryTypes.Expense, null));
+
+    budgetSpending.push(new Category('TAXES', 100/12, CategoryTypes.Expense, null));
+
+    return new Budget('getGoldenYearsNOPayment', new Date('05/01/2082'), new Date('12/31/2096'), budgetSpending);
 }

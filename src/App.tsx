@@ -13,8 +13,6 @@ interface IProps {
 }
 
 interface IState {
-  doneComputing: boolean,
-  chartData: any,
   today: Date;
   events: Event[];
   budgets: Budget[];
@@ -42,25 +40,6 @@ class App extends React.Component<IProps, IState> {
     theaccounts.push(tax);
 
     this.state = {
-      doneComputing: false,
-      chartData: {
-        labels: [],
-        datasets: [
-          {
-            label: "brokerage",
-            data: [],
-            fill: true,
-            backgroundColor: "rgba(75,192,192,0.2)",
-            borderColor: "rgba(75,192,192,1)"
-          },
-          {
-            label: "tax",
-            data: [],
-            fill: false,
-            borderColor: "#742774"
-          }
-        ]
-      },
       today: n,
       events: getEvents(),
       budgets: getBudgets(),
@@ -68,13 +47,13 @@ class App extends React.Component<IProps, IState> {
       inflation: 2.75,
       absoluteMonthlyGrowth: ((10.49-2.75) / 100)/12,
       startDate: n,
-      endDate: new Date('12/31/2024'),
+      endDate: new Date('12/31/2096'),
       dateIm59:  new Date('4/25/2055'),
       retireDate: new Date('1/29/2024'),
       accounts: theaccounts,
       balances: {
         brokerage: {
-          [0]: 200131.22,
+          [0]: 199160.56,
           
         },
         tax: {
@@ -110,6 +89,7 @@ class App extends React.Component<IProps, IState> {
                 <th>Brokerage</th>
                 <th>Tax</th>
                 <th>Note</th>
+                <th>Accnt Used</th>
 
               </tr>
               {balanceData}
@@ -174,6 +154,7 @@ class App extends React.Component<IProps, IState> {
     const dates = dateRange(startDate, endDate);
     let data = dates.map( (date, i) => {
       let eventDesc = "";
+      let accntUsed = "";
 
       if (i > 0) {
         // for each account, compute their currentDay balance, then return the entry to put it in the table
@@ -181,11 +162,15 @@ class App extends React.Component<IProps, IState> {
 
           // USE or GROW the account?
           if (this.use(account, date, i, dateIm59, balances, retireDate)) {
+            accntUsed = account.name;
             const budget = this.getCurrentBudget(date, budgets)!;
             const afterSpending = balances[account.name][i-1] - budget.getTypeSum(CategoryTypes.Expense);
             balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
           } else {
             balances[account.name][i] = balances[account.name][i-1] + absoluteMonthlyGrowth * balances[account.name][i-1];
+            if (balances[account.name][i-1] <= 0.0) {
+              balances[account.name][i] = 0.0;
+            }
           }
 
           // Apply Events regardless if im using the account or not
@@ -219,6 +204,8 @@ class App extends React.Component<IProps, IState> {
           <td>${balances['brokerage'][i].toFixed(2)}</td>
           <td>${balances['tax'][i].toFixed(2)}</td>
           <td>{eventDesc}</td>
+          <td>{accntUsed}</td>
+
         </tr>
       );
     });
