@@ -1,18 +1,27 @@
-import React from 'react';
+import * as React from 'react';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+
 import './App.css';
 import { Event } from './model/Event';
 import { Budget } from './model/Budget';
 import { Account } from './model/Account';
-import { CategoryTypes } from './model/Category';
 
 import { getEvents, getBudgets } from './utilities/dataSetup';
-import { dateRange } from './utilities/helpers';
+import { generateTable } from './utilities/helpers';
 import { Line } from "react-chartjs-2";
+import AccountsView from './views/AccountsView';
+import BudgetsView from './views/BudgetsView';
+import DataView from './views/DataView';
+import InputsView from './views/InputsView';
+
 
 interface IProps {
 }
 
 interface IState {
+  selectedTab: number;
   today: Date;
   events: Event[];
   budgets: Budget[];
@@ -40,6 +49,7 @@ class App extends React.Component<IProps, IState> {
     theaccounts.push(tax);
 
     this.state = {
+      selectedTab: 0,
       today: n,
       events: getEvents(),
       budgets: getBudgets(),
@@ -61,156 +71,46 @@ class App extends React.Component<IProps, IState> {
         }
       }
     }
-    this.componentDidMount = this.componentDidMount.bind(this);
-    this.generateTable = this.generateTable.bind(this);
 
     this.render = this.render.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount() {
-
+  handleChange(event: React.SyntheticEvent, newValue: number) {
+    this.setState({selectedTab: newValue});
   }
 
   render() {
-    const [balanceData,chartData] = this.generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, 
+    const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, 
       this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
     return (
       <div >
         <div>
-        <Line data={chartData} />
+          <Line data={chartData} />
 
-          </div>
+        </div>
+
+        <br/><br/>
+
         <div>
-          <table>
-            <tbody>
-
-              <tr>
-                <th>Date</th>
-                <th>Brokerage</th>
-                <th>Tax</th>
-                <th>Note</th>
-                <th>Accnt Used</th>
-
-              </tr>
-              {balanceData}
-            </tbody>
-
-          </table>
+          <Box sx={{ width: '100%' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" variant="fullWidth" centered>
+                <Tab label="Data"  />
+                <Tab label="Budgets"  />
+                <Tab label="Accounts"  />
+                <Tab label="Inputs"  />
+              </Tabs>
+            </Box>
+            <br/><br/>
+            <DataView value={this.state.selectedTab} index={0} />
+            <BudgetsView value={this.state.selectedTab} index={1} />
+            <AccountsView value={this.state.selectedTab} index={2} />
+            <InputsView value={this.state.selectedTab} index={3} />
+          </Box>
         </div>
       </div>
     );
-  }
-
-  getCurrentBudget(date: Date, budgets: Budget[]) {
-    for (const budget of budgets) {
-      if (date >= budget.startDate && date <= budget.endDate) {
-        return budget;
-      }
-    }
-  }
-  
-  use(account: Account, currentDate: Date, currentDateIndex: number, dateIm59: Date, balances: any, retireDate: Date) {
-    // don't USE any of my accounts before my retire date, only GROW them
-    if (currentDate < retireDate) {
-      return false;
-    }
-
-    // use brokerage before im 59, then use up my 401k, then go back to my brokerage
-    let accntToUse = null;
-    if (currentDate < dateIm59) {
-      accntToUse = 'brokerage';
-    } else if (currentDate >= dateIm59 && balances['tax'][currentDateIndex-1] > 0) {
-      accntToUse = 'tax';
-    } else if (currentDate >= dateIm59 && balances['tax'][currentDateIndex-1] <= 0) {
-      accntToUse = 'brokerage';
-    }
-
-    return account.name === accntToUse;
-  }
-
-  generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date) {
-    console.log("generateTable");
-    var tmpChartData:any = {
-      labels: [],
-      datasets: [
-        {
-          label: "brokerage",
-          data: [],
-          fill: true,
-          backgroundColor: "rgba(75,192,192,0.2)",
-          borderColor: "rgba(75,192,192,1)"
-        },
-        {
-          label: "tax",
-          data: [],
-          fill: false,
-          borderColor: "#742774"
-        }
-      ]
-    };
-
-
-    // create a list of dates incrementing by 1 month
-    const dates = dateRange(startDate, endDate);
-    let data = dates.map( (date, i) => {
-      let eventDesc = "";
-      let accntUsed = "";
-
-      if (i > 0) {
-        // for each account, compute their currentDay balance, then return the entry to put it in the table
-        for (const account of myaccounts) {
-
-          // USE or GROW the account?
-          if (this.use(account, date, i, dateIm59, balances, retireDate)) {
-            accntUsed = account.name;
-            const budget = this.getCurrentBudget(date, budgets)!;
-            const afterSpending = balances[account.name][i-1] - budget.getTypeSum(CategoryTypes.Expense);
-            balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
-          } else {
-            balances[account.name][i] = balances[account.name][i-1] + absoluteMonthlyGrowth * balances[account.name][i-1];
-            if (balances[account.name][i-1] <= 0.0) {
-              balances[account.name][i] = 0.0;
-            }
-          }
-
-          // Apply Events regardless if im using the account or not
-          for (const event of events) {
-            // if the event is to be debited from the account, and it occurs this month/year then account for it
-            if (event.account === account.name) {
-              if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
-                eventDesc += event.name;
-                if (event.category) {
-                  if (event.category!.type === CategoryTypes.Expense) {
-                    balances[account.name][i] -= event.category!.getValue();
-                  }      
-                  if (event.category!.type === CategoryTypes.Income) {
-                    balances[account.name][i] += event.category!.getValue();
-                  }
-                }
-                if (event.name !== "") eventDesc += ' -- ';
-              }
-            }
-          }
-        }
-      }
-
-      tmpChartData.labels.push(`${date.getMonth()+1}/${date.getFullYear()}`);
-      tmpChartData.datasets[0].data.push(balances['brokerage'][i].toFixed(2));
-      tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
-
-      return (
-        <tr>
-          <td>{`${date.getMonth()+1}/${date.getFullYear()}`}</td>
-          <td>${balances['brokerage'][i].toFixed(2)}</td>
-          <td>${balances['tax'][i].toFixed(2)}</td>
-          <td>{eventDesc}</td>
-          <td>{accntUsed}</td>
-
-        </tr>
-      );
-    });
-
-    return [data,tmpChartData];
   }
 }
 
