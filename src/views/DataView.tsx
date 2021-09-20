@@ -5,7 +5,7 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { getEvents, getBudgets } from '../utilities/dataSetup';
+import { getEvents, getBudgets, getAccounts } from '../utilities/dataSetup';
 import { generateTable, RowData } from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
@@ -42,11 +42,6 @@ class DataView extends React.Component<DataViewProps, IState> {
 
         super(props);
         let n = new Date();
-        let brokerage = new Account('brokerage');
-        let tax = new Account('tax');
-        let theaccounts: Account[] = [];
-        theaccounts.push(brokerage);
-        theaccounts.push(tax);
 
         this.state = {
             today: n,
@@ -59,7 +54,7 @@ class DataView extends React.Component<DataViewProps, IState> {
             endDate: new Date('12/31/2096'),
             dateIm59: new Date('4/25/2055'),
             retireDate: new Date('1/29/2024'),
-            accounts: theaccounts,
+            accounts: getAccounts(),
             balances: {
                 brokerage: {
                     [0]: 199160.56,

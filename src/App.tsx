@@ -8,13 +8,14 @@ import { Event } from './model/Event';
 import { Budget } from './model/Budget';
 import { Account } from './model/Account';
 
-import { getEvents, getBudgets } from './utilities/dataSetup';
+import { getEvents, getBudgets, getAccounts } from './utilities/dataSetup';
 import { generateTable } from './utilities/helpers';
 import { Line } from "react-chartjs-2";
 import AccountsView from './views/AccountsView';
 import BudgetsView from './views/BudgetsView';
 import DataView from './views/DataView';
 import InputsView from './views/InputsView';
+import EventsView from './views/EventsView';
 
 
 interface IProps {
@@ -42,14 +43,9 @@ class App extends React.Component<IProps, IState> {
   
     super(props);
     let n = new Date();
-    let brokerage = new Account('brokerage');
-    let tax = new Account('tax');
-    let theaccounts: Account[] = [];
-    theaccounts.push(brokerage);
-    theaccounts.push(tax);
 
     this.state = {
-      selectedTab: 0,
+      selectedTab: 1,
       today: n,
       events: getEvents(),
       budgets: getBudgets(),
@@ -60,7 +56,7 @@ class App extends React.Component<IProps, IState> {
       endDate: new Date('12/31/2096'),
       dateIm59:  new Date('4/25/2055'),
       retireDate: new Date('1/29/2024'),
-      accounts: theaccounts,
+      accounts: getAccounts(),
       balances: {
         brokerage: {
           [0]: 199160.56,
@@ -98,6 +94,8 @@ class App extends React.Component<IProps, IState> {
               <Tabs value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" variant="fullWidth" centered>
                 <Tab label="Data"  />
                 <Tab label="Budgets"  />
+                <Tab label="Events"  />
+
                 <Tab label="Accounts"  />
                 <Tab label="Inputs"  />
               </Tabs>
@@ -105,8 +103,10 @@ class App extends React.Component<IProps, IState> {
             <br/><br/>
             <DataView value={this.state.selectedTab} index={0} />
             <BudgetsView value={this.state.selectedTab} index={1} />
-            <AccountsView value={this.state.selectedTab} index={2} />
-            <InputsView value={this.state.selectedTab} index={3} />
+            <EventsView value={this.state.selectedTab} index={2} />
+
+            <AccountsView value={this.state.selectedTab} index={3} />
+            <InputsView value={this.state.selectedTab} index={4} />
           </Box>
         </div>
       </div>
