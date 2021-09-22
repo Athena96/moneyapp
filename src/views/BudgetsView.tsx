@@ -19,11 +19,12 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { getBudgets } from '../utilities/dataSetup';
 import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 
 import TextField from '@mui/material/TextField';
 interface BudgetsViewProps {
-    value: number;
-    index: number;
+  value: number;
+  index: number;
 }
 
 interface IState {
@@ -34,7 +35,7 @@ interface IState {
 class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
   constructor(props: BudgetsViewProps) {
-  
+
     super(props);
 
     this.state = {
@@ -42,36 +43,59 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
       budgets: getBudgets()
     }
 
+    this.handleDeleteBudget = this.handleDeleteBudget.bind(this);
+    this.handleAddBudget = this.handleAddBudget.bind(this);
     this.render = this.render.bind(this);
   }
 
+  handleAddBudget() {
+    let emptarr: Category[] = [];
+    let newBudget = new Budget('...', new Date(), new Date(), emptarr);
+    let newBudgets = [...this.state.budgets, newBudget]
+    this.setState({ budgets: newBudgets });
+  }
+
+  handleDeleteBudget(event: any) {
+    const idToDelete = (event.target as Element).id;
+    let newBudgets = [];
+    for (const budget of this.state.budgets) {
+      if (budget.name !== idToDelete) {
+        newBudgets.push(budget);
+      }
+    }
+    this.setState({ budgets: newBudgets });
+  }
   render() {
     return this.props.index === this.props.value ? (
       <div >
-        <Button style={{margin: '15px'}} variant="outlined">Add Budget</Button>
+        <Button style={{ margin: '15px', width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
 
-          {this.state.budgets.map((budget: Budget) => {
-              return (
+        {this.state.budgets.map((budget: Budget) => {
+          return (
 
-                <Card variant="outlined" style={{margin: '15px' }} sx={{  minWidth: 275}}>
-                <CardContent>
+            <Card variant="outlined" style={{ margin: '15px' }}>
+              <CardContent>
+
+                <Stack direction='row' spacing={4}>
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b><TextField id="outlined-basic" label={budget.name} placeholder={budget.name} variant="outlined" />
-</b>: <TextField id="outlined-basic" label={budget.startDate.toString()} placeholder={budget.startDate.toString()} variant="outlined" /> - <TextField id="outlined-basic" label={budget.endDate.toString()} placeholder={budget.endDate.toString()} variant="outlined" />
+                    {budget.name}
                   </Typography>
-                 
-                  {budget.categories.map((category: Category) => (
-                      <>
-                    <TextField id="outlined-basic" label={category.name} placeholder={category.name} variant="outlined" />
-                    <TextField id="outlined-basic" label={category.getValue().toString()} placeholder={category.getValue().toString()} variant="outlined" /><br/></>
-                    ))}
 
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
+                  </Typography>
+                  
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
+                  </Typography>
+                  <Button id={budget.name} onClick={this.handleDeleteBudget} variant="contained">Delete Budget</Button>
 
-                </CardContent>       
-              </Card>
+                </Stack>
+              </CardContent>
+            </Card>
 
-              )
-          })}
+          )
+        })}
       </div>
     ) : (<></>);
   }
