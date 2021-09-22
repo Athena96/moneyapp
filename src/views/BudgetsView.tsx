@@ -59,12 +59,19 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     const idToDelete = (event.target as Element).id;
     let newBudgets = [];
     for (const budget of this.state.budgets) {
-      if (budget.name !== idToDelete) {
+      if (budget.getKey() !== idToDelete) {
         newBudgets.push(budget);
       }
     }
     this.setState({ budgets: newBudgets });
   }
+
+  handleEditBudget(event: any) {
+    const idToEdit = (event.target as Element).id;
+
+    console.log(idToEdit)
+  }
+
   render() {
     return this.props.index === this.props.value ? (
       <div >
@@ -88,7 +95,13 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                     {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
                   </Typography>
-                  <Button id={budget.name} onClick={this.handleDeleteBudget} variant="contained">Delete Budget</Button>
+
+                  <CardActions>
+
+                    <Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button>
+                    <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete Budget</Button>
+
+                  </CardActions>
 
                 </Stack>
               </CardContent>

@@ -1,6 +1,7 @@
 import { Category } from "./Category";
+import { Key } from "./KeyInterface";
 
-export class Event {
+export class Event implements Key {
     name: string;
     date: Date;
     account: string;
@@ -15,6 +16,10 @@ export class Event {
 
     printEvent() {
         console.log(`[Event] name: ${this.name} date: ${this.date.getMonth()}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`)
+    }
+    
+    getKey() {
+        return `${this.date.getTime().toString()}`;
     }
 
 

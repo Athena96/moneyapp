@@ -1,7 +1,8 @@
 import { Category } from "./Category";
 import { CategoryTypes } from "./Category";
+import { Key } from "./KeyInterface";
 
-export class Budget {
+export class Budget implements Key {
 
     name: string;
     startDate: Date;
@@ -24,6 +25,10 @@ export class Budget {
             }
         }
         return sum;
+    }
+
+    getKey() {
+        return `${this.startDate.getTime().toString()}-${this.endDate.getTime().toString()}`
     }
 
 }

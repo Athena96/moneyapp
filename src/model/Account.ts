@@ -1,5 +1,5 @@
 
-
+import { Key } from "./KeyInterface";
 
 export class Account {
 
@@ -8,6 +8,10 @@ export class Account {
 
     constructor(name: string) {
         this.name = name;
+    }
+
+    getKey() {
+        return this.name;
     }
 
 }

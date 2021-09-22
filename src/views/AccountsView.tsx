@@ -42,27 +42,50 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       name: 'AccountsView',
       accounts: getAccounts()
     }
-
+    this.handleAddAccount = this.handleAddAccount.bind(this);
+    this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
     this.render = this.render.bind(this);
+  }
+
+  handleAddAccount() {
+    let emptarr: Category[] = [];
+    let newAccount = new Account('...');
+    let newAccounts = [...this.state.accounts, newAccount]
+    this.setState({ accounts: newAccounts });
+  }
+
+  handleDeleteAccount(event: any) {
+    const idToDelete = (event.target as Element).id;
+    let newAccounts = [];
+    for (const budget of this.state.accounts) {
+      if (budget.getKey() !== idToDelete) {
+        newAccounts.push(budget);
+      }
+    }
+    this.setState({ accounts: newAccounts });
   }
 
   render() {
     return this.props.index === this.props.value ? (
       <div >
-        <Button style={{margin: '15px'}} variant="outlined">Add Account</Button>
+        <Button style={{ margin: '15px', width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account</Button>
 
           {this.state.accounts.map((account: Account) => {
               return (
 
-                <Card variant="outlined" style={{margin: '15px' }} sx={{  minWidth: 275}}>
+                <Card variant="outlined" style={{ margin: '15px' }}>
                 <CardContent>
-
-                <Stack spacing={2} direction="row">
-                    <TextField id="outlined-basic" label={account.name} placeholder={account.name} variant="outlined" />
-
-                </Stack>
-              
-                </CardContent>       
+  
+                  <Stack direction='row' spacing={4}>
+                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                      {account.name}
+                    </Typography>
+  
+       
+                    <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete Account</Button>
+  
+                  </Stack>
+                </CardContent>
               </Card>
 
               )

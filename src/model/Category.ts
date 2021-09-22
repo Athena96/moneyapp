@@ -1,9 +1,10 @@
+import { Key } from "./KeyInterface";
 
 export enum CategoryTypes {
     Expense,
     Income,
 }
-export class Category {
+export class Category implements Key {
 
     name: string;
     value: number;
@@ -27,6 +28,10 @@ export class Category {
 
     getCategoryDescription() {
         return `[Category] name: ${this.name} value: ${this.value} type: ${this.type === 1 ? 'Income' : 'Expense'}`;
+    }
+
+    getKey() {
+        return `${this.name}-${this.value}-${this.type.toString()}`
     }
 }
 

@@ -76,6 +76,8 @@ class App extends React.Component<IProps, IState> {
     this.setState({selectedTab: newValue});
   }
 
+  // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
+  
   render() {
     const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, 
       this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
