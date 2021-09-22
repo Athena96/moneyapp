@@ -1,0 +1,37 @@
+
+enum CategoryTypes {
+  Expense
+  Income
+}
+
+type Account @model {
+  id: ID!
+  name: String
+}
+
+type Category @model {
+  id: ID!
+  name: String
+  value: Float
+  type: CategoryTypes
+
+}
+
+
+type Budget @model {
+  id: ID!
+  name: String
+  startDate: AWSDateTime
+  endDate: AWSDateTime
+  categories: [Category]
+
+}
+
+type Event @model {
+  id: ID!
+  name: String
+  date: AWSDateTime
+  account: String
+  category: Category
+}
+

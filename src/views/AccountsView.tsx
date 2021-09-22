@@ -22,6 +22,17 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 import TextField from '@mui/material/TextField';
+
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import { createAccount } from '../graphql/mutations'
+import { listAccounts } from '../graphql/queries'
+import { ListAccountsQuery, OnCreateAccountSubscription } from "../API";
+
+import { GraphQLResult } from "@aws-amplify/api";
+
+import awsExports from "../aws-exports";
+Amplify.configure(awsExports);
+
 interface AccountsViewProps {
     value: number;
     index: number;
@@ -40,15 +51,37 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
     this.state = {
       name: 'AccountsView',
-      accounts: getAccounts()
+      accounts: []
     }
+
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.fetchAccounts = this.fetchAccounts.bind(this);
+
     this.handleAddAccount = this.handleAddAccount.bind(this);
     this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
     this.render = this.render.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchAccounts();
+  }
+
+  async fetchAccounts() {
+    let fetchedAccounts: Account[] = [];
+    try {
+      const response = (await API.graphql({
+        query: listAccounts
+      })) as { data: ListAccountsQuery }
+      for (const account of response.data.listAccounts!.items!) {
+        fetchedAccounts.push(new Account(account!.name!));
+      }
+      this.setState({accounts: fetchedAccounts})
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   handleAddAccount() {
-    let emptarr: Category[] = [];
     let newAccount = new Account('...');
     let newAccounts = [...this.state.accounts, newAccount]
     this.setState({ accounts: newAccounts });
