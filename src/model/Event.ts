@@ -2,12 +2,14 @@ import { Category } from "./Category";
 import { Key } from "./KeyInterface";
 
 export class Event implements Key {
+    id: string;
     name: string;
     date: Date;
     account: string;
-    category: Category | undefined;
+    category: Category | null;
 
-    constructor(name: string, date: Date, account: string, category: Category | undefined = undefined) {
+    constructor(id: string, name: string, date: Date, account: string, category: Category | null) {
+        this.id = id;
         this.name = name;
         this.date = date;
         this.account = account;
@@ -19,7 +21,7 @@ export class Event implements Key {
     }
     
     getKey() {
-        return `${this.date.getTime().toString()}`;
+        return this.id;
     }
 
 

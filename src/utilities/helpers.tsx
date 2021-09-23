@@ -3,7 +3,7 @@
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
-import { CategoryTypes } from '../model/Category'; 
+import { CategoryTypes } from "../API";
 
 export interface RowData {
   date: string;

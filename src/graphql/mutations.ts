@@ -41,51 +41,6 @@ export const deleteAccount = /* GraphQL */ `
     }
   }
 `;
-export const createCategory = /* GraphQL */ `
-  mutation CreateCategory(
-    $input: CreateCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    createCategory(input: $input, condition: $condition) {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const updateCategory = /* GraphQL */ `
-  mutation UpdateCategory(
-    $input: UpdateCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    updateCategory(input: $input, condition: $condition) {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const deleteCategory = /* GraphQL */ `
-  mutation DeleteCategory(
-    $input: DeleteCategoryInput!
-    $condition: ModelCategoryConditionInput
-  ) {
-    deleteCategory(input: $input, condition: $condition) {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
 export const createBudget = /* GraphQL */ `
   mutation CreateBudget(
     $input: CreateBudgetInput!
@@ -101,8 +56,6 @@ export const createBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -124,8 +77,6 @@ export const updateBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -147,8 +98,6 @@ export const deleteBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -170,8 +119,6 @@ export const createEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -193,8 +140,6 @@ export const updateEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -216,8 +161,6 @@ export const deleteEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt

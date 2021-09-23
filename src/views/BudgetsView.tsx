@@ -7,7 +7,8 @@ import * as React from 'react';
 // import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 // import { CategoryTypes } from '../model/Category';
-import { Category, CategoryTypes } from '../model/Category';
+import { Category } from '../model/Category';
+import { CategoryTypes } from "../API";
 
 // import { getEvents, getBudgets } from '../utilities/dataSetup';
 // import { dateRange, generateTable } from '../utilities/helpers';
@@ -75,9 +76,13 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
         query: listBudgets
       })) as { data: ListBudgetsQuery }
       for (const budget of response.data.listBudgets!.items!) {
-        let cats = []
-        for (const category of budget!.categories!) {
-          cats.push(new Category(category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income), null));
+        let cats = null;
+
+        if (budget?.categories) {
+          cats = [];
+          for (const category of budget!.categories!) {
+            cats.push(new Category('',category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+          }
         }
         fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
       }
@@ -88,15 +93,11 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
   }
 
   async handleAddBudget() {
-
-
     try {
-
-      let c: Category[] =[]
-      let newBudget = new Budget('','...', new Date(), new Date(), null);
+      let newBudget = new Budget(new Date().getTime().toString(),'...', new Date(), new Date(), null);
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });
-      await API.graphql(graphqlOperation(createBudget, {input: { categories: c, name: '...', startDate: new Date(), endDate: new Date()}}))
+      await API.graphql(graphqlOperation(createBudget, {input: newBudget }))
     } catch (err) {
       console.log('error creating todo:', err)
     }

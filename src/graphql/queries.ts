@@ -29,37 +29,6 @@ export const listAccounts = /* GraphQL */ `
     }
   }
 `;
-export const getCategory = /* GraphQL */ `
-  query GetCategory($id: ID!) {
-    getCategory(id: $id) {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const listCategories = /* GraphQL */ `
-  query ListCategories(
-    $filter: ModelCategoryFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listCategories(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        value
-        type
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
 export const getBudget = /* GraphQL */ `
   query GetBudget($id: ID!) {
     getBudget(id: $id) {
@@ -72,8 +41,6 @@ export const getBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -97,8 +64,6 @@ export const listBudgets = /* GraphQL */ `
           name
           value
           type
-          createdAt
-          updatedAt
         }
         createdAt
         updatedAt
@@ -119,8 +84,6 @@ export const getEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -144,8 +107,6 @@ export const listEvents = /* GraphQL */ `
           name
           value
           type
-          createdAt
-          updatedAt
         }
         createdAt
         updatedAt

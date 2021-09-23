@@ -9,14 +9,14 @@ type Account @model {
   name: String
 }
 
-type Category @model {
-  id: ID!
+# no @model directive because we do not want a Category table, i.e. Categories
+# are not singletons to be consistent between types. Like emplies on teams.
+type Category {
+  id: ID
   name: String
   value: Float
   type: CategoryTypes
-
 }
-//todo get rid of cat table, use primitives
 
 
 type Budget @model {

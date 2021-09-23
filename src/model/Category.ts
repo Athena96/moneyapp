@@ -1,21 +1,21 @@
 import { Key } from "./KeyInterface";
+import { CategoryTypes } from "../API";
 
-export enum CategoryTypes {
-    Expense,
-    Income,
-}
+// export enum CategoryTypes {
+//     Expense,
+//     Income,
+// }
 export class Category implements Key {
-
+    id: string;
     name: string;
     value: number;
     type: CategoryTypes;
-    security: string | null;
 
-    constructor(name: string, value: number, type: CategoryTypes, security: string | null) {
+    constructor(id: string, name: string, value: number, type: CategoryTypes) {
+        this.id = id;
         this.name = name;
         this.value = value;
         this.type = type;
-        this.security = security;
     }
 
      getValue() {
@@ -23,11 +23,11 @@ export class Category implements Key {
     }
 
     printCategory() {
-        console.log(`[Category] name: ${this.name} value: ${this.value} type: ${this.type === 1 ? 'Income' : 'Expense'}`)
+        console.log(`[Category] name: ${this.name} value: ${this.value} type: ${this.type}`)
     }
 
     getCategoryDescription() {
-        return `[Category] name: ${this.name} value: ${this.value} type: ${this.type === 1 ? 'Income' : 'Expense'}`;
+        return `[Category] name: ${this.name} value: ${this.value} type: ${this.type}`;
     }
 
     getKey() {

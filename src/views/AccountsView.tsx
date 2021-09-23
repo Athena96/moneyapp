@@ -7,7 +7,7 @@ import * as React from 'react';
 // import { Account } from '../model/Account';
 import { Account } from '../model/Account';
 import { Category } from '../model/Category';
-// import { CategoryTypes } from '../model/Category';
+// import { CategoryTypes } from "../API";
 
 // import { getAccounts, getAccounts } from '../utilities/dataSetup';
 // import { dateRange, generateTable } from '../utilities/helpers';
@@ -86,7 +86,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       let newAccount = new Account('','...');
       let newAccounts = [...this.state.accounts, newAccount]
       this.setState({ accounts: newAccounts });
-      await API.graphql(graphqlOperation(deleteAccount, {input: newAccount}))
+      await API.graphql(graphqlOperation(createAccount, {input: newAccount}))
     } catch (err) {
       console.log('error creating todo:', err)
     }

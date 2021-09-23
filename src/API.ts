@@ -71,7 +71,15 @@ export type DeleteAccountInput = {
   id: string,
 };
 
-export type CreateCategoryInput = {
+export type CreateBudgetInput = {
+  id?: string | null,
+  name?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  categories?: Array< CategoryInput | null > | null,
+};
+
+export type CategoryInput = {
   id?: string | null,
   name?: string | null,
   value?: number | null,
@@ -83,60 +91,6 @@ export enum CategoryTypes {
   Income = "Income",
 }
 
-
-export type ModelCategoryConditionInput = {
-  name?: ModelStringInput | null,
-  value?: ModelFloatInput | null,
-  type?: ModelCategoryTypesInput | null,
-  and?: Array< ModelCategoryConditionInput | null > | null,
-  or?: Array< ModelCategoryConditionInput | null > | null,
-  not?: ModelCategoryConditionInput | null,
-};
-
-export type ModelFloatInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
-export type ModelCategoryTypesInput = {
-  eq?: CategoryTypes | null,
-  ne?: CategoryTypes | null,
-};
-
-export type Category = {
-  __typename: "Category",
-  id: string,
-  name?: string | null,
-  value?: number | null,
-  type?: CategoryTypes | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type UpdateCategoryInput = {
-  id: string,
-  name?: string | null,
-  value?: number | null,
-  type?: CategoryTypes | null,
-};
-
-export type DeleteCategoryInput = {
-  id: string,
-};
-
-export type CreateBudgetInput = {
-  id?: string | null,
-  name?: string | null,
-  startDate?: string | null,
-  endDate?: string | null,
-};
 
 export type ModelBudgetConditionInput = {
   name?: ModelStringInput | null,
@@ -158,11 +112,20 @@ export type Budget = {
   updatedAt: string,
 };
 
+export type Category = {
+  __typename: "Category",
+  id?: string | null,
+  name?: string | null,
+  value?: number | null,
+  type?: CategoryTypes | null,
+};
+
 export type UpdateBudgetInput = {
   id: string,
   name?: string | null,
   startDate?: string | null,
   endDate?: string | null,
+  categories?: Array< CategoryInput | null > | null,
 };
 
 export type DeleteBudgetInput = {
@@ -174,6 +137,7 @@ export type CreateEventInput = {
   name?: string | null,
   date?: string | null,
   account?: string | null,
+  category?: CategoryInput | null,
 };
 
 export type ModelEventConditionInput = {
@@ -201,6 +165,7 @@ export type UpdateEventInput = {
   name?: string | null,
   date?: string | null,
   account?: string | null,
+  category?: CategoryInput | null,
 };
 
 export type DeleteEventInput = {
@@ -234,22 +199,6 @@ export type ModelIDInput = {
 export type ModelAccountConnection = {
   __typename: "ModelAccountConnection",
   items?:  Array<Account | null > | null,
-  nextToken?: string | null,
-};
-
-export type ModelCategoryFilterInput = {
-  id?: ModelIDInput | null,
-  name?: ModelStringInput | null,
-  value?: ModelFloatInput | null,
-  type?: ModelCategoryTypesInput | null,
-  and?: Array< ModelCategoryFilterInput | null > | null,
-  or?: Array< ModelCategoryFilterInput | null > | null,
-  not?: ModelCategoryFilterInput | null,
-};
-
-export type ModelCategoryConnection = {
-  __typename: "ModelCategoryConnection",
-  items?:  Array<Category | null > | null,
   nextToken?: string | null,
 };
 
@@ -330,57 +279,6 @@ export type DeleteAccountMutation = {
   } | null,
 };
 
-export type CreateCategoryMutationVariables = {
-  input: CreateCategoryInput,
-  condition?: ModelCategoryConditionInput | null,
-};
-
-export type CreateCategoryMutation = {
-  createCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateCategoryMutationVariables = {
-  input: UpdateCategoryInput,
-  condition?: ModelCategoryConditionInput | null,
-};
-
-export type UpdateCategoryMutation = {
-  updateCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteCategoryMutationVariables = {
-  input: DeleteCategoryInput,
-  condition?: ModelCategoryConditionInput | null,
-};
-
-export type DeleteCategoryMutation = {
-  deleteCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
 export type CreateBudgetMutationVariables = {
   input: CreateBudgetInput,
   condition?: ModelBudgetConditionInput | null,
@@ -395,12 +293,10 @@ export type CreateBudgetMutation = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -421,12 +317,10 @@ export type UpdateBudgetMutation = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -447,12 +341,10 @@ export type DeleteBudgetMutation = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -473,12 +365,10 @@ export type CreateEventMutation = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,
@@ -499,12 +389,10 @@ export type UpdateEventMutation = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,
@@ -525,12 +413,10 @@ export type DeleteEventMutation = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,
@@ -571,44 +457,6 @@ export type ListAccountsQuery = {
   } | null,
 };
 
-export type GetCategoryQueryVariables = {
-  id: string,
-};
-
-export type GetCategoryQuery = {
-  getCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListCategoriesQueryVariables = {
-  filter?: ModelCategoryFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListCategoriesQuery = {
-  listCategories?:  {
-    __typename: "ModelCategoryConnection",
-    items?:  Array< {
-      __typename: "Category",
-      id: string,
-      name?: string | null,
-      value?: number | null,
-      type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
-    } | null > | null,
-    nextToken?: string | null,
-  } | null,
-};
-
 export type GetBudgetQueryVariables = {
   id: string,
 };
@@ -622,12 +470,10 @@ export type GetBudgetQuery = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -651,12 +497,10 @@ export type ListBudgetsQuery = {
       endDate?: string | null,
       categories?:  Array< {
         __typename: "Category",
-        id: string,
+        id?: string | null,
         name?: string | null,
         value?: number | null,
         type?: CategoryTypes | null,
-        createdAt: string,
-        updatedAt: string,
       } | null > | null,
       createdAt: string,
       updatedAt: string,
@@ -678,12 +522,10 @@ export type GetEventQuery = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,
@@ -707,12 +549,10 @@ export type ListEventsQuery = {
       account?: string | null,
       category?:  {
         __typename: "Category",
-        id: string,
+        id?: string | null,
         name?: string | null,
         value?: number | null,
         type?: CategoryTypes | null,
-        createdAt: string,
-        updatedAt: string,
       } | null,
       createdAt: string,
       updatedAt: string,
@@ -751,42 +591,6 @@ export type OnDeleteAccountSubscription = {
   } | null,
 };
 
-export type OnCreateCategorySubscription = {
-  onCreateCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateCategorySubscription = {
-  onUpdateCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteCategorySubscription = {
-  onDeleteCategory?:  {
-    __typename: "Category",
-    id: string,
-    name?: string | null,
-    value?: number | null,
-    type?: CategoryTypes | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
 export type OnCreateBudgetSubscription = {
   onCreateBudget?:  {
     __typename: "Budget",
@@ -796,12 +600,10 @@ export type OnCreateBudgetSubscription = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -817,12 +619,10 @@ export type OnUpdateBudgetSubscription = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -838,12 +638,10 @@ export type OnDeleteBudgetSubscription = {
     endDate?: string | null,
     categories?:  Array< {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null > | null,
     createdAt: string,
     updatedAt: string,
@@ -859,12 +657,10 @@ export type OnCreateEventSubscription = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,
@@ -880,12 +676,10 @@ export type OnUpdateEventSubscription = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,
@@ -901,12 +695,10 @@ export type OnDeleteEventSubscription = {
     account?: string | null,
     category?:  {
       __typename: "Category",
-      id: string,
+      id?: string | null,
       name?: string | null,
       value?: number | null,
       type?: CategoryTypes | null,
-      createdAt: string,
-      updatedAt: string,
     } | null,
     createdAt: string,
     updatedAt: string,

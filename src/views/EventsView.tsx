@@ -6,8 +6,9 @@ import * as React from 'react';
 // import '../App.css';
 // import { Event } from '../model/Event';
 import { Event } from '../model/Event';
-import { Category, CategoryTypes } from '../model/Category';
+import { Category } from '../model/Category';
 // import { CategoryTypes } from '../model/Category';
+import { CategoryTypes } from "../API";
 
 // import { getEvents, getEvents } from '../utilities/dataSetup';
 // import { dateRange, generateTable } from '../utilities/helpers';
@@ -25,7 +26,7 @@ import TextField from '@mui/material/TextField';
 
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createEvent } from '../graphql/mutations'
+import { createEvent, deleteEvent } from '../graphql/mutations'
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery, OnCreateEventSubscription } from "../API";
 
@@ -72,7 +73,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         query: listEvents
       })) as { data: ListEventsQuery }
       for (const event of response.data.listEvents!.items!) {
-        const e = new Event(event!.name!, new Date(event!.date!), event!.account!, new Category(event!.category!.name!, event!.category!.value!, (event!.category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income), null));
+        const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, event!.category!.value!, event!.category!.type!) : null;
+        const e = new Event(event!.id!, event!.name!, new Date(event!.date!), event!.account!, cc);
         e.printEvent();
         fetchedEvents.push(e);
       }
@@ -81,21 +83,45 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       console.log(error);
     }
   }
-  handleAddEvents() {
-    let newEvent = new Event('...', new Date(), '...', new Category('...', 0.0, CategoryTypes.Expense, null));
-    let newEvents = [...this.state.events, newEvent]
-    this.setState({ events: newEvents });
+
+  async handleAddEvents() {
+
+
+    try {
+      let newEvent = new Event(new Date().getTime().toString(), '...', new Date(), '...', null);
+      let newEvents = [...this.state.events, newEvent]
+      this.setState({ events: newEvents });
+      await API.graphql(graphqlOperation(createEvent, {input: newEvent}))
+    } catch (err) {
+      console.log('error creating todo:', err)
+    }
   }
 
-  handleDeleteEvents(event: any) {
+
+
+  async handleDeleteEvents(event: any) {
     const idToDelete = (event.target as Element).id;
+    console.log(`idToDelete: ${idToDelete}`)
     let newEvents = [];
+    let eventToDelete = null;
+
     for (const event of this.state.events) {
-      if (event.getKey() !== idToDelete) {
-        newEvents.push(event);
-      }
+      if (event.getKey() === idToDelete) {
+        eventToDelete = {
+          'id': event.getKey()
+        }
+        console.log(event.printEvent());
+        continue;
+      } 
+      newEvents.push(event);
+
     }
     this.setState({ events: newEvents });
+    try {
+      await API.graphql({ query: deleteEvent, variables: {input: eventToDelete}});
+    } catch (err) {
+      console.log('error:', err)
+    }
   }
 
   render() {
@@ -123,7 +149,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                   {event.category ? event.category!.getValue().toString() : '...'}
                 </Typography>
 
-                <Button id={event.date.getTime().toString()} onClick={this.handleDeleteEvents} variant="contained">Delete Event</Button>
+                <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete Event</Button>
 
               </Stack>
             </CardContent>

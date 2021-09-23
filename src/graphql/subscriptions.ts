@@ -32,42 +32,6 @@ export const onDeleteAccount = /* GraphQL */ `
     }
   }
 `;
-export const onCreateCategory = /* GraphQL */ `
-  subscription OnCreateCategory {
-    onCreateCategory {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onUpdateCategory = /* GraphQL */ `
-  subscription OnUpdateCategory {
-    onUpdateCategory {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const onDeleteCategory = /* GraphQL */ `
-  subscription OnDeleteCategory {
-    onDeleteCategory {
-      id
-      name
-      value
-      type
-      createdAt
-      updatedAt
-    }
-  }
-`;
 export const onCreateBudget = /* GraphQL */ `
   subscription OnCreateBudget {
     onCreateBudget {
@@ -80,8 +44,6 @@ export const onCreateBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -100,8 +62,6 @@ export const onUpdateBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -120,8 +80,6 @@ export const onDeleteBudget = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -140,8 +98,6 @@ export const onCreateEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -160,8 +116,6 @@ export const onUpdateEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -180,8 +134,6 @@ export const onDeleteEvent = /* GraphQL */ `
         name
         value
         type
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
