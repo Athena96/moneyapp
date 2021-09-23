@@ -22,6 +22,18 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 import TextField from '@mui/material/TextField';
+
+
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import { createEvent } from '../graphql/mutations'
+import { listEvents } from '../graphql/queries'
+import { ListEventsQuery, OnCreateEventSubscription } from "../API";
+
+import { GraphQLResult } from "@aws-amplify/api";
+
+import awsExports from "../aws-exports";
+Amplify.configure(awsExports);
+
 interface EventsViewProps {
     value: number;
     index: number;
@@ -35,18 +47,40 @@ interface IState {
 class EventsView extends React.Component<EventsViewProps, IState> {
 
   constructor(props: EventsViewProps) {
-  
     super(props);
-
     this.state = {
       name: 'EventsView',
-      events: getEvents()
+      events: []
     }
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.fetchEvents = this.fetchEvents.bind(this);
     this.handleDeleteEvents = this.handleDeleteEvents.bind(this);
     this.handleAddEvents = this.handleAddEvents.bind(this);
     this.render = this.render.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchEvents();
+  }
+
+  async fetchEvents() {
+    console.log('fetchEvents.')
+
+    let fetchedEvents: Event[] = [];
+    try {
+      const response = (await API.graphql({
+        query: listEvents
+      })) as { data: ListEventsQuery }
+      for (const event of response.data.listEvents!.items!) {
+        const e = new Event(event!.name!, new Date(event!.date!), event!.account!, new Category(event!.category!.name!, event!.category!.value!, (event!.category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income), null));
+        e.printEvent();
+        fetchedEvents.push(e);
+      }
+      this.setState({events: fetchedEvents})
+    } catch (error) {
+      console.log(error);
+    }
+  }
   handleAddEvents() {
     let newEvent = new Event('...', new Date(), '...', new Category('...', 0.0, CategoryTypes.Expense, null));
     let newEvents = [...this.state.events, newEvent]

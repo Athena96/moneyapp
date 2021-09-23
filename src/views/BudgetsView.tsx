@@ -6,8 +6,8 @@ import * as React from 'react';
 // import '../App.css';
 // import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
-import { Category } from '../model/Category';
 // import { CategoryTypes } from '../model/Category';
+import { Category, CategoryTypes } from '../model/Category';
 
 // import { getEvents, getBudgets } from '../utilities/dataSetup';
 // import { dateRange, generateTable } from '../utilities/helpers';
@@ -22,6 +22,17 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 import TextField from '@mui/material/TextField';
+
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import { createBudget } from '../graphql/mutations'
+import { listBudgets } from '../graphql/queries'
+import { ListBudgetsQuery, OnCreateBudgetSubscription } from "../API";
+
+import { GraphQLResult } from "@aws-amplify/api";
+
+import awsExports from "../aws-exports";
+Amplify.configure(awsExports);
+
 interface BudgetsViewProps {
   value: number;
   index: number;
@@ -40,12 +51,39 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
     this.state = {
       name: 'BudgetsView',
-      budgets: getBudgets()
+      budgets: [] //getBudgets()
     }
+
+    this.componentDidMount = this.componentDidMount.bind(this);
+    this.fetchBudgets = this.fetchBudgets.bind(this);
 
     this.handleDeleteBudget = this.handleDeleteBudget.bind(this);
     this.handleAddBudget = this.handleAddBudget.bind(this);
     this.render = this.render.bind(this);
+  }
+
+
+  componentDidMount() {
+    this.fetchBudgets();
+  }
+
+  async fetchBudgets() {
+    let fetchedBudgets: Budget[] = [];
+    try {
+      const response = (await API.graphql({
+        query: listBudgets
+      })) as { data: ListBudgetsQuery }
+      for (const budget of response.data.listBudgets!.items!) {
+        let cats = []
+        for (const category of budget!.categories!) {
+          cats.push(new Category(category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income), null));
+        }
+        fetchedBudgets.push(new Budget(budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
+      }
+      this.setState({budgets: fetchedBudgets})
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   handleAddBudget() {
