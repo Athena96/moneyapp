@@ -115,6 +115,12 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     }
   }
 
+  handleEditAccount(event: any) {
+    const idToEdit = (event.target as Element).id;
+
+    console.log(idToEdit);
+  }
+
   render() {
     return this.props.index === this.props.value ? (
       <div >
@@ -131,10 +137,16 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                       {account.name}
                     </Typography>
   
-       
-                    <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete Account</Button>
-  
+        
                   </Stack>
+
+                  <Stack direction='row' spacing={4}>
+                  <Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button>
+
+                  <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete</Button>
+
+                  </Stack>
+
                 </CardContent>
               </Card>
 

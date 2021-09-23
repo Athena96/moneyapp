@@ -53,7 +53,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
     this.state = {
       name: 'BudgetsView',
-      budgets: [] //getBudgets()
+      budgets: []
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -156,15 +156,23 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                     {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
                   </Typography>
+                  </Stack>
 
                   <CardActions>
 
-                    <Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button>
-                    <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete Budget</Button>
+                  <Stack direction='row' spacing={4}>
 
-                  </CardActions>
+
+
+
+                    <Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button>
+                    <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete</Button>
+
+
 
                 </Stack>
+
+                </CardActions>
               </CardContent>
             </Card>
 

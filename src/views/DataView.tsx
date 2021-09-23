@@ -78,19 +78,19 @@ class DataView extends React.Component<DataViewProps, IState> {
 
 
                 <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <Table  aria-label="simple table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Date</TableCell>
                                 <TableCell align="center">Brokerage</TableCell>
                                 <TableCell align="center">Tax</TableCell>
                                 <TableCell align="left">Note</TableCell>
-                                <TableCell align="center">Accnt Used</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {balanceData.map((row: RowData) => (
                                 <TableRow
+                                style={{backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white')}}
                                     key={row.date}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
@@ -100,7 +100,6 @@ class DataView extends React.Component<DataViewProps, IState> {
                                     <TableCell align="center">{row.brokerageBal}</TableCell>
                                     <TableCell align="center">{row.taxBal}</TableCell>
                                     <TableCell align="left">{row.note}</TableCell>
-                                    <TableCell align="center">{row.accountUsed}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

@@ -84,8 +84,10 @@ class App extends React.Component<IProps, IState> {
     return (
       <div >
         <div>
-          <Line data={chartData} />
+        <Box sx={{ width: '100%' }}>
 
+          <Line data={chartData} />
+          </Box>
         </div>
 
         <br/><br/>
@@ -93,7 +95,9 @@ class App extends React.Component<IProps, IState> {
         <div>
           <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" variant="fullWidth" centered>
+              <Tabs variant="scrollable"
+  scrollButtons
+  allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
                 <Tab label="Data"  />
                 <Tab label="Budgets"  />
                 <Tab label="Events"  />

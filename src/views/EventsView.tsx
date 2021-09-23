@@ -124,6 +124,12 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     }
   }
 
+  handleEditEvents(event: any) {
+    const idToEdit = (event.target as Element).id;
+
+    console.log(idToEdit);
+  }
+
   render() {
     return this.props.index === this.props.value ? (
       <div >
@@ -149,9 +155,15 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                   {event.category ? event.category!.getValue().toString() : '...'}
                 </Typography>
 
-                <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete Event</Button>
+                </Stack>
 
-              </Stack>
+                <Stack direction='row' spacing={4}>
+                  <Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button>
+
+                  <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
+
+                  </Stack>
+
             </CardContent>
           </Card>
 
