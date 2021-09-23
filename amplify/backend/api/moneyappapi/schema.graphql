@@ -16,6 +16,7 @@ type Category @model {
   type: CategoryTypes
 
 }
+//todo get rid of cat table, use primitives
 
 
 type Budget @model {

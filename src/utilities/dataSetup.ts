@@ -22,8 +22,8 @@ const CAR_DP = 2400;
 
 
 export function getAccounts() {
-    let brokerage = new Account('brokerage');
-    let tax = new Account('tax');
+    let brokerage = new Account('1','brokerage');
+    let tax = new Account('2','tax');
     let theaccounts: Account[] = [];
     theaccounts.push(brokerage);
     theaccounts.push(tax);
@@ -177,7 +177,7 @@ function getSignOnBonusBudget() {
     budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('saving', 6417.26, CategoryTypes.Income, null));
 
-    return new Budget('getSignOnBonusBudget', new Date('01/27/2021'), new Date('12/31/2021'), budgetSpending);
+    return new Budget('','getSignOnBonusBudget', new Date('01/27/2021'), new Date('12/31/2021'), budgetSpending);
 }
 
 
@@ -201,7 +201,7 @@ function getY3NoBonusBudget() {
     budgetSpending.push(new Category('LTC insurance', 36.85, CategoryTypes.Expense, null));
     budgetSpending.push(new Category('saving', 5111.02, CategoryTypes.Income, null));
 
-    return new Budget('getY3NoBonusBudget', new Date('01/01/2022'), new Date('01/31/2024'), budgetSpending);
+    return new Budget('','getY3NoBonusBudget', new Date('01/01/2022'), new Date('01/31/2024'), budgetSpending);
 }
 
 function getRetireSingleDuringLoan() {
@@ -227,7 +227,7 @@ function getRetireSingleDuringLoan() {
 
     budgetSpending.push(new Category('MISC_TAXES', 200.00/12, CategoryTypes.Expense, null));
 
-    return new Budget('getRetireSingleDuringLoan', new Date('02/01/2024'), new Date('02/31/2027'), budgetSpending);
+    return new Budget('','getRetireSingleDuringLoan', new Date('02/01/2024'), new Date('02/31/2027'), budgetSpending);
 }
 
 function getRetireSingleAfterLoan() {
@@ -256,7 +256,7 @@ function getRetireSingleAfterLoan() {
 
     budgetSpending.push(new Category('MISC_TAXES', 200.00/12, CategoryTypes.Expense, null));
 
-    return new Budget('getRetireSingleAfterLoan', new Date('03/01/2027'), new Date('04/31/2036'), budgetSpending);
+    return new Budget('','getRetireSingleAfterLoan', new Date('03/01/2027'), new Date('04/31/2036'), budgetSpending);
 }
 
 function getRetireFamilyB459Car() {
@@ -287,7 +287,7 @@ function getRetireFamilyB459Car() {
 
     // budgetSpending.push(new Category('MISC_TAXES', 200.00, CategoryTypes.Expense, null));
 
-    return new Budget('getRetireFamilyB459Car', new Date('05/01/2036'), new Date('04/31/2041'), budgetSpending);
+    return new Budget('','getRetireFamilyB459Car', new Date('05/01/2036'), new Date('04/31/2041'), budgetSpending);
 }
 
 function getRetireFamilyB459() {
@@ -318,7 +318,7 @@ function getRetireFamilyB459() {
 
     // budgetSpending.push(new Category('MISC_TAXES', 200.00, CategoryTypes.Expense, null));
 
-    return new Budget('getRetireFamilyB459', new Date('05/01/2041'), new Date('04/31/2055'), budgetSpending);
+    return new Budget('','getRetireFamilyB459', new Date('05/01/2041'), new Date('04/31/2055'), budgetSpending);
 }
 
 function getRetireFamilyAfter59() {
@@ -349,7 +349,7 @@ function getRetireFamilyAfter59() {
 
     budgetSpending.push(new Category('TAXES (401k)', 5730.79/12, CategoryTypes.Expense, null));
 
-    return new Budget('getRetireFamilyAfter59', new Date('05/01/2055'), new Date('04/31/2058'), budgetSpending);
+    return new Budget('','getRetireFamilyAfter59', new Date('05/01/2055'), new Date('04/31/2058'), budgetSpending);
 }
 
 function getGoldenYearsDuringHousePayment() {
@@ -382,7 +382,7 @@ function getGoldenYearsDuringHousePayment() {
 
     budgetSpending.push(new Category('TAXES (401k)', 3307.98/12, CategoryTypes.Expense, null));
 
-    return new Budget('getGoldenYearsDuringHousePayment', new Date('05/01/2058'), new Date('04/31/2066'), budgetSpending);
+    return new Budget('','getGoldenYearsDuringHousePayment', new Date('05/01/2058'), new Date('04/31/2066'), budgetSpending);
 }
 
 function getGoldenYearsNOPayment() {
@@ -415,7 +415,7 @@ function getGoldenYearsNOPayment() {
 
     budgetSpending.push(new Category('TAXES (401k)', 3307.98/12, CategoryTypes.Expense, null));
 
-    return new Budget('getGoldenYearsNOPayment', new Date('05/01/2066'), new Date('04/31/2082'), budgetSpending);
+    return new Budget('','getGoldenYearsNOPayment', new Date('05/01/2066'), new Date('04/31/2082'), budgetSpending);
 }
 
 
@@ -448,5 +448,5 @@ function getEOL() {
 
     budgetSpending.push(new Category('TAXES', 100/12, CategoryTypes.Expense, null));
 
-    return new Budget('getEOL', new Date('05/01/2082'), new Date('12/31/2096'), budgetSpending);
+    return new Budget('','getEOL', new Date('05/01/2082'), new Date('12/31/2096'), budgetSpending);
 }

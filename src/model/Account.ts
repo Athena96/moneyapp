@@ -3,15 +3,18 @@ import { Key } from "./KeyInterface";
 
 export class Account {
 
+    id: string;
     name: string;
 
 
-    constructor(name: string) {
+    constructor(id: string, name: string) {
+        this.id = id;
         this.name = name;
+    
     }
 
     getKey() {
-        return this.name;
+        return this.id;
     }
 
 }

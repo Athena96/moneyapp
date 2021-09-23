@@ -4,12 +4,14 @@ import { Key } from "./KeyInterface";
 
 export class Budget implements Key {
 
+    id: string;
     name: string;
     startDate: Date;
     endDate: Date;
-    categories: Category[]
+    categories: Category[] | null
 
-    constructor(name: string, startDate: Date, endDate: Date, categories: Category[]) {
+    constructor(id: string, name: string, startDate: Date, endDate: Date, categories: Category[] | null) {
+        this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -19,7 +21,7 @@ export class Budget implements Key {
   
     getTypeSum(type: CategoryTypes) {
         let sum = 0.0;
-        for (const category of this.categories) {
+        for (const category of this.categories!) {
             if (category.type === type) {
                 sum += category.value;
             }
@@ -28,7 +30,7 @@ export class Budget implements Key {
     }
 
     getKey() {
-        return `${this.startDate.getTime().toString()}-${this.endDate.getTime().toString()}`
+        return this.id;
     }
 
 }

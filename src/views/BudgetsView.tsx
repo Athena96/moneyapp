@@ -24,13 +24,14 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createBudget } from '../graphql/mutations'
+import { createBudget, deleteBudget } from '../graphql/mutations'
 import { listBudgets } from '../graphql/queries'
 import { ListBudgetsQuery, OnCreateBudgetSubscription } from "../API";
 
 import { GraphQLResult } from "@aws-amplify/api";
 
 import awsExports from "../aws-exports";
+import { PickersCalendarHeaderComponentsPropsOverides } from '@mui/lab/CalendarPicker/PickersCalendarHeader';
 Amplify.configure(awsExports);
 
 interface BudgetsViewProps {
@@ -78,7 +79,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
         for (const category of budget!.categories!) {
           cats.push(new Category(category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income), null));
         }
-        fetchedBudgets.push(new Budget(budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
+        fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
       }
       this.setState({budgets: fetchedBudgets})
     } catch (error) {
@@ -86,22 +87,43 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     }
   }
 
-  handleAddBudget() {
-    let emptarr: Category[] = [];
-    let newBudget = new Budget('...', new Date(), new Date(), emptarr);
-    let newBudgets = [...this.state.budgets, newBudget]
-    this.setState({ budgets: newBudgets });
+  async handleAddBudget() {
+
+
+    try {
+
+      let c: Category[] =[]
+      let newBudget = new Budget('','...', new Date(), new Date(), null);
+      let newBudgets = [...this.state.budgets, newBudget]
+      this.setState({ budgets: newBudgets });
+      await API.graphql(graphqlOperation(createBudget, {input: { categories: c, name: '...', startDate: new Date(), endDate: new Date()}}))
+    } catch (err) {
+      console.log('error creating todo:', err)
+    }
+    
   }
 
-  handleDeleteBudget(event: any) {
+  async handleDeleteBudget(event: any) {
     const idToDelete = (event.target as Element).id;
     let newBudgets = [];
+    let budgetToDelete = null;
+
     for (const budget of this.state.budgets) {
-      if (budget.getKey() !== idToDelete) {
-        newBudgets.push(budget);
+      if (budget.getKey() === idToDelete) {
+        budgetToDelete = {
+          'id': budget.getKey()
+        }
+        continue;
       }
+      newBudgets.push(budget);
+
     }
     this.setState({ budgets: newBudgets });
+    try {
+      await API.graphql({ query: deleteBudget, variables: {input: budgetToDelete}});
+    } catch (err) {
+      console.log('error:', err)
+    }
   }
 
   handleEditBudget(event: any) {

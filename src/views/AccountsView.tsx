@@ -24,7 +24,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createAccount } from '../graphql/mutations'
+import { createAccount, deleteAccount } from '../graphql/mutations'
 import { listAccounts } from '../graphql/queries'
 import { ListAccountsQuery, OnCreateAccountSubscription } from "../API";
 
@@ -73,7 +73,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
         query: listAccounts
       })) as { data: ListAccountsQuery }
       for (const account of response.data.listAccounts!.items!) {
-        fetchedAccounts.push(new Account(account!.name!));
+        fetchedAccounts.push(new Account(account!.id!, account!.name!));
       }
       this.setState({accounts: fetchedAccounts})
     } catch (error) {
@@ -81,21 +81,38 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     }
   }
 
-  handleAddAccount() {
-    let newAccount = new Account('...');
-    let newAccounts = [...this.state.accounts, newAccount]
-    this.setState({ accounts: newAccounts });
+  async handleAddAccount() {
+    try {
+      let newAccount = new Account('','...');
+      let newAccounts = [...this.state.accounts, newAccount]
+      this.setState({ accounts: newAccounts });
+      await API.graphql(graphqlOperation(deleteAccount, {input: newAccount}))
+    } catch (err) {
+      console.log('error creating todo:', err)
+    }
+
   }
 
-  handleDeleteAccount(event: any) {
+  async handleDeleteAccount(event: any) {
     const idToDelete = (event.target as Element).id;
     let newAccounts = [];
-    for (const budget of this.state.accounts) {
-      if (budget.getKey() !== idToDelete) {
-        newAccounts.push(budget);
-      }
+    let accntToDelete = null;
+    for (const account of this.state.accounts) {
+      if (account.getKey() === idToDelete) {
+        accntToDelete = {
+          'id': account.getKey()
+        }
+        continue;
+      } 
+      newAccounts.push(account);
+
     }
     this.setState({ accounts: newAccounts });
+    try {
+      await API.graphql({ query: deleteAccount, variables: {input: accntToDelete}});
+    } catch (err) {
+      console.log('error:', err)
+    }
   }
 
   render() {
