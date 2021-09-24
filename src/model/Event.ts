@@ -27,7 +27,4 @@ export class Event implements Key {
         return this.id;
     }
 
-
 }
-
-

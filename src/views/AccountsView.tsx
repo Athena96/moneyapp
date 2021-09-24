@@ -1,42 +1,27 @@
 import * as React from 'react';
-// import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
-// import Box from '@mui/material/Box';
-
-// import '../App.css';
-// import { Account } from '../model/Account';
-import { Account } from '../model/Account';
-import { Category } from '../model/Category';
-// import { CategoryTypes } from "../API";
-import { Link } from "react-router-dom";
-
-// import { getAccounts, getAccounts } from '../utilities/dataSetup';
-// import { dateRange, generateTable } from '../utilities/helpers';
-// import { Line } from "react-chartjs-2";
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import { getAccounts } from '../utilities/dataSetup';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-
-import TextField from '@mui/material/TextField';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createAccount, deleteAccount } from '../graphql/mutations'
 import { listAccounts } from '../graphql/queries'
-import { ListAccountsQuery, OnCreateAccountSubscription } from "../API";
-
-import { GraphQLResult } from "@aws-amplify/api";
-
+import { ListAccountsQuery } from "../API";
 import awsExports from "../aws-exports";
+
+import { Account } from '../model/Account';
+
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+
+import { Link } from "react-router-dom";
+
 Amplify.configure(awsExports);
 
 interface AccountsViewProps {
-    value: number;
-    index: number;
+  value: number;
+  index: number;
 }
 
 interface IState {
@@ -47,7 +32,7 @@ interface IState {
 class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   constructor(props: AccountsViewProps) {
-  
+
     super(props);
 
     this.state = {
@@ -76,7 +61,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       for (const account of response.data.listAccounts!.items!) {
         fetchedAccounts.push(new Account(account!.id!, account!.name!));
       }
-      this.setState({accounts: fetchedAccounts})
+      this.setState({ accounts: fetchedAccounts })
     } catch (error) {
       console.log(error);
     }
@@ -84,10 +69,10 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   async handleAddAccount() {
     try {
-      let newAccount = new Account('','...');
+      let newAccount = new Account('', '...');
       let newAccounts = [...this.state.accounts, newAccount]
       this.setState({ accounts: newAccounts });
-      await API.graphql(graphqlOperation(createAccount, {input: newAccount}))
+      await API.graphql(graphqlOperation(createAccount, { input: newAccount }))
     } catch (err) {
       console.log('error creating todo:', err)
     }
@@ -104,13 +89,13 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
           'id': account.getKey()
         }
         continue;
-      } 
+      }
       newAccounts.push(account);
 
     }
     this.setState({ accounts: newAccounts });
     try {
-      await API.graphql({ query: deleteAccount, variables: {input: accntToDelete}});
+      await API.graphql({ query: deleteAccount, variables: { input: accntToDelete } });
     } catch (err) {
       console.log('error:', err)
     }
@@ -118,7 +103,6 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   handleEditAccount(event: any) {
     const idToEdit = (event.target as Element).id;
-
     console.log(idToEdit);
   }
 
@@ -127,39 +111,39 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       <div >
         <Button style={{ margin: '15px', width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account</Button>
 
-          {this.state.accounts.map((account: Account) => {
-              return (
+        {this.state.accounts.map((account: Account) => {
+          return (
 
-                <Card variant="outlined" style={{ margin: '15px' }}>
-                <CardContent>
-  
+            <Card variant="outlined" style={{ margin: '15px' }}>
+              <CardContent>
+
+                <Stack direction='row' spacing={4}>
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    {account.name}
+                  </Typography>
+
+
+                </Stack>
+
+                <CardActions>
+
                   <Stack direction='row' spacing={4}>
-                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                      {account.name}
-                    </Typography>
-  
-        
-                  </Stack>
-
-                  <CardActions>
-
-                  <Stack direction='row' spacing={4}>
 
 
-                  <Link to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button></Link>
+                    <Link to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button></Link>
 
-                  
 
-                  <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete</Button>
+
+                    <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete</Button>
 
                   </Stack>
-                  </CardActions>
+                </CardActions>
 
-                </CardContent>
-              </Card>
+              </CardContent>
+            </Card>
 
-              )
-          })}
+          )
+        })}
       </div>
     ) : (<></>);
   }

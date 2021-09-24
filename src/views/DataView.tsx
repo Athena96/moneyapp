@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import '../App.css';
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
@@ -15,6 +14,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+
+import '../App.css';
 
 interface DataViewProps {
     value: number;
@@ -77,20 +78,20 @@ class DataView extends React.Component<DataViewProps, IState> {
 
     async fetchEventData() {
         const finnhub = require('finnhub');
-    
+
         const api_key = finnhub.ApiClient.instance.authentications['api_key'];
         api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
         const finnhubClient = new finnhub.DefaultApi()
-    
-    
+
+
         finnhubClient.quote("AMZN", (error: any, data: any, response: any) => {
-          const currentAmazonStockPrice: number = data.c;
-          this.setState({events: getEvents(currentAmazonStockPrice) })
-      });
-      
-    
-    
-      }
+            const currentAmazonStockPrice: number = data.c;
+            this.setState({ events: getEvents(currentAmazonStockPrice) })
+        });
+
+
+
+    }
 
     render() {
 
@@ -101,7 +102,7 @@ class DataView extends React.Component<DataViewProps, IState> {
 
 
                 <TableContainer component={Paper}>
-                    <Table  aria-label="simple table">
+                    <Table aria-label="simple table">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Date</TableCell>
@@ -113,7 +114,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                         <TableBody>
                             {balanceData.map((row: RowData) => (
                                 <TableRow
-                                style={{backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white')}}
+                                    style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
                                     key={row.date}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >

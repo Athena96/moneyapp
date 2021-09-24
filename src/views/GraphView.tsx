@@ -1,25 +1,17 @@
 import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
-// import { Navbar, Nav } from 'react-bootstrap';
-// // import 'bootstrap/dist/css/bootstrap.min.css';
 
-import '../App.css';
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { getEvents, getBudgets, getAccounts} from '../utilities/dataSetup';
+import { getEvents, getBudgets, getAccounts } from '../utilities/dataSetup';
 import { generateTable } from '../utilities/helpers';
-import { Line } from "react-chartjs-2";
-import AccountsView from '../views/AccountsView';
-import BudgetsView from '../views/BudgetsView';
-import DataView from '../views/DataView';
-import InputsView from '../views/InputsView';
-import EventsView from '../views/EventsView';
-import { da } from 'date-fns/locale';
 
+import Box from '@mui/material/Box';
+
+import '../App.css';
+
+import { Line } from "react-chartjs-2";
 
 interface GraphsViewProps {
 }
@@ -34,8 +26,8 @@ interface IState {
   absoluteMonthlyGrowth: number;
   startDate: Date;
   endDate: Date;
-  dateIm59 : Date;
-  retireDate : Date;
+  dateIm59: Date;
+  retireDate: Date;
   accounts: Account[];
   balances: any;
 }
@@ -43,7 +35,7 @@ interface IState {
 class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   constructor(props: GraphsViewProps) {
-  
+
     super(props);
     let n = new Date();
 
@@ -54,16 +46,16 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       budgets: getBudgets(),
       growth: 10.49,
       inflation: 2.75,
-      absoluteMonthlyGrowth: ((10.49-2.75) / 100)/12,
+      absoluteMonthlyGrowth: ((10.49 - 2.75) / 100) / 12,
       startDate: n,
       endDate: new Date('12/31/2096'),
-      dateIm59:  new Date('4/25/2055'),
+      dateIm59: new Date('4/25/2055'),
       retireDate: new Date('1/29/2024'),
       accounts: getAccounts(),
       balances: {
         brokerage: {
           [0]: 0,
-          
+
         },
         tax: {
           [0]: 0,
@@ -83,8 +75,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   async fetchStartingBalances() {
-    console.log("fetchStartingBalances");
-
     const finnhub = require('finnhub');
 
     const api_key = finnhub.ApiClient.instance.authentications['api_key'];
@@ -202,23 +192,25 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     for (const entry of holdingsMap) {
       if (entry.ticket !== null) {
         if (entry.isCurrency) {
-          finnhubClient.cryptoCandles(`BINANCE:${entry.ticket}USDT`, "D",Math.floor(Date.now() / 1000) - 2*24*60*60 ,Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
+          finnhubClient.cryptoCandles(`BINANCE:${entry.ticket}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
             const value: number = data.c[1];
             console.log(`${entry.ticket} - ${value}`);
 
             const holdingValue = value * entry.quantity;
             const newBrokCurr = entry.account === 'brokerage' ? this.state.balances['brokerage'][0] + holdingValue : this.state.balances['brokerage'][0];
             const currTaxCurr = entry.account === 'tax' ? this.state.balances['tax'][0] + holdingValue : this.state.balances['tax'][0];
-            this.setState({balances: {
-              brokerage: {
-                [0]: newBrokCurr,
-                
-              },
-              tax: {
-                [0]: currTaxCurr,
+            this.setState({
+              balances: {
+                brokerage: {
+                  [0]: newBrokCurr,
+
+                },
+                tax: {
+                  [0]: currTaxCurr,
+                }
               }
-            }})
-        });
+            })
+          });
         } else {
           finnhubClient.quote(entry.ticket, (error: any, data: any, response: any) => {
             console.log(data);
@@ -228,39 +220,43 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
             const holdingValue = value * entry.quantity;
             const newBrok = entry.account === 'brokerage' ? this.state.balances['brokerage'][0] + holdingValue : this.state.balances['brokerage'][0];
             const currTax = entry.account === 'tax' ? this.state.balances['tax'][0] + holdingValue : this.state.balances['tax'][0];
-            this.setState({balances: {
-              brokerage: {
-                [0]: newBrok,
-                
-              },
-              tax: {
-                [0]: currTax,
+            this.setState({
+              balances: {
+                brokerage: {
+                  [0]: newBrok,
+
+                },
+                tax: {
+                  [0]: currTax,
+                }
               }
-            }})
-          });  
+            })
+          });
         }
       } else {
-        
+
         const newBrokNonStock = entry.account === 'brokerage' ? this.state.balances['brokerage'][0] + entry.quantity : this.state.balances['brokerage'][0];
         const currTaxNonStock = entry.account === 'tax' ? this.state.balances['tax'][0] + entry.quantity : this.state.balances['tax'][0];
-       
+
         console.log(`${entry.ticket} - ${newBrokNonStock}`);
         console.log(`${entry.ticket} - ${newBrokNonStock}`);
 
-       
-        this.setState({balances: {
-          brokerage: {
-            [0]: newBrokNonStock,
-            
-          },
-          tax: {
-            [0]: currTaxNonStock,
+
+        this.setState({
+          balances: {
+            brokerage: {
+              [0]: newBrokNonStock,
+
+            },
+            tax: {
+              [0]: currTaxNonStock,
+            }
           }
-        }})
+        })
       }
 
     }
-    
+
   }
 
   async fetchEventData() {
@@ -273,27 +269,27 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     finnhubClient.quote("AMZN", (error: any, data: any, response: any) => {
       const currentAmazonStockPrice: number = data.c;
-      this.setState({events: getEvents(currentAmazonStockPrice) })
+      this.setState({ events: getEvents(currentAmazonStockPrice) })
     });
-  
+
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
-    this.setState({selectedTab: newValue});
+    this.setState({ selectedTab: newValue });
   }
 
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
-  
+
   render() {
-    const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, 
+    const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
       this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
     return (
-        <div>
+      <div>
         <Box sx={{ width: '100%' }}>
 
           <Line data={chartData} />
-          </Box>
-        </div>
+        </Box>
+      </div>
 
     );
   }

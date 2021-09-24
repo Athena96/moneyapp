@@ -1,31 +1,17 @@
 import * as React from 'react';
 
-
-
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createEvent, deleteEvent } from '../../graphql/mutations'
-import { getEvent, listEvents } from '../../graphql/queries'
-import { GetEventQuery, ListEventsQuery, OnCreateEventSubscription } from "../../API";
-import { Event } from '../../model/Event';
-import { GraphQLResult } from "@aws-amplify/api";
-// import {
-//   BrowserRouter as Router,
-//   Link,
-//   Route
-// } from 'react-router-dom'
-import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
-
-import { Link } from "react-router-dom";
-import TextField from '@mui/material/TextField';
-
+import Amplify, { API } from 'aws-amplify'
+import { getEvent } from '../../graphql/queries'
+import { GetEventQuery } from "../../API";
 import awsExports from "../../aws-exports";
-import { getEvents } from '../../utilities/dataSetup';
+
+import { Event } from '../../model/Event';
 import { Category } from '../../model/Category';
 
-
+import Stack from '@mui/material/Stack';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
@@ -34,7 +20,6 @@ Amplify.configure(awsExports);
 
 interface EventDetailProps {
 }
-
 
 interface IState {
   event: Event | null;
@@ -61,12 +46,10 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
 
   async fetchEvent(eventId: string) {
 
-    console.log(eventId);
     try {
       const ee = await API.graphql({ query: getEvent, variables: { id: eventId } }) as { data: GetEventQuery }
       const e = ee.data!.getEvent!;
       const event = new Event(e!.id!, e!.name!, new Date(e!.date!), e!.account!, e!.category ? new Category(e!.category!.id!, e!.category!.name!, e!.category!.value!, e!.category!.type!) : null)
-      console.log(event.toStringEvent());
 
       this.setState({ event: event });
     } catch (err) {

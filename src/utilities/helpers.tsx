@@ -54,7 +54,6 @@ export function use(account: Account, currentDate: Date, currentDateIndex: numbe
 }
 
 export function generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date) {
-  console.log("generateTable");
   var tmpChartData:any = {
     labels: [],
     datasets: [
@@ -70,7 +69,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
       }
     ]
   };
-
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
@@ -130,16 +128,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 
     return r;
 
-    // return (
-    //   <tr>
-    //     <td>{`${date.getMonth()+1}/${date.getFullYear()}`}</td>
-    //     <td>${balances['brokerage'][i].toFixed(2)}</td>
-    //     <td>${balances['tax'][i].toFixed(2)}</td>
-    //     <td>{eventDesc}</td>
-    //     <td>{accntUsed}</td>
-
-    //   </tr>
-    // );
   });
 
   return [data,tmpChartData];

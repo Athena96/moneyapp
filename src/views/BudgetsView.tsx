@@ -1,39 +1,24 @@
 import * as React from 'react';
-// import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
-// import Box from '@mui/material/Box';
-
-// import '../App.css';
-// import { Event } from '../model/Event';
-import { Budget } from '../model/Budget';
-// import { CategoryTypes } from '../model/Category';
-import { Category } from '../model/Category';
-import { CategoryTypes } from "../API";
-import { Link } from "react-router-dom";
-
-// import { getEvents, getBudgets } from '../utilities/dataSetup';
-// import { dateRange, generateTable } from '../utilities/helpers';
-// import { Line } from "react-chartjs-2";
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import { getBudgets } from '../utilities/dataSetup';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-
-import TextField from '@mui/material/TextField';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createBudget, deleteBudget } from '../graphql/mutations'
+import { ListBudgetsQuery } from "../API";
 import { listBudgets } from '../graphql/queries'
-import { ListBudgetsQuery, OnCreateBudgetSubscription } from "../API";
-
-import { GraphQLResult } from "@aws-amplify/api";
-
 import awsExports from "../aws-exports";
-import { PickersCalendarHeaderComponentsPropsOverides } from '@mui/lab/CalendarPicker/PickersCalendarHeader';
+
+import { Budget } from '../model/Budget';
+import { Category } from '../model/Category';
+import { CategoryTypes } from "../API";
+
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
+
+import { Link } from "react-router-dom";
+
 Amplify.configure(awsExports);
 
 interface BudgetsViewProps {
@@ -82,12 +67,12 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
         if (budget?.categories) {
           cats = [];
           for (const category of budget!.categories!) {
-            cats.push(new Category('',category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+            cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
           }
         }
         fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
       }
-      this.setState({budgets: fetchedBudgets})
+      this.setState({ budgets: fetchedBudgets })
     } catch (error) {
       console.log(error);
     }
@@ -95,14 +80,14 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
   async handleAddBudget() {
     try {
-      let newBudget = new Budget(new Date().getTime().toString(),'...', new Date(), new Date(), null);
+      let newBudget = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), null);
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });
-      await API.graphql(graphqlOperation(createBudget, {input: newBudget }))
+      await API.graphql(graphqlOperation(createBudget, { input: newBudget }))
     } catch (err) {
       console.log('error creating todo:', err)
     }
-    
+
   }
 
   async handleDeleteBudget(event: any) {
@@ -122,7 +107,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     }
     this.setState({ budgets: newBudgets });
     try {
-      await API.graphql({ query: deleteBudget, variables: {input: budgetToDelete}});
+      await API.graphql({ query: deleteBudget, variables: { input: budgetToDelete } });
     } catch (err) {
       console.log('error:', err)
     }
@@ -153,26 +138,26 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                     {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
                   </Typography>
-                  
+
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                     {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
                   </Typography>
-                  </Stack>
+                </Stack>
 
-                  <CardActions>
+                <CardActions>
 
                   <Stack direction='row' spacing={4}>
 
 
 
-                  <Link to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
+                    <Link to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
 
-                    
+
                     <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete</Button>
 
 
 
-                </Stack>
+                  </Stack>
 
                 </CardActions>
               </CardContent>

@@ -1,49 +1,28 @@
 import * as React from 'react';
-// import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
-// import Box from '@mui/material/Box';
-
-// import '../App.css';
-// import { Event } from '../model/Event';
-import { Event } from '../model/Event';
-import { Category } from '../model/Category';
-// import { CategoryTypes } from '../model/Category';
-import { CategoryTypes } from "../API";
-
-// import { getEvents, getEvents } from '../utilities/dataSetup';
-// import { dateRange, generateTable } from '../utilities/helpers';
-// import { Line } from "react-chartjs-2";
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-
-import TextField from '@mui/material/TextField';
-
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createEvent, deleteEvent } from '../graphql/mutations'
 import { listEvents } from '../graphql/queries'
-import { ListEventsQuery, OnCreateEventSubscription } from "../API";
+import { ListEventsQuery } from "../API";
+import awsExports from "../aws-exports";
 
-import { GraphQLResult } from "@aws-amplify/api";
-// import {
-//   BrowserRouter as Router,
-//   Link,
-//   Route
-// } from 'react-router-dom'
+import { Event } from '../model/Event';
+import { Category } from '../model/Category';
+
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+
 import { Link } from "react-router-dom";
 
-import awsExports from "../aws-exports";
 Amplify.configure(awsExports);
 
 interface EventsViewProps {
-    value: number;
-    index: number;
+  value: number;
+  index: number;
 }
 
 interface IState {
@@ -71,8 +50,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async fetchEvents() {
-    console.log('fetchEvents.')
-
     let fetchedEvents: Event[] = [];
     try {
       const response = (await API.graphql({
@@ -84,7 +61,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         e.printEvent();
         fetchedEvents.push(e);
       }
-      this.setState({events: fetchedEvents})
+      this.setState({ events: fetchedEvents })
     } catch (error) {
       console.log(error);
     }
@@ -97,7 +74,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       let newEvent = new Event(new Date().getTime().toString(), '...', new Date(), '...', null);
       let newEvents = [...this.state.events, newEvent]
       this.setState({ events: newEvents });
-      await API.graphql(graphqlOperation(createEvent, {input: newEvent}))
+      await API.graphql(graphqlOperation(createEvent, { input: newEvent }))
     } catch (err) {
       console.log('error creating todo:', err)
     }
@@ -118,13 +95,13 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         }
         console.log(event.printEvent());
         continue;
-      } 
+      }
       newEvents.push(event);
 
     }
     this.setState({ events: newEvents });
     try {
-      await API.graphql({ query: deleteEvent, variables: {input: eventToDelete}});
+      await API.graphql({ query: deleteEvent, variables: { input: eventToDelete } });
     } catch (err) {
       console.log('error:', err)
     }
@@ -132,8 +109,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   handleEditEvents(event: any) {
     const idToEdit = (event.target as Element).id;
-    // <Link`/events/${idToEdit}/`>
-
     console.log(idToEdit);
   }
 
@@ -142,43 +117,43 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       <div >
         <Button style={{ margin: '15px', width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
 
-          {this.state.events.map((event: Event) => {
-              return (
+        {this.state.events.map((event: Event) => {
+          return (
 
 
             <Card variant="outlined" style={{ margin: '15px' }}>
-            <CardContent>
+              <CardContent>
 
-              <Stack direction='row' spacing={4}>
-                <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  {event.name === "" ? '...' : event.name}
-                </Typography>
+                <Stack direction='row' spacing={4}>
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    {event.name === "" ? '...' : event.name}
+                  </Typography>
 
-                <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  {(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
-                </Typography>
-                
-                <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  {event.category ? event.category!.getValue().toString() : '...'}
-                </Typography>
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    {(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
+                  </Typography>
+
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    {event.category ? event.category!.getValue().toString() : '...'}
+                  </Typography>
 
                 </Stack>
                 <CardActions>
 
-                <Stack direction='row' spacing={4}>
-                  <Link to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button></Link>
+                  <Stack direction='row' spacing={4}>
+                    <Link to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button></Link>
 
-                  <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
+                    <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
 
                   </Stack>
-                  </CardActions>
+                </CardActions>
 
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
 
-              )
-          })}
+          )
+        })}
       </div>
     ) : (<></>);
   }

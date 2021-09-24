@@ -1,33 +1,18 @@
 import * as React from 'react';
 
-
-
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createBudget, deleteBudget } from '../../graphql/mutations'
-import { getBudget, listBudgets } from '../../graphql/queries'
-import { CategoryTypes, GetBudgetQuery, ListBudgetsQuery, OnCreateBudgetSubscription } from "../../API";
-import { Budget } from '../../model/Budget';
-import { GraphQLResult } from "@aws-amplify/api";
-import Divider from '@mui/material/Divider';
-
-// import {
-//   BrowserRouter as Router,
-//   Link,
-//   Route
-// } from 'react-router-dom'
-import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
-
-import { Link } from "react-router-dom";
-import TextField from '@mui/material/TextField';
-
+import Amplify, { API } from 'aws-amplify'
+import { getBudget } from '../../graphql/queries'
 import awsExports from "../../aws-exports";
-import { getBudgets } from '../../utilities/dataSetup';
+import { CategoryTypes, GetBudgetQuery } from "../../API";
+
+import { Budget } from '../../model/Budget';
 import { Category } from '../../model/Category';
 
-
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
@@ -64,33 +49,31 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
 
   handleAddCategory() {
 
-      let currCategories: Category[] = [];
-      
-      if (this.state.budget?.categories) {
-        currCategories = this.state.budget!.categories!;
-      }
+    let currCategories: Category[] = [];
 
-      currCategories.push(new Category('','',0,CategoryTypes.Expense));
-      let currB = this.state.budget;
-      currB!.categories = currCategories;
-      this.setState({
-          budget: currB
-        });
+    if (this.state.budget?.categories) {
+      currCategories = this.state.budget!.categories!;
+    }
+
+    currCategories.push(new Category('', '', 0, CategoryTypes.Expense));
+    let currB = this.state.budget;
+    currB!.categories = currCategories;
+    this.setState({
+      budget: currB
+    });
 
   }
 
   async fetchBudget(budgetId: string) {
-
-    console.log(budgetId);
     try {
       const ee = await API.graphql({ query: getBudget, variables: { id: budgetId } }) as { data: GetBudgetQuery }
       const e = ee.data!.getBudget!;
       let cats: Category[] | null = null;
       if (e.categories) {
-          cats = []
-          for (const c of e.categories!) {
-              cats.push(new Category(c?.id!, c?.name!, c?.value!, c?.type!));
-          }
+        cats = []
+        for (const c of e.categories!) {
+          cats.push(new Category(c?.id!, c?.name!, c?.value!, c?.type!));
+        }
       }
       const budget = new Budget(e!.id!, e!.name!, new Date(e!.startDate!), new Date(e!.endDate!), cats);
 
@@ -131,38 +114,38 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
-            <br/>
-            <Divider/>
+            <br />
+            <Divider />
 
             <p><b>Categories</b></p>
             <Stack>
-            {this.state.budget?.categories ? this.state.budget?.categories.map((cat, i) => {
+              {this.state.budget?.categories ? this.state.budget?.categories.map((cat, i) => {
                 return (
-                    
-                    <>
+
+                  <>
                     <p><b>category name</b></p>
 
                     <TextField id="outlined-basic" variant="outlined" value={cat.name} />
                     <p><b>category value</b></p>
-        
+
                     <TextField id="outlined-basic" variant="outlined" value={cat.value} />
                     <p><b>category type</b></p>
-        
+
                     <TextField id="outlined-basic" variant="outlined" value={cat.type} />
-                    <br/>
-                    <Divider/>
+                    <br />
+                    <Divider />
 
 
                     {
-                        i===(this.state.budget!.categories!.length-1) ? <><br/><Button onClick={this.handleAddCategory} variant="contained">add category +</Button></> : <></>
+                      i === (this.state.budget!.categories!.length - 1) ? <><br /><Button onClick={this.handleAddCategory} variant="contained">add category +</Button></> : <></>
                     }
-                    </>
-          
+                  </>
+
 
                 )
 
-            }) : <></>}
-</Stack>
+              }) : <></>}
+            </Stack>
             <Button id={this.state.budget?.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
 
           </Stack>

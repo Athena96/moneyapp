@@ -1,13 +1,13 @@
 
 import * as React from 'react';
 
-import { Switch, Route } from 'react-router-dom';
 import AccountDetailView from './DetailViews/AccountDetailView';
 import BudgetDetailView from './DetailViews/BudgetDetailView';
 import EventDetailView from './DetailViews/EventDetailView';
 
-
 import Home from './Home';
+
+import { Switch, Route } from 'react-router-dom';
 
 interface InputsViewProps {
 
@@ -20,7 +20,7 @@ interface IState {
 class Main extends React.Component<InputsViewProps, IState> {
 
   constructor(props: InputsViewProps) {
-  
+
     super(props);
 
     this.state = {
@@ -32,7 +32,7 @@ class Main extends React.Component<InputsViewProps, IState> {
 
   render() {
     return (
-        <Switch>
+      <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/home" component={Home} />
         <Route path="/events" component={EventDetailView} />
@@ -40,7 +40,7 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/accounts" component={AccountDetailView} />
 
       </Switch>
-      );
+    );
   }
 
 }

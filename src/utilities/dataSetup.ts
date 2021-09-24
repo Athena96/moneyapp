@@ -8,8 +8,6 @@ import { Category } from '../model/Category';
 
 import {CategoryTypes} from '../API';
 
-
-// const amznStock = 3462.52;
 const INVEST_SIGNON_BROK = 6417.26;
 const INVEST_BROK = 5136.02;
 
@@ -22,7 +20,6 @@ const HOME_RENT = 1800;
 const HOUSE_DP = 55000;
 
 const CAR_DP = 2300;
-
 
 export function getAccounts() {
     let brokerage = new Account('1','brokerage');

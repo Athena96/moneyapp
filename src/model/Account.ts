@@ -1,11 +1,10 @@
 
 import { Key } from "./KeyInterface";
 
-export class Account {
+export class Account implements Key {
 
     id: string;
     name: string;
-
 
     constructor(id: string, name: string) {
         this.id = id;
