@@ -15,6 +15,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import Container from '@mui/material/Container';
 
 import { Link } from "react-router-dom";
 
@@ -114,14 +115,14 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   render() {
     return this.props.index === this.props.value ? (
-      <div >
-        <Button style={{ margin: '15px', width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
+      <Container >
+        <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
 
         {this.state.events.map((event: Event) => {
           return (
 
 
-            <Card variant="outlined" style={{ margin: '15px' }}>
+            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
               <CardContent>
 
                 <Stack direction='row' spacing={4}>
@@ -154,7 +155,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
           )
         })}
-      </div>
+      </Container >
+
     ) : (<></>);
   }
 
