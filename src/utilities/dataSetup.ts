@@ -21,6 +21,18 @@ const HOUSE_DP = 55000;
 
 const CAR_DP = 2300;
 
+export function getInputs() {
+    return {
+        growth: 10.49,
+        inflation: 2.75,
+        absoluteMonthlyGrowth: ((10.49 - 2.75) / 100) / 12,
+        startDate: new Date(),
+        endDate: new Date('12/31/2096'),
+        dateIm59: new Date('4/25/2055'),
+        retireDate: new Date('1/29/2024'),
+    };
+}
+
 export function getAccounts() {
     let brokerage = new Account('1','brokerage');
     let tax = new Account('2','tax');

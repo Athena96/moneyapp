@@ -49,7 +49,6 @@ class Home extends React.Component<IProps, IState> {
             <GraphView />
           </div>
 
-          <br /><br />
 
           <div>
             <Box sx={{ width: '100%' }}>
@@ -69,7 +68,6 @@ class Home extends React.Component<IProps, IState> {
               <DataView value={this.state.selectedTab} index={0} />
               <BudgetsView value={this.state.selectedTab} index={1} />
               <EventsView value={this.state.selectedTab} index={2} />
-
               <AccountsView value={this.state.selectedTab} index={3} />
               <InputsView value={this.state.selectedTab} index={4} />
             </Box>
