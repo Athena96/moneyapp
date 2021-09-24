@@ -134,7 +134,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
       {
         ticket: null,
-        quantity: 3,
+        quantity: 3.08,
         account: "brokerage"
       },
       {
@@ -168,8 +168,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         account: "brokerage"
       },
       {
-        ticket: "FXAIX",
-        quantity: 1.292,
+        ticket: null,// ticket: "FXAIX",
+        quantity: 200.05,
         account: "brokerage"
       },
       {
@@ -220,7 +220,10 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         });
         } else {
           finnhubClient.quote(entry.ticket, (error: any, data: any, response: any) => {
+
             const value: number = data.c;
+            console.log(`${entry.ticket} - ${value}`);
+
             const holdingValue = value * entry.quantity;
             const newBrok = entry.account === 'brokerage' ? this.state.balances['brokerage'][0] + holdingValue : this.state.balances['brokerage'][0];
             const currTax = entry.account === 'tax' ? this.state.balances['tax'][0] + holdingValue : this.state.balances['tax'][0];
@@ -236,8 +239,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           });  
         }
       } else {
+        
         const newBrokNonStock = entry.account === 'brokerage' ? this.state.balances['brokerage'][0] + entry.quantity : this.state.balances['brokerage'][0];
         const currTaxNonStock = entry.account === 'tax' ? this.state.balances['tax'][0] + entry.quantity : this.state.balances['tax'][0];
+       
+        console.log(`${entry.ticket} - ${newBrokNonStock}`);
+        console.log(`${entry.ticket} - ${newBrokNonStock}`);
+
+       
         this.setState({balances: {
           brokerage: {
             [0]: newBrokNonStock,
