@@ -8,10 +8,21 @@ import { getBudgets, getAccounts, getInputs } from '../utilities/dataSetup';
 import { generateTable, fetchStartingBalances, fetchEventData } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import {
+  Chart,
+  ArgumentAxis,
+  ValueAxis,
+  LineSeries,
+  Title,
+  Legend,
+
+} from '@devexpress/dx-react-chart-material-ui';
 
 import '../App.css';
 
 import { Line } from "react-chartjs-2";
+
 
 interface GraphsViewProps {
 }
@@ -79,9 +90,28 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   render() {
     const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
       this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
-    return (
-      <Container >
-        <Line data={chartData} />
+    console.log(chartData);
+      return (
+      <Container style={{maxHeight: '200px'}} >
+
+        <Paper style={{maxHeight: '200px'}}>
+
+<div style={{maxHeight: '200px'}}>
+        <Chart
+          data={chartData} >
+          <LineSeries
+            name="brokerage"
+            valueField="brokerage"
+            argumentField="time"
+          />
+          <LineSeries
+            name="tax"
+            valueField="tax"
+            argumentField="time"
+          />
+        </Chart>
+        </div>
+        </Paper>
       </Container >
     );
   }

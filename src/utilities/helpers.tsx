@@ -55,21 +55,7 @@ export function use(account: Account, currentDate: Date, currentDateIndex: numbe
 }
 
 export function generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date) {
-  var tmpChartData:any = {
-    labels: [],
-    datasets: [
-      {
-        label: "brokerage",
-        data: [],
-        borderColor: "rgba(37,113,207,1)"
-      },
-      {
-        label: "tax",
-        data: [],
-        borderColor: "rgba(0,125,76,1)"
-      }
-    ]
-  };
+  var tmpChartData:any = [];
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
@@ -115,9 +101,15 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
       }
     }
 
-    tmpChartData.labels.push(`${date.getMonth()+1}/${date.getFullYear()}`);
-    tmpChartData.datasets[0].data.push(balances['brokerage'][i].toFixed(2));
-    tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
+    // tmpChartData.labels.push(`${date.getMonth()+1}/${date.getFullYear()}`);
+    // tmpChartData.datasets[0].data.push(balances['brokerage'][i].toFixed(2));
+    // tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
+
+    tmpChartData.push({
+      time: i,
+      brokerage: Math.floor(balances['brokerage'][i].toFixed(2)),
+      tax:  Math.floor(balances['tax'][i].toFixed(2))
+    });
 
     const r: RowData = {
       date: `${date.getMonth()+1}/${date.getFullYear()}`,

@@ -10,6 +10,7 @@ import GraphView from '../views/GraphView';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 
 import '../App.css';
 
@@ -44,13 +45,13 @@ class Home extends React.Component<IProps, IState> {
       <div >
 
 
-        <div >
-          <div>
+
+        <Container style={{ marginTop: '15px' }} >
             <GraphView />
-          </div>
+            </Container >
 
 
-          <div>
+
             <Box sx={{ width: '100%' }}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs variant="scrollable"
@@ -65,14 +66,18 @@ class Home extends React.Component<IProps, IState> {
                 </Tabs>
               </Box>
               <br /><br />
+              <Container style={{ marginBottom: '15px' }} >
+
               <DataView value={this.state.selectedTab} index={0} />
               <BudgetsView value={this.state.selectedTab} index={1} />
               <EventsView value={this.state.selectedTab} index={2} />
               <AccountsView value={this.state.selectedTab} index={3} />
               <InputsView value={this.state.selectedTab} index={4} />
+              </Container >
+
             </Box>
-          </div>
-        </div>
+
+
       </div>
 
     );
