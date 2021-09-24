@@ -139,6 +139,8 @@ export async function fetchStartingBalances(componentState: any) {
   const finnhub = require('finnhub');
 
   const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+  delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+
   api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
   const finnhubClient = new finnhub.DefaultApi()
 
