@@ -21,7 +21,7 @@ const HOME_RENT = 1800;
 
 const HOUSE_DP = 55000;
 
-const CAR_DP = 2400;
+const CAR_DP = 2300;
 
 
 export function getAccounts() {

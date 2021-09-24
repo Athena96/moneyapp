@@ -2,7 +2,9 @@
 import * as React from 'react';
 
 import { Switch, Route } from 'react-router-dom';
-import EventDetail from './EventDetail';
+import AccountDetailView from './DetailViews/AccountDetailView';
+import BudgetDetailView from './DetailViews/BudgetDetailView';
+import EventDetailView from './DetailViews/EventDetailView';
 
 
 import Home from './Home';
@@ -33,7 +35,9 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/home" component={Home} />
-        <Route path="/events" component={EventDetail} />
+        <Route path="/events" component={EventDetailView} />
+        <Route path="/budgets" component={BudgetDetailView} />
+        <Route path="/accounts" component={AccountDetailView} />
 
       </Switch>
       );

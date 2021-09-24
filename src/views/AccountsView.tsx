@@ -8,6 +8,7 @@ import * as React from 'react';
 import { Account } from '../model/Account';
 import { Category } from '../model/Category';
 // import { CategoryTypes } from "../API";
+import { Link } from "react-router-dom";
 
 // import { getAccounts, getAccounts } from '../utilities/dataSetup';
 // import { dateRange, generateTable } from '../utilities/helpers';
@@ -143,7 +144,11 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                   <CardActions>
 
                   <Stack direction='row' spacing={4}>
-                  <Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button>
+
+
+                  <Link to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button></Link>
+
+                  
 
                   <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete</Button>
 

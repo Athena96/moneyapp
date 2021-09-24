@@ -17,11 +17,11 @@ export class Event implements Key {
     }
 
     printEvent() {
-        console.log(`[Event] name: ${this.name} date: ${this.date.getMonth()}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`)
+        console.log(`[Event] name: ${this.name} account: ${this.account} date: ${this.date.getMonth()+1}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`)
     }
     
     toStringEvent() {
-        return `[Event] name: ${this.name} date: ${this.date.getMonth()}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`;
+        return `[Event] name: ${this.name} account: ${this.account} date: ${this.date.getMonth()+1}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`;
     }
     getKey() {
         return this.id;

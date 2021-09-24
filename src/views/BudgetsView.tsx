@@ -9,6 +9,7 @@ import { Budget } from '../model/Budget';
 // import { CategoryTypes } from '../model/Category';
 import { Category } from '../model/Category';
 import { CategoryTypes } from "../API";
+import { Link } from "react-router-dom";
 
 // import { getEvents, getBudgets } from '../utilities/dataSetup';
 // import { dateRange, generateTable } from '../utilities/helpers';
@@ -164,8 +165,9 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
 
 
+                  <Link to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
 
-                    <Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button>
+                    
                     <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete</Button>
 
 
