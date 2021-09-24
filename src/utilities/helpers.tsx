@@ -121,8 +121,8 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 
     const r: RowData = {
       date: `${date.getMonth()+1}/${date.getFullYear()}`,
-      brokerageBal: `${balances['brokerage'][i].toFixed(2)}`,
-      taxBal: `${balances['tax'][i].toFixed(2)}`,
+      brokerageBal: `$${balances['brokerage'][i].toFixed(2)}`,
+      taxBal: `$${balances['tax'][i].toFixed(2)}`,
       note: eventDesc,
       accountUsed: accntUsed
     };
