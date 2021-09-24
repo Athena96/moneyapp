@@ -1,10 +1,6 @@
 import { Key } from "./KeyInterface";
 import { CategoryTypes } from "../API";
 
-// export enum CategoryTypes {
-//     Expense,
-//     Income,
-// }
 export class Category implements Key {
     id: string;
     name: string;

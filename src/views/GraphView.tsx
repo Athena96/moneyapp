@@ -213,7 +213,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           });
         } else {
           finnhubClient.quote(entry.ticket, (error: any, data: any, response: any) => {
-            console.log(data);
             const value: number = data.c;
             console.log(`${entry.ticket} - ${value}`);
 

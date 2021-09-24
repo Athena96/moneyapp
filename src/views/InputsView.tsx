@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import Container from '@mui/material/Container';
+
 interface InputsViewProps {
   value: number;
   index: number;
@@ -24,9 +26,9 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   render() {
     return this.props.index === this.props.value ? (
-      <div >
-        <h1>Inputs View</h1>
-      </div>
+      <Container sx={{ marginTop: '55px' }} maxWidth="sm">
+      <h1>Inputs View</h1>
+      </Container>
     ) : (<></>);
   }
 

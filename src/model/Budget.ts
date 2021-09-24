@@ -18,7 +18,6 @@ export class Budget implements Key {
         this.categories = categories;
     }
 
-  
     getTypeSum(type: CategoryTypes) {
         let sum = 0.0;
         for (const category of this.categories!) {

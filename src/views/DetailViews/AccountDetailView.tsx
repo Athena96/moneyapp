@@ -45,8 +45,6 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
 
   async fetchAccount(accountId: string) {
 
-    console.log(accountId);
-
     try {
       const ee = await API.graphql({ query: getAccount, variables: { id: accountId } }) as { data: GetAccountQuery }
       const e = ee.data!.getAccount!;
