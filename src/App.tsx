@@ -2,7 +2,6 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-
 import './App.css';
 import { Event } from './model/Event';
 import { Budget } from './model/Budget';
@@ -16,129 +15,40 @@ import BudgetsView from './views/BudgetsView';
 import DataView from './views/DataView';
 import InputsView from './views/InputsView';
 import EventsView from './views/EventsView';
-
+import Main from './views/Main'
 
 interface IProps {
 }
 
 interface IState {
   selectedTab: number;
-  today: Date;
-  events: Event[];
-  budgets: Budget[];
-  growth: number;
-  inflation: number;
-  absoluteMonthlyGrowth: number;
-  startDate: Date;
-  endDate: Date;
-  dateIm59 : Date;
-  retireDate : Date;
-  accounts: Account[];
-  balances: any;
+
 }
 
 class App extends React.Component<IProps, IState> {
 
   constructor(props: IProps) {
-  
-    super(props);
-    let n = new Date();
 
+    super(props);
     this.state = {
-      selectedTab: 1,
-      today: n,
-      events: [], //getEvents(),
-      budgets: getBudgets(),
-      growth: 10.49,
-      inflation: 2.75,
-      absoluteMonthlyGrowth: ((10.49-2.75) / 100)/12,
-      startDate: n,
-      endDate: new Date('12/31/2096'),
-      dateIm59:  new Date('4/25/2055'),
-      retireDate: new Date('1/29/2024'),
-      accounts: getAccounts(),
-      balances: {
-        brokerage: {
-          [0]: 199160.56,
-          
-        },
-        tax: {
-          [0]: 16362.42,
-        }
-      }
+      selectedTab: 1
     }
-    this.fetchEventData = this.fetchEventData.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
 
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount() {
-    this.fetchEventData()
-  }
-
-  async fetchEventData() {
-    const finnhub = require('finnhub');
-
-    const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-    api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-    const finnhubClient = new finnhub.DefaultApi()
-
-
-    finnhubClient.quote("AMZN", (error: any, data: any, response: any) => {
-      const currentAmazonStockPrice: number = data.c;
-      this.setState({events: getEvents(currentAmazonStockPrice) })
-  });
-  
-
-
-  }
-
   handleChange(event: React.SyntheticEvent, newValue: number) {
-    this.setState({selectedTab: newValue});
+    this.setState({ selectedTab: newValue });
   }
 
-  // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
-  
   render() {
-    const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth, 
-      this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
+
     return (
       <div >
-        <div>
-        <Box sx={{ width: '100%' }}>
-
-          <Line data={chartData} />
-          </Box>
-        </div>
-
-        <br/><br/>
-
-        <div>
-          <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs variant="scrollable"
-  scrollButtons
-  allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
-                <Tab label="Data"  />
-                <Tab label="Budgets"  />
-                <Tab label="Events"  />
-
-                <Tab label="Accounts"  />
-                <Tab label="Inputs"  />
-              </Tabs>
-            </Box>
-            <br/><br/>
-            <DataView value={this.state.selectedTab} index={0} />
-            <BudgetsView value={this.state.selectedTab} index={1} />
-            <EventsView value={this.state.selectedTab} index={2} />
-
-            <AccountsView value={this.state.selectedTab} index={3} />
-            <InputsView value={this.state.selectedTab} index={4} />
-          </Box>
-        </div>
+        <Main/>
       </div>
+
     );
   }
 }

@@ -20,6 +20,9 @@ export class Event implements Key {
         console.log(`[Event] name: ${this.name} date: ${this.date.getMonth()}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`)
     }
     
+    toStringEvent() {
+        return `[Event] name: ${this.name} date: ${this.date.getMonth()}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`;
+    }
     getKey() {
         return this.id;
     }

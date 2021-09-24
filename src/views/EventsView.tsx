@@ -36,6 +36,7 @@ import { GraphQLResult } from "@aws-amplify/api";
 //   Link,
 //   Route
 // } from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 import awsExports from "../aws-exports";
 Amplify.configure(awsExports);
@@ -131,6 +132,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   handleEditEvents(event: any) {
     const idToEdit = (event.target as Element).id;
+    // <Link`/events/${idToEdit}/`>
 
     console.log(idToEdit);
   }
@@ -164,7 +166,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                 <CardActions>
 
                 <Stack direction='row' spacing={4}>
-                  <Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button>
+                  <Link to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button></Link>
 
                   <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
 
