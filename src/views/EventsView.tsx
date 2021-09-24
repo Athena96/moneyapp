@@ -18,7 +18,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { getEvents } from '../utilities/dataSetup';
+
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
@@ -31,6 +31,11 @@ import { listEvents } from '../graphql/queries'
 import { ListEventsQuery, OnCreateEventSubscription } from "../API";
 
 import { GraphQLResult } from "@aws-amplify/api";
+// import {
+//   BrowserRouter as Router,
+//   Link,
+//   Route
+// } from 'react-router-dom'
 
 import awsExports from "../aws-exports";
 Amplify.configure(awsExports);
@@ -156,6 +161,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                 </Typography>
 
                 </Stack>
+                <CardActions>
 
                 <Stack direction='row' spacing={4}>
                   <Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button>
@@ -163,6 +169,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                   <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
 
                   </Stack>
+                  </CardActions>
 
             </CardContent>
           </Card>

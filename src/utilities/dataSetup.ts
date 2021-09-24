@@ -8,7 +8,8 @@ import { Category } from '../model/Category';
 
 import {CategoryTypes} from '../API';
 
-const AMZN = 3462.52;
+
+// const amznStock = 3462.52;
 const INVEST_SIGNON_BROK = 6417.26;
 const INVEST_BROK = 5136.02;
 
@@ -32,7 +33,7 @@ export function getAccounts() {
     return theaccounts;
 }
 
-export function getEvents() {
+export function getEvents(amznStock: number) {
 
     let events = [];
 
@@ -78,9 +79,9 @@ export function getEvents() {
     events.push(new Event('','', new Date('11/27/2022'), 'tax', new Category('','invest', INVEST_TAX, CategoryTypes.Income)));
     events.push(new Event('','', new Date('12/27/2022'), 'tax', new Category('','invest', INVEST_TAX, CategoryTypes.Income)));
 
-    events.push(new Event('','earn 8 x amzn stock', new Date('01/15/2022'), 'brokerage', new Category('','amzn stock', (8*AMZN)-0.3*(8*AMZN), CategoryTypes.Income)));
+    events.push(new Event('',`earn 8 x amzn stock ${amznStock}`, new Date('01/15/2022'), 'brokerage', new Category('','amzn stock', (8*amznStock)-0.3*(8*amznStock), CategoryTypes.Income)));
     events.push(new Event('','payoff loan or vacation $1294', new Date('06/15/2022'), 'brokerage', new Category('','loan or vacation', 1294.0, CategoryTypes.Expense)));
-    events.push(new Event('','earn 10 x amzn stock', new Date('07/15/2022'), 'brokerage', new Category('','amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income)));
+    events.push(new Event('',`earn 10 x amzn stock ${amznStock}`, new Date('07/15/2022'), 'brokerage', new Category('','amzn stock', (10*amznStock)-0.3*(10*amznStock), CategoryTypes.Income)));
     events.push(new Event('','Christmas $140', new Date('12/22/2022'), 'brokerage', new Category('','Christmas $140', 140.0, CategoryTypes.Expense)));
 
     // 2023
@@ -110,9 +111,9 @@ export function getEvents() {
     events.push(new Event('','', new Date('11/27/2023'), 'tax', new Category('','invest', INVEST_TAX, CategoryTypes.Income)));
     events.push(new Event('','', new Date('12/27/2023'), 'tax', new Category('','invest', INVEST_TAX, CategoryTypes.Income)));
 
-    events.push(new Event('','earn 10 x amzn stock', new Date('01/15/2023'), 'brokerage', new Category('','amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income)));
+    events.push(new Event('',`earn 10 x amzn stock ${amznStock}`, new Date('01/15/2023'), 'brokerage', new Category('','amzn stock', (10*amznStock)-0.3*(10*amznStock), CategoryTypes.Income)));
     events.push(new Event('','payoff loan or vacation $1100.56', new Date('06/15/2023'), 'brokerage', new Category('','loan or vacation', 1100.56, CategoryTypes.Expense)));
-    events.push(new Event('','earn 10 x amzn stock', new Date('07/15/2023'), 'brokerage', new Category('','amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income)));
+    events.push(new Event('',`earn 10 x amzn stock ${amznStock}`, new Date('07/15/2023'), 'brokerage', new Category('','amzn stock', (10*amznStock)-0.3*(10*amznStock), CategoryTypes.Income)));
     events.push(new Event('','Christmas $140', new Date('12/22/2023'), 'brokerage', new Category('','Christmas $140', 140.0, CategoryTypes.Expense)));
 
     // 2024
@@ -121,7 +122,7 @@ export function getEvents() {
     events.push(new Event('','', new Date('1/27/2024'), 'tax', new Category('','invest', INVEST_TAX, CategoryTypes.Income)));
 
 
-    events.push(new Event('','earn 10 x amzn stock', new Date('01/15/2024'), 'brokerage', new Category('','amzn stock', (10*AMZN)-0.3*(10*AMZN), CategoryTypes.Income)));
+    events.push(new Event('',`earn 10 x amzn stock ${amznStock}`, new Date('01/15/2024'), 'brokerage', new Category('','amzn stock', (10*amznStock)-0.3*(10*amznStock), CategoryTypes.Income)));
     events.push(new Event('','Retire', new Date('02/14/2024'), 'brokerage', null));
 
 

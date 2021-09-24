@@ -45,7 +45,7 @@ class DataView extends React.Component<DataViewProps, IState> {
 
         this.state = {
             today: n,
-            events: getEvents(),
+            events: [],
             budgets: getBudgets(),
             growth: 10.49,
             inflation: 2.75,
@@ -65,9 +65,32 @@ class DataView extends React.Component<DataViewProps, IState> {
                 }
             }
         }
+        this.componentDidMount = this.componentDidMount.bind(this);
+        this.fetchEventData = this.fetchEventData.bind(this);
 
         this.render = this.render.bind(this);
     }
+
+    componentDidMount() {
+        this.fetchEventData();
+    }
+
+    async fetchEventData() {
+        const finnhub = require('finnhub');
+    
+        const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+        api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+        const finnhubClient = new finnhub.DefaultApi()
+    
+    
+        finnhubClient.quote("AMZN", (error: any, data: any, response: any) => {
+          const currentAmazonStockPrice: number = data.c;
+          this.setState({events: getEvents(currentAmazonStockPrice) })
+      });
+      
+    
+    
+      }
 
     render() {
 
