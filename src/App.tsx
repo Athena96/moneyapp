@@ -4,6 +4,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
 import './App.css';
 
@@ -48,7 +49,9 @@ class App extends React.Component<IProps, IState> {
           </AppBar>
         </Box>
         
-        <Main />
+        <Container>
+          <Main/>
+        </Container>
       </div>
 
     );

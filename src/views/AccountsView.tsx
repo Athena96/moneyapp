@@ -14,7 +14,6 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
 
 import { Link } from "react-router-dom";
 
@@ -109,7 +108,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   render() {
     return this.props.index === this.props.value ? (
-      <Container >
+      <>
         <Button style={{ width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account</Button>
 
         {this.state.accounts.map((account: Account) => {
@@ -122,19 +121,12 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                     {account.name}
                   </Typography>
-
-
                 </Stack>
 
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-
-
                     <Link to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button></Link>
-
-
-
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete</Button>
 
                   </Stack>
@@ -145,7 +137,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
           )
         })}
-      </Container>
+      </>
     ) : (<></>);
   }
 

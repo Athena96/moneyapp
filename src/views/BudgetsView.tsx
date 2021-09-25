@@ -16,7 +16,6 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 
 import { Link } from "react-router-dom";
 
@@ -121,7 +120,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
   render() {
     return this.props.index === this.props.value ? (
-      <Container >
+      <>
         <Button style={{ width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
 
         {this.state.budgets.map((budget: Budget) => {
@@ -147,25 +146,16 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-
-
-
                     <Link to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
-
-
                     <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete</Button>
-
-
-
                   </Stack>
 
                 </CardActions>
               </CardContent>
             </Card>
-
           )
         })}
-      </Container>
+        </>
     ) : (<></>);
   }
 
