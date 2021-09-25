@@ -15,7 +15,6 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
 
 import { Link } from "react-router-dom";
 
@@ -115,7 +114,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   render() {
     return this.props.index === this.props.value ? (
-      <Container >
+      <>
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
 
         {this.state.events.map((event: Event) => {
@@ -151,11 +150,9 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
               </CardContent>
             </Card>
-
-
           )
         })}
-      </Container >
+      </>
 
     ) : (<></>);
   }

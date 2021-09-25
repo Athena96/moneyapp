@@ -14,7 +14,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Container from '@mui/material/Container';
 
 import '../App.css';
 
@@ -82,7 +81,7 @@ class DataView extends React.Component<DataViewProps, IState> {
         const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
             this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);
         return this.props.index === this.props.value ? (
-            <Container >
+            <>
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
@@ -111,8 +110,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                         </TableBody>
                     </Table>
                 </TableContainer>
-
-            </Container >
+</>
         ) : (<></>);
     }
 }
