@@ -26,6 +26,7 @@ interface IState {
   startDate: Date;
   endDate: Date;
   dateIm59: Date;
+  minEnd: number;
   retireDate: Date;
   accounts: Account[];
   balances: any;
@@ -46,6 +47,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       endDate: inputs.endDate,
       dateIm59: inputs.dateIm59,
       retireDate: inputs.retireDate,
+      minEnd: inputs.minEnd,
       selectedTab: 1,
       events: [],
       budgets: getBudgets(),
@@ -78,7 +80,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   render() {
     const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
-      this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate);
+      this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);
     return (
       <Container >
         <Line data={chartData} />
