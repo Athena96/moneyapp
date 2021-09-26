@@ -6,6 +6,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 
+import { Link } from "react-router-dom";
+
 import './App.css';
 
 import Main from './views/Main'
@@ -42,9 +44,11 @@ class App extends React.Component<IProps, IState> {
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static">
             <Toolbar>
+
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Money App
+               <Link style={{color: 'white', textDecoration: 'none'}} to="/">Money App</Link>
               </Typography>
+
             </Toolbar>
           </AppBar>
         </Box>

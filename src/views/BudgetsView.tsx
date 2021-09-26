@@ -146,7 +146,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-                    <Link to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
+                    <Link style={{color: 'white', textDecoration: 'none'}} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
                     <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete</Button>
                   </Stack>
 

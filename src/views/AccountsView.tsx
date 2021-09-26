@@ -126,7 +126,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-                    <Link to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button></Link>
+                    <Link style={{color: 'white', textDecoration: 'none'}} to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="outlined">Edit</Button></Link>
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="contained">Delete</Button>
 
                   </Stack>

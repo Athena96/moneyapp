@@ -141,7 +141,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-                    <Link to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button></Link>
+                    <Link style={{color: 'white', textDecoration: 'none'}} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button></Link>
 
                     <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Amplify, { API } from 'aws-amplify'
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { getBudget } from '../../graphql/queries'
 import awsExports from "../../aws-exports";
 import { CategoryTypes, GetBudgetQuery } from "../../API";
@@ -16,6 +16,7 @@ import Button from '@mui/material/Button';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
+import { updateBudget } from '../../graphql/mutations';
 
 Amplify.configure(awsExports);
 
@@ -24,14 +25,26 @@ interface BudgetDetailProps {
 
 
 interface IState {
-  budget: Budget | null;
+  id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  categories: Category[] | null;
 }
+
 class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
   constructor(props: BudgetDetailProps) {
     super(props);
     this.state = {
-      budget: null
+      id: "",
+      name: "",
+      startDate: new Date(),
+      endDate: new Date(),
+      categories: []
+
     }
+
+    this.handleChange = this.handleChange.bind(this);
     this.handleAddCategory = this.handleAddCategory.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
@@ -43,23 +56,53 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
     this.fetchBudget(window.location.pathname.split('/')[2])
   }
 
-  handleSave() {
+  async handleSave() {
+    try {
+      let newBudget = new Budget(this.state.id, this.state.name, this.state.startDate, this.state.endDate, this.state.categories!);
 
+      await API.graphql(graphqlOperation(updateBudget, { input: newBudget }))
+    } catch (err) {
+      console.log('error creating todo:', err)
+    }
+  }
+
+  handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const target = e.target;
+    const value = target.value;
+    const name = target.name;
+    console.log(`${name} = ${value}`)
+    if (name.includes('category')) {
+      const cats = this.state.categories!
+      // ${cat.id}-category-name
+      const parts = name.split('-');
+      const id = parts[0];
+      const catname = parts[2]
+      for (const c of cats) {
+        if (id === c.id) {
+          (c as any)[catname] = value;
+        }
+      }
+
+      this.setState({categories: cats});
+
+    } else {
+
+      this.setState({ [name]: value } as any);
+    }
   }
 
   handleAddCategory() {
 
     let currCategories: Category[] = [];
 
-    if (this.state.budget?.categories) {
-      currCategories = this.state.budget!.categories!;
+    if (this.state.categories) {
+      currCategories = this.state.categories!;
     }
 
-    currCategories.push(new Category('', '', 0, CategoryTypes.Expense));
-    let currB = this.state.budget;
-    currB!.categories = currCategories;
+    currCategories.push(new Category(new Date().getTime().toString(), '', 0, CategoryTypes.Expense));
+
     this.setState({
-      budget: currB
+      categories: currCategories
     });
 
   }
@@ -75,9 +118,14 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
           cats.push(new Category(c?.id!, c?.name!, c?.value!, c?.type!));
         }
       }
-      const budget = new Budget(e!.id!, e!.name!, new Date(e!.startDate!), new Date(e!.endDate!), cats);
 
-      this.setState({ budget: budget });
+      this.setState({ 
+        id: e!.id!,
+        name: e!.name!,
+        startDate: new Date(e!.startDate!),
+        endDate: new Date(e!.endDate!),
+        categories: cats
+       });
     } catch (err) {
       console.log('error:', err)
     }
@@ -91,14 +139,14 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
           <Stack spacing={2}>
             <p><b><b>name</b></b></p>
-            <TextField id="outlined-basic" variant="outlined" value={this.state.budget?.name ? this.state.budget?.name : '...'} />
+            <TextField id="outlined-basic" name={`name`}  variant="outlined" onChange={this.handleChange} value={this.state.name} />
             <p><b>start date</b></p>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Basic example"
-                value={this.state.budget?.startDate}
+                value={this.state.startDate}
                 onChange={(newValue) => {
-                  // setValue(newValue);
+                  this.setState({ startDate: newValue } as any);
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -107,9 +155,9 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Basic example"
-                value={this.state.budget?.endDate}
+                value={this.state.endDate}
                 onChange={(newValue) => {
-                  // setValue(newValue);
+                  this.setState({ endDate: newValue } as any);
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -119,34 +167,34 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
 
             <p><b>Categories</b></p>
             <Stack>
-              {this.state.budget?.categories ? this.state.budget?.categories.map((cat, i) => {
+              {this.state.categories ? this.state.categories.map((cat, i) => {
                 return (
 
                   <>
                     <p><b>category name</b></p>
+                    <TextField id="outlined-basic" name={`${cat.id}-category-name`} variant="outlined" onChange={this.handleChange} value={cat.name} />
 
-                    <TextField id="outlined-basic" variant="outlined" value={cat.name} />
                     <p><b>category value</b></p>
-
-                    <TextField id="outlined-basic" variant="outlined" value={cat.value} />
+                    <TextField id="outlined-basic" name={`${cat.id}-category-value`} variant="outlined" onChange={this.handleChange} value={cat.value} />
+                    
                     <p><b>category type</b></p>
+                    <TextField id="outlined-basic" name={`${cat.id}-category-type`} variant="outlined" onChange={this.handleChange} value={cat.type} />
 
-                    <TextField id="outlined-basic" variant="outlined" value={cat.type} />
                     <br />
                     <Divider />
 
 
                     {
-                      i === (this.state.budget!.categories!.length - 1) ? <><br /><Button onClick={this.handleAddCategory} variant="contained">add category +</Button></> : <></>
+                      i === (this.state.categories!.length - 1) ? <><br /><Button onClick={this.handleAddCategory} variant="contained">add category +</Button></> : <></>
                     }
                   </>
 
 
                 )
 
-              }) : <></>}
+              }) : <><br /><Button onClick={this.handleAddCategory} variant="contained">add category +</Button></>}
             </Stack>
-            <Button id={this.state.budget?.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
+            <Button id={this.state.id} onClick={this.handleSave} variant="contained">Save</Button>
 
           </Stack>
         </Container>
