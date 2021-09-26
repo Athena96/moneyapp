@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import Amplify, { API } from 'aws-amplify'
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { getEvent } from '../../graphql/queries'
-import { GetEventQuery } from "../../API";
+import { CategoryTypes, GetEventQuery } from "../../API";
 import awsExports from "../../aws-exports";
 
 import { Event } from '../../model/Event';
@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
+import { updateEvent } from '../../graphql/mutations';
 
 Amplify.configure(awsExports);
 
@@ -22,36 +23,67 @@ interface EventDetailProps {
 }
 
 interface IState {
-  event: Event | null;
+  id: string;
+  name: string;
+  date: Date;
+  account: string;
+  categoryName: string;
+  categoryValue: number;
+  categoryType: CategoryTypes;
 }
+
 class EventDetailView extends React.Component<EventDetailProps, IState> {
   constructor(props: EventDetailProps) {
     super(props);
     this.state = {
-      event: null
+      id: "",
+      name: "",
+      date: new Date(),
+      account: "",
+      categoryName: "",
+      categoryValue: 0.0,
+      categoryType: CategoryTypes.Expense
     }
 
+    this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.fetchEvent = this.fetchEvent.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
   }
-  componentDidMount() {
 
+  componentDidMount() {
     this.fetchEvent(window.location.pathname.split('/')[2])
   }
 
-  handleSave() {
+  handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const target = e.target;
+    const value = target.value;
+    const name = target.name;
+    this.setState({ [name]: value } as any);
+  }
 
+  async handleSave() {
+    try {
+      let newEvent = new Event(this.state.id, this.state.name, this.state.date, this.state.account, new Category(this.state.id, this.state.categoryName, this.state.categoryValue, this.state.categoryType));
+      await API.graphql(graphqlOperation(updateEvent, { input: newEvent }))
+    } catch (err) {
+      console.log('error creating todo:', err)
+    }
   }
 
   async fetchEvent(eventId: string) {
-
     try {
       const ee = await API.graphql({ query: getEvent, variables: { id: eventId } }) as { data: GetEventQuery }
       const e = ee.data!.getEvent!;
-      const event = new Event(e!.id!, e!.name!, new Date(e!.date!), e!.account!, e!.category ? new Category(e!.category!.id!, e!.category!.name!, e!.category!.value!, e!.category!.type!) : null)
-
-      this.setState({ event: event });
+      this.setState({
+        id: e!.id!,
+        name: e!.name!,
+        date: new Date(e!.date!),
+        account: e!.account!,
+        categoryName: e!.category!.name!,
+        categoryValue: e!.category!.value!,
+        categoryType: e!.category!.type!
+      });
     } catch (err) {
       console.log('error:', err)
     }
@@ -65,16 +97,16 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
           <Stack spacing={2}>
             <p><b><b>name</b></b></p>
-            <TextField id="outlined-basic" variant="outlined" value={this.state.event?.name ? this.state.event?.name : '...'} />
+            <TextField id="outlined-basic" name="name" variant="outlined" onChange={this.handleChange} value={this.state.name ? this.state.name : '...'} />
             <p><b>account</b></p>
-            <TextField id="outlined-basic" variant="outlined" value={this.state.event?.account} />
+            <TextField id="outlined-basic" name="account" variant="outlined" onChange={this.handleChange} value={this.state.account} />
             <p><b>date</b></p>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Basic example"
-                value={this.state.event?.date}
+                value={this.state.date}
                 onChange={(newValue) => {
-                  // setValue(newValue);
+                  this.setState({ date: newValue } as any);
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -82,15 +114,15 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
 
             <p><b>category name</b></p>
 
-            <TextField id="outlined-basic" variant="outlined" value={this.state.event?.category?.name} />
+            <TextField id="outlined-basic" name="categoryName" variant="outlined" onChange={this.handleChange} value={this.state.categoryName} />
             <p><b>category value</b></p>
 
-            <TextField id="outlined-basic" variant="outlined" value={this.state.event?.category?.value} />
+            <TextField id="outlined-basic" name="categoryValue" variant="outlined" onChange={this.handleChange} value={this.state.categoryValue} />
             <p><b>category type</b></p>
 
-            <TextField id="outlined-basic" variant="outlined" value={this.state.event?.category?.type} />
+            <TextField id="outlined-basic" name="categoryType" variant="outlined" onChange={this.handleChange} value={this.state.categoryType} />
 
-            <Button id={this.state.event?.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
+            <Button id={this.state.id!} onClick={this.handleSave} variant="contained">Save</Button>
 
           </Stack>
         </Container>
