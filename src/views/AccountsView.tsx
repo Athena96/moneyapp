@@ -69,7 +69,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   async handleAddAccount() {
     try {
-      let newAccount = new Account('', '...');
+      let newAccount = new Account(new Date().getTime().toString(), '...');
       let newAccounts = [...this.state.accounts, newAccount]
       this.setState({ accounts: newAccounts });
       await API.graphql(graphqlOperation(createAccount, { input: newAccount }))

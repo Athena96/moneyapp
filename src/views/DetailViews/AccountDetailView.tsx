@@ -1,7 +1,8 @@
 import * as React from 'react';
 
-import Amplify, { API } from 'aws-amplify'
+import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { getAccount } from '../../graphql/queries'
+import { updateAccount } from '../../graphql/mutations';
 import { GetAccountQuery } from "../../API";
 import awsExports from "../../aws-exports";
 
@@ -30,6 +31,7 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
       account: null
     }
 
+    this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.fetchAccount = this.fetchAccount.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -39,12 +41,23 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
     this.fetchAccount(window.location.pathname.split('/')[2])
   }
 
-  handleSave() {
+  handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const target = event.target;
+    const value = target.value;
+    const accnt = this.state.account!;
+    accnt!.name = value;
+    this.setState({account: accnt});
+  }
 
+  async handleSave() {
+    try {
+      await API.graphql(graphqlOperation(updateAccount, { input: this.state.account }))
+    } catch (err) {
+      console.log('error creating account:', err)
+    }
   }
 
   async fetchAccount(accountId: string) {
-
     try {
       const ee = await API.graphql({ query: getAccount, variables: { id: accountId } }) as { data: GetAccountQuery }
       const e = ee.data!.getAccount!;
@@ -53,7 +66,6 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
     } catch (err) {
       console.log('error:', err)
     }
-
   }
 
 
@@ -63,10 +75,8 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
           <Stack spacing={2}>
             <p><b><b>name</b></b></p>
-            <TextField id="outlined-basic" variant="outlined" value={this.state.account?.name ? this.state.account?.name : '...'} />
-
+            <TextField id="outlined-basic" variant="outlined" onChange={this.handleChange} value={this.state.account?.name!} />
             <Button id={this.state.account?.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
-
           </Stack>
         </Container>
 
