@@ -1,19 +1,18 @@
-
-
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import { Category } from '../model/Category';
 import { CategoryTypes } from "../API";
 
-import { getEvents } from '../utilities/dataSetup';
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import { API } from 'aws-amplify'
 import { listAccounts } from '../graphql/queries'
 import { ListAccountsQuery } from "../API";
 import { ListBudgetsQuery } from "../API";
 import { listBudgets } from '../graphql/queries'
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
+import { listEvents } from '../graphql/queries'
+import { ListEventsQuery } from "../API";
 
 export interface RowData {
   date: string;
@@ -340,19 +339,45 @@ export async function fetchStartingBalances(componentState: any) {
 
 }
 
-export async function fetchEventData(componentState: any) {
-  const finnhub = require('finnhub');
 
+export async function fetchEvents(componentState: any) {
+  const finnhub = require('finnhub');
   const api_key = finnhub.ApiClient.instance.authentications['api_key'];
   api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
   const finnhubClient = new finnhub.DefaultApi()
-  finnhubClient.quote("AMZN", (error: any, data: any, response: any) => {
+  const rep = componentState;
+  finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
     if (data && data.c) {
-
       const currentAmazonStockPrice: number = data.c;
-      componentState.setState({ events: getEvents(currentAmazonStockPrice) })
+      let fetchedEvents: Event[] = [];
+      try {
+        const response = (await API.graphql({
+          query: listEvents
+        })) as { data: ListEventsQuery }
+        for (const event of response.data.listEvents!.items!) {
+          let value = 0.0;
+          let name = event!.name!;
+          if (event!.category && event?.category.value) {
+            value = event?.category!.value!;
+          }
+          if (event?.name && event?.name?.includes('amzn')) {
+            const parts = event.name.split(' ');
+            const quantity = Number(parts[1]);
+            name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
+            value = Number((quantity * currentAmazonStockPrice - (0.3 * quantity * currentAmazonStockPrice)).toFixed(2));
+          }
+          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
+          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+          e.printEvent();
+          fetchedEvents.push(e);
+        }
+        rep.setState({ events: fetchedEvents })
+      } catch (error) {
+        console.log(error);
+      }
     }
   });
+
 
 }
 

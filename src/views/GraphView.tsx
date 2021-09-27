@@ -4,7 +4,7 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { generateTable, fetchStartingBalances, fetchEventData, fetchAccounts, fetchBudgets, fetchInputs } from '../utilities/helpers';
+import { generateTable, fetchStartingBalances, fetchAccounts, fetchBudgets, fetchInputs, fetchEvents } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
 
@@ -71,7 +71,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     fetchBudgets(this);
     fetchAccounts(this);
     fetchStartingBalances(this);
-    fetchEventData(this);
+    fetchEvents(this);
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -85,7 +85,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   render() {
-    if (this.state.accounts.length >= 1 && this.state.budgets.length >= 1 && this.inputsAreLoaded()) {
+    if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
       const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
         this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
       return (

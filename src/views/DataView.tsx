@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
-import { generateTable, RowData, fetchStartingBalances, fetchEventData, fetchAccounts, fetchBudgets, fetchInputs } from '../utilities/helpers';
+import { generateTable, RowData, fetchStartingBalances, fetchEvents, fetchAccounts, fetchBudgets, fetchInputs } from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -71,17 +71,18 @@ class DataView extends React.Component<DataViewProps, IState> {
 
     componentDidMount() {
         fetchInputs(this);
-
         fetchBudgets(this);
         fetchAccounts(this);
         fetchStartingBalances(this);
-        fetchEventData(this);
+        fetchEvents(this);
     }
+
     inputsAreLoaded() {
         return this.state.growth != null && this.state.inflation != null && this.state.absoluteMonthlyGrowth != null;
     }
+
     render() {
-        if (this.state.accounts.length >= 1 && this.state.budgets.length >= 1 && this.inputsAreLoaded()) {
+        if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
 
             const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
                 this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
