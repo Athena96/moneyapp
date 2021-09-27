@@ -4,8 +4,8 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { getBudgets, getInputs } from '../utilities/dataSetup';
-import { generateTable, RowData, fetchStartingBalances, fetchEventData, fetchAccounts } from '../utilities/helpers';
+import { getInputs } from '../utilities/dataSetup';
+import { generateTable, RowData, fetchStartingBalances, fetchEventData, fetchAccounts, fetchBudgets } from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -55,7 +55,7 @@ class DataView extends React.Component<DataViewProps, IState> {
             minEnd: inputs.minEnd,
 
             events: [],
-            budgets: getBudgets(),
+            budgets: [],
             accounts: [],
             balances: {
                 brokerage: {
@@ -72,14 +72,14 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     componentDidMount() {
+        fetchBudgets(this);
         fetchAccounts(this);
-
         fetchStartingBalances(this);
         fetchEventData(this);
     }
 
     render() {
-        if (this.state.accounts.length >= 1) {
+        if (this.state.accounts.length >= 1 && this.state.budgets.length >= 1) {
 
             const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
                 this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);

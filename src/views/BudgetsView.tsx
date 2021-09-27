@@ -9,6 +9,7 @@ import awsExports from "../aws-exports";
 import { Budget } from '../model/Budget';
 import { Category } from '../model/Category';
 import { CategoryTypes } from "../API";
+import { fetchBudgets } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -43,8 +44,6 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.fetchBudgets = this.fetchBudgets.bind(this);
-
     this.handleDeleteBudget = this.handleDeleteBudget.bind(this);
     this.handleAddBudget = this.handleAddBudget.bind(this);
     this.render = this.render.bind(this);
@@ -52,30 +51,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
 
   componentDidMount() {
-    this.fetchBudgets();
-  }
-
-  async fetchBudgets() {
-    let fetchedBudgets: Budget[] = [];
-    try {
-      const response = (await API.graphql({
-        query: listBudgets
-      })) as { data: ListBudgetsQuery }
-      for (const budget of response.data.listBudgets!.items!) {
-        let cats = null;
-
-        if (budget?.categories) {
-          cats = [];
-          for (const category of budget!.categories!) {
-            cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-          }
-        }
-        fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
-      }
-      this.setState({ budgets: fetchedBudgets })
-    } catch (error) {
-      console.log(error);
-    }
+    fetchBudgets(this);
   }
 
   async handleAddBudget() {

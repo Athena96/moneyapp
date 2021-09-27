@@ -4,8 +4,8 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { getBudgets, getInputs } from '../utilities/dataSetup';
-import { generateTable, fetchStartingBalances, fetchEventData, fetchAccounts } from '../utilities/helpers';
+import { getInputs } from '../utilities/dataSetup';
+import { generateTable, fetchStartingBalances, fetchEventData, fetchAccounts, fetchBudgets } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
 
@@ -50,7 +50,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       minEnd: inputs.minEnd,
       selectedTab: 1,
       events: [],
-      budgets: getBudgets(),
+      budgets: [],
       accounts: [],
       balances: {
         brokerage: {
@@ -68,6 +68,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   componentDidMount() {
+    fetchBudgets(this);
     fetchAccounts(this);
     fetchStartingBalances(this);
     fetchEventData(this);
@@ -80,7 +81,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
   render() {
-    if (this.state.accounts.length >= 1) {
+    if (this.state.accounts.length >= 1 && this.state.budgets.length >= 1) {
       const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
         this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);
       return (

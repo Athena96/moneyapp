@@ -3,12 +3,15 @@
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
+import { Category } from '../model/Category';
 import { CategoryTypes } from "../API";
+
 import { getEvents } from '../utilities/dataSetup';
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { listAccounts } from '../graphql/queries'
 import { ListAccountsQuery } from "../API";
-
+import { ListBudgetsQuery } from "../API";
+import { listBudgets } from '../graphql/queries'
 export interface RowData {
   date: string;
   brokerageBal: string;
@@ -360,6 +363,29 @@ export async function fetchAccounts(componentState: any) {
       fetchedAccounts.push(new Account(account!.id!, account!.name!));
     }
     componentState.setState({ accounts: fetchedAccounts })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchBudgets(componentState: any) {
+  let fetchedBudgets: Budget[] = [];
+  try {
+    const response = (await API.graphql({
+      query: listBudgets
+    })) as { data: ListBudgetsQuery }
+    for (const budget of response.data.listBudgets!.items!) {
+      let cats = null;
+
+      if (budget?.categories) {
+        cats = [];
+        for (const category of budget!.categories!) {
+          cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+        }
+      }
+      fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
+    }
+    componentState.setState({ budgets: fetchedBudgets })
   } catch (error) {
     console.log(error);
   }

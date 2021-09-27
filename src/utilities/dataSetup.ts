@@ -140,31 +140,6 @@ export function getEvents(amznStock: number) {
 
 }
 
-export function getBudgets() {
-    let budgets = [];
-
-    budgets.push(getSignOnBonusBudget());
-    budgets.push(getY3NoBonusBudget());
-
-    budgets.push(getRetireSingleDuringLoan());
-    budgets.push(getRetireSingleAfterLoan());
-
-    budgets.push(getRetireFamilyB459());
-    budgets.push(getRetireFamilyB459Car());
-    budgets.push(getRetireFamilyAfter59());
-
-    budgets.push(getGoldenYearsDuringHousePayment());
-    budgets.push(getGoldenYearsNOPayment());
-
-    budgets.push(getEOL());
-
-    // for (const b of budgets) {
-    //     b.printBudget();
-    // }
-
-    return budgets;
-}
-
 
 function getSignOnBonusBudget() {
     let budgetSpending = []
