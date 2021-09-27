@@ -12,6 +12,9 @@ import { listAccounts } from '../graphql/queries'
 import { ListAccountsQuery } from "../API";
 import { ListBudgetsQuery } from "../API";
 import { listBudgets } from '../graphql/queries'
+import { listInputs } from '../graphql/queries';
+import { ListInputsQuery } from '../API';
+
 export interface RowData {
   date: string;
   brokerageBal: string;
@@ -386,6 +389,66 @@ export async function fetchBudgets(componentState: any) {
       fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
     }
     componentState.setState({ budgets: fetchedBudgets })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchInputs(componentState: any) {
+  let fetchedInputs: any[] = [];
+  let growth = 0.0;
+  let inflation = 0.0;
+  try {
+    const response = (await API.graphql({
+      query: listInputs
+    })) as { data: ListInputsQuery }
+    for (const input of response.data.listInputs!.items!) {
+
+      if (input?.type === 'date') {
+        fetchedInputs.push({
+          id: input?.id,
+          key: input?.key!,
+          type: input?.type!,
+          value: new Date(input?.value!)
+        });
+      } else if (input?.type === "number") {
+
+        fetchedInputs.push({
+          id: input?.id,
+          key: input?.key!,
+          type: input?.type!,
+          value: Number(input?.value!)
+        });
+      }
+
+      if (input?.key === 'growth') {
+        growth = Number(input?.value!);
+      }
+      if (input?.key === 'inflation') {
+        inflation = Number(input?.value!);
+      }
+    }
+
+    // add computed inputs
+    fetchedInputs.push({
+      id: new Date().getTime().toString(),
+      key: "absoluteMonthlyGrowth",
+      type: "computed-number",
+      value: (growth - inflation) / 12 / 100
+    });
+
+    fetchedInputs.push({
+      id: new Date().getTime().toString(),
+      key: "startDate",
+      type: "computed-date",
+      value: new Date()
+    });
+
+    componentState.setState({ inputs: fetchedInputs } as any);
+    for (const i of fetchedInputs) {
+      componentState.setState({ [i.key]: i.value } as any);
+    }
+
   } catch (error) {
     console.log(error);
   }

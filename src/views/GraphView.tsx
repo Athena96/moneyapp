@@ -4,8 +4,7 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { getInputs } from '../utilities/dataSetup';
-import { generateTable, fetchStartingBalances, fetchEventData, fetchAccounts, fetchBudgets } from '../utilities/helpers';
+import { generateTable, fetchStartingBalances, fetchEventData, fetchAccounts, fetchBudgets, fetchInputs } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
 
@@ -20,14 +19,14 @@ interface IState {
   selectedTab: number;
   events: Event[];
   budgets: Budget[];
-  growth: number;
-  inflation: number;
-  absoluteMonthlyGrowth: number;
-  startDate: Date;
-  endDate: Date;
-  dateIm59: Date;
-  minEnd: number;
-  retireDate: Date;
+  growth: number | null;
+  inflation: number | null;
+  absoluteMonthlyGrowth: number | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  dateIm59: Date | null;
+  minEnd: number | null;
+  retireDate: Date | null;
   accounts: Account[];
   balances: any;
 }
@@ -38,16 +37,15 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     super(props);
 
-    const inputs = getInputs();
     this.state = {
-      growth: inputs.growth,
-      inflation: inputs.inflation,
-      absoluteMonthlyGrowth: inputs.absoluteMonthlyGrowth,
-      startDate: inputs.startDate,
-      endDate: inputs.endDate,
-      dateIm59: inputs.dateIm59,
-      retireDate: inputs.retireDate,
-      minEnd: inputs.minEnd,
+      growth: null,
+      inflation: null,
+      absoluteMonthlyGrowth: null,
+      startDate: null,
+      endDate: null,
+      dateIm59: null,
+      retireDate: null,
+      minEnd: null,
       selectedTab: 1,
       events: [],
       budgets: [],
@@ -62,12 +60,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         }
       }
     }
+    this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
+    fetchInputs(this);
     fetchBudgets(this);
     fetchAccounts(this);
     fetchStartingBalances(this);
@@ -80,10 +80,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
+  inputsAreLoaded() {
+    return this.state.growth != null && this.state.inflation != null && this.state.absoluteMonthlyGrowth != null;
+  }
+
   render() {
-    if (this.state.accounts.length >= 1 && this.state.budgets.length >= 1) {
-      const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
-        this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);
+    if (this.state.accounts.length >= 1 && this.state.budgets.length >= 1 && this.inputsAreLoaded()) {
+      const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
+        this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
       return (
         <Container >
           <Line data={chartData} />

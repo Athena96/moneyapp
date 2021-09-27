@@ -13,8 +13,8 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
+import { fetchInputs } from '../utilities/helpers';
 
-import { getInputs } from '../utilities/dataSetup';
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { updateInputs } from '../graphql/mutations';
@@ -44,7 +44,6 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     this.getInputToSave = this.getInputToSave.bind(this);
 
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.fetchInputs = this.fetchInputs.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
 
@@ -58,7 +57,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     const inpts = this.state.inputs;
     const tp = name.split('-')[0];
     const key = name.split('-')[1];
-    
+
     for (const i of inpts) {
 
       if (i.key === key) {
@@ -69,33 +68,12 @@ class InputsView extends React.Component<InputsViewProps, IState> {
         }
       }
     }
-    this.setState({inputs: inpts});
+    this.setState({ inputs: inpts });
 
   }
 
   componentDidMount() {
-    this.fetchInputs();
-  }
-
-  async fetchInputs() {
-    let fetchedInputs: any[] = [];
-    try {
-      const response = (await API.graphql({
-        query: listInputs
-      })) as { data: ListInputsQuery }
-      for (const input of response.data.listInputs!.items!) {
-        fetchedInputs.push({
-          id: input?.id,
-          key: input?.key!,
-          type: input?.type!,
-
-          value: input?.value!
-        });
-      }
-      this.setState({ inputs: fetchedInputs } as any);
-    } catch (error) {
-      console.log(error);
-    }
+    fetchInputs(this);
   }
 
   handleAddInput() {
@@ -143,61 +121,87 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   render() {
     console.log(this.state.inputs);
-    return this.props.index === this.props.value ? (
-      <Container style={{ marginBottom: '15px' }} >
 
-        {this.state.inputs ? this.state.inputs.map((input: any, i: number) => {
-          return (
-            <>
+    if (this.props.index === this.props.value) {
 
-            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-              <CardContent>
+      return (
+        <Container style={{ marginBottom: '15px' }} >
 
-                <Stack direction='row' spacing={4}>
-                <TextField id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
-                  {
-                    (input.type === "date") ?
-                      <>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                          <DatePicker
-                            label="Basic example"
-                            value={input.value}
-                            onChange={(newValue) => {
-                              const ipts = this.state.inputs;
-                              for (const i of ipts) {
-                                if (i.id === input.id) {
-                                  i.value = newValue;
-                                }
-                              }
-                              this.setState({ inputs: ipts } as any);
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </>
-                      :
-                      <><TextField id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
-                  }
+          {this.state.inputs ? this.state.inputs.map((input: any, i: number) => {
 
-                  <Button id={input.id} onClick={this.handleSave} variant="contained">Save</Button>
+            return !input.type.includes('computed') ? (
+              <>
+                <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+                  <CardContent>
+
+                    <Stack direction='row' spacing={4}>
+                      <TextField id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
+                      {
+                        (input.type === "date") ?
+                          <>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                              <DatePicker
+                                label="Basic example"
+                                value={input.value}
+                                onChange={(newValue) => {
+                                  const ipts = this.state.inputs;
+                                  for (const i of ipts) {
+                                    if (i.id === input.id) {
+                                      i.value = newValue;
+                                    }
+                                  }
+                                  this.setState({ inputs: ipts } as any);
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                              />
+                            </LocalizationProvider>
+                          </>
+                          :
+                          <><TextField id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
+                      }
+
+                      <Button id={input.id} onClick={this.handleSave} variant="contained">Save</Button>
 
 
-                </Stack>
+                    </Stack>
 
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
 
-            {
-              i === (this.state.inputs.length - 1) ? <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></> : <></>
-            }
+                {
+                  i === (this.state.inputs.length - 1) ? <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></> : <></>
+                }
+              </>
+            ) : <>
+
+              <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+                <CardContent>
+
+                  <Stack direction='row' spacing={4}>
+                    <TextField disabled id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
+                    <TextField disabled id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} />
+
+                  </Stack>
+
+                </CardContent>
+              </Card>
+
+              {
+                i === (this.state.inputs.length - 1) ? <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></> : <></>
+              }
+
             </>
 
-          )
-        }) : <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></>}
+
+          }) : <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></>}
 
 
-      </Container>
-    ) : (<></>);
+        </Container>
+      )
+    } else {
+      return (<></>);
+    }
+
   }
 
 }
