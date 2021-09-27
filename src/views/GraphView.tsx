@@ -88,9 +88,17 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
       const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
         this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
-      return (
+        const options = {
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 0
+            }
+          }
+        };
+        return (
         <Container >
-          <Line data={chartData} />
+          <Line data={chartData} options={options}/>
         </Container >
       );
     } else {
