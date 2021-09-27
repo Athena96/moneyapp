@@ -2,11 +2,10 @@ import * as React from 'react';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createAccount, deleteAccount } from '../graphql/mutations'
-import { listAccounts } from '../graphql/queries'
-import { ListAccountsQuery } from "../API";
 import awsExports from "../aws-exports";
 
 import { Account } from '../model/Account';
+import { fetchAccounts } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -41,30 +40,13 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.fetchAccounts = this.fetchAccounts.bind(this);
-
     this.handleAddAccount = this.handleAddAccount.bind(this);
     this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
     this.render = this.render.bind(this);
   }
 
   componentDidMount() {
-    this.fetchAccounts();
-  }
-
-  async fetchAccounts() {
-    let fetchedAccounts: Account[] = [];
-    try {
-      const response = (await API.graphql({
-        query: listAccounts
-      })) as { data: ListAccountsQuery }
-      for (const account of response.data.listAccounts!.items!) {
-        fetchedAccounts.push(new Account(account!.id!, account!.name!));
-      }
-      this.setState({ accounts: fetchedAccounts })
-    } catch (error) {
-      console.log(error);
-    }
+    fetchAccounts(this);
   }
 
   async handleAddAccount() {

@@ -36,15 +36,6 @@ export function getInputs() {
     };
 }
 
-export function getAccounts() {
-    let brokerage = new Account('1', 'brokerage');
-    let tax = new Account('2', 'tax');
-    let theaccounts: Account[] = [];
-    theaccounts.push(brokerage);
-    theaccounts.push(tax);
-    return theaccounts;
-}
-
 export function getEvents(amznStock: number) {
 
     let events = [];

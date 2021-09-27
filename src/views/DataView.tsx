@@ -4,8 +4,8 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { getBudgets, getAccounts, getInputs } from '../utilities/dataSetup';
-import { generateTable, RowData, fetchStartingBalances, fetchEventData } from '../utilities/helpers';
+import { getBudgets, getInputs } from '../utilities/dataSetup';
+import { generateTable, RowData, fetchStartingBalances, fetchEventData, fetchAccounts } from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -56,7 +56,7 @@ class DataView extends React.Component<DataViewProps, IState> {
 
             events: [],
             budgets: getBudgets(),
-            accounts: getAccounts(),
+            accounts: [],
             balances: {
                 brokerage: {
                     [0]: 0,
@@ -72,46 +72,52 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     componentDidMount() {
+        fetchAccounts(this);
+
         fetchStartingBalances(this);
         fetchEventData(this);
     }
 
     render() {
+        if (this.state.accounts.length >= 1) {
 
-        const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
-            this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);
-        return this.props.index === this.props.value ? (
-            <>
-                <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Date</TableCell>
-                                <TableCell align="center">Brokerage</TableCell>
-                                <TableCell align="center">Tax</TableCell>
-                                <TableCell align="left">Note</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {balanceData.map((row: RowData) => (
-                                <TableRow
-                                    style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
-                                    key={row.date}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.date}
-                                    </TableCell>
-                                    <TableCell align="center">{row.brokerageBal}</TableCell>
-                                    <TableCell align="center">{row.taxBal}</TableCell>
-                                    <TableCell align="left">{row.note}</TableCell>
+            const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth,
+                this.state.accounts, this.state.startDate, this.state.endDate, this.state.dateIm59, this.state.retireDate, this.state.minEnd);
+            return this.props.index === this.props.value ? (
+                <>
+                    <TableContainer component={Paper}>
+                        <Table aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Date</TableCell>
+                                    <TableCell align="center">Brokerage</TableCell>
+                                    <TableCell align="center">Tax</TableCell>
+                                    <TableCell align="left">Note</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-</>
-        ) : (<></>);
+                            </TableHead>
+                            <TableBody>
+                                {balanceData.map((row: RowData) => (
+                                    <TableRow
+                                        style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
+                                        key={row.date}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {row.date}
+                                        </TableCell>
+                                        <TableCell align="center">{row.brokerageBal}</TableCell>
+                                        <TableCell align="center">{row.taxBal}</TableCell>
+                                        <TableCell align="left">{row.note}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </>
+            ) : (<></>);
+        } else {
+            return (<></>);
+        }
     }
 }
 
