@@ -105,11 +105,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
   }
 
   async handleSave(e: any) {
-    console.log("here");
-    console.log(e);
-
     const id = e.target.id;
-    console.log(id);
 
     try {
       const ipt = this.getInputToSave(id);
@@ -120,13 +116,13 @@ class InputsView extends React.Component<InputsViewProps, IState> {
   }
 
   render() {
-    console.log(this.state.inputs);
 
     if (this.props.index === this.props.value) {
 
       return (
-        <Container style={{ marginBottom: '15px' }} >
+        < >
 
+<Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add input +</Button>
           {this.state.inputs ? this.state.inputs.map((input: any, i: number) => {
 
             return !input.type.includes('computed') ? (
@@ -168,9 +164,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                   </CardContent>
                 </Card>
 
-                {
-                  i === (this.state.inputs.length - 1) ? <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></> : <></>
-                }
+            
               </>
             ) : <>
 
@@ -186,17 +180,15 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                 </CardContent>
               </Card>
 
-              {
-                i === (this.state.inputs.length - 1) ? <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></> : <></>
-              }
+       
 
             </>
 
 
-          }) : <><br /><Button onClick={this.handleAddInput} variant="contained">add input +</Button></>}
+          }) : <></>}
 
 
-        </Container>
+        </>
       )
     } else {
       return (<></>);

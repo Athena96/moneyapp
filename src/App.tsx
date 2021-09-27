@@ -53,7 +53,7 @@ class App extends React.Component<IProps, IState> {
           </AppBar>
         </Box>
         
-        <Container>
+        <Container style={{margin: '15px'}}>
           <Main/>
         </Container>
       </div>
