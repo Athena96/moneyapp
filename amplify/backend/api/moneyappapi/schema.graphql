@@ -36,3 +36,10 @@ type Event @model {
   category: Category
 }
 
+type Inputs @model {
+  id: ID!
+  key: String
+  value: String
+  type: String
+}
+

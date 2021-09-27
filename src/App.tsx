@@ -26,7 +26,7 @@ class App extends React.Component<IProps, IState> {
 
     super(props);
     this.state = {
-      selectedTab: 1
+      selectedTab: 2
     }
 
     this.render = this.render.bind(this);

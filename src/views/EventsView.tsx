@@ -117,7 +117,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       <>
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
 
-        {this.state.events.map((event: Event) => {
+        {this.state.events.sort((a,b) => (a.date > b.date) ? 1 : -1 ).map((event: Event) => {
           return (
 
 
@@ -134,7 +134,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {event.category ? event.category!.getValue().toString() : '...'}
+                    ${event.category ? event.category!.getValue().toString() : '...'}
                   </Typography>
 
                 </Stack>

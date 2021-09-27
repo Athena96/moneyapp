@@ -123,7 +123,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
       <>
         <Button style={{ width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
 
-        {this.state.budgets.map((budget: Budget) => {
+        {this.state.budgets.sort((a,b) => (a.startDate > b.startDate) ? 1 : -1 ).map((budget: Budget) => {
           return (
 
             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>

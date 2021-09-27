@@ -172,6 +172,43 @@ export type DeleteEventInput = {
   id: string,
 };
 
+export type CreateInputsInput = {
+  id?: string | null,
+  key?: string | null,
+  value?: string | null,
+  type?: string | null,
+};
+
+export type ModelInputsConditionInput = {
+  key?: ModelStringInput | null,
+  value?: ModelStringInput | null,
+  type?: ModelStringInput | null,
+  and?: Array< ModelInputsConditionInput | null > | null,
+  or?: Array< ModelInputsConditionInput | null > | null,
+  not?: ModelInputsConditionInput | null,
+};
+
+export type Inputs = {
+  __typename: "Inputs",
+  id: string,
+  key?: string | null,
+  value?: string | null,
+  type?: string | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateInputsInput = {
+  id: string,
+  key?: string | null,
+  value?: string | null,
+  type?: string | null,
+};
+
+export type DeleteInputsInput = {
+  id: string,
+};
+
 export type ModelAccountFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -231,6 +268,22 @@ export type ModelEventFilterInput = {
 export type ModelEventConnection = {
   __typename: "ModelEventConnection",
   items?:  Array<Event | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelInputsFilterInput = {
+  id?: ModelIDInput | null,
+  key?: ModelStringInput | null,
+  value?: ModelStringInput | null,
+  type?: ModelStringInput | null,
+  and?: Array< ModelInputsFilterInput | null > | null,
+  or?: Array< ModelInputsFilterInput | null > | null,
+  not?: ModelInputsFilterInput | null,
+};
+
+export type ModelInputsConnection = {
+  __typename: "ModelInputsConnection",
+  items?:  Array<Inputs | null > | null,
   nextToken?: string | null,
 };
 
@@ -423,6 +476,57 @@ export type DeleteEventMutation = {
   } | null,
 };
 
+export type CreateInputsMutationVariables = {
+  input: CreateInputsInput,
+  condition?: ModelInputsConditionInput | null,
+};
+
+export type CreateInputsMutation = {
+  createInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateInputsMutationVariables = {
+  input: UpdateInputsInput,
+  condition?: ModelInputsConditionInput | null,
+};
+
+export type UpdateInputsMutation = {
+  updateInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteInputsMutationVariables = {
+  input: DeleteInputsInput,
+  condition?: ModelInputsConditionInput | null,
+};
+
+export type DeleteInputsMutation = {
+  deleteInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetAccountQueryVariables = {
   id: string,
 };
@@ -554,6 +658,44 @@ export type ListEventsQuery = {
         value?: number | null,
         type?: CategoryTypes | null,
       } | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetInputsQueryVariables = {
+  id: string,
+};
+
+export type GetInputsQuery = {
+  getInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListInputsQueryVariables = {
+  filter?: ModelInputsFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListInputsQuery = {
+  listInputs?:  {
+    __typename: "ModelInputsConnection",
+    items?:  Array< {
+      __typename: "Inputs",
+      id: string,
+      key?: string | null,
+      value?: string | null,
+      type?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -700,6 +842,42 @@ export type OnDeleteEventSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateInputsSubscription = {
+  onCreateInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateInputsSubscription = {
+  onUpdateInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteInputsSubscription = {
+  onDeleteInputs?:  {
+    __typename: "Inputs",
+    id: string,
+    key?: string | null,
+    value?: string | null,
+    type?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,

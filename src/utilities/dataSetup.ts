@@ -145,7 +145,6 @@ export function getEvents(amznStock: number) {
     events.push(new Event('', 'car DP', new Date('04/15/2036'), 'brokerage', new Category('', 'car DP', CAR_DP, CategoryTypes.Expense)));
 
 
-
     return events;
 
 }
@@ -167,6 +166,10 @@ export function getBudgets() {
     budgets.push(getGoldenYearsNOPayment());
 
     budgets.push(getEOL());
+
+    // for (const b of budgets) {
+    //     b.printBudget();
+    // }
 
     return budgets;
 }

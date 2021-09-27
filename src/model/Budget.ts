@@ -32,5 +32,9 @@ export class Budget implements Key {
         return this.id;
     }
 
+    printBudget() {
+        console.log(JSON.stringify(this));
+    }
+
 }
 

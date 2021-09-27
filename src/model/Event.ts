@@ -17,7 +17,7 @@ export class Event implements Key {
     }
 
     printEvent() {
-        console.log(`[Event] name: ${this.name} account: ${this.account} date: ${this.date.getMonth()+1}-${this.date.getFullYear()} category: ${this.category ? this.category!.getCategoryDescription() : '...'} account: ${this.account}`)
+        console.log(JSON.stringify(this));
     }
     
     toStringEvent() {

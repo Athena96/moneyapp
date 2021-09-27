@@ -167,3 +167,48 @@ export const deleteEvent = /* GraphQL */ `
     }
   }
 `;
+export const createInputs = /* GraphQL */ `
+  mutation CreateInputs(
+    $input: CreateInputsInput!
+    $condition: ModelInputsConditionInput
+  ) {
+    createInputs(input: $input, condition: $condition) {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateInputs = /* GraphQL */ `
+  mutation UpdateInputs(
+    $input: UpdateInputsInput!
+    $condition: ModelInputsConditionInput
+  ) {
+    updateInputs(input: $input, condition: $condition) {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteInputs = /* GraphQL */ `
+  mutation DeleteInputs(
+    $input: DeleteInputsInput!
+    $condition: ModelInputsConditionInput
+  ) {
+    deleteInputs(input: $input, condition: $condition) {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;

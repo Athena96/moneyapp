@@ -140,3 +140,39 @@ export const onDeleteEvent = /* GraphQL */ `
     }
   }
 `;
+export const onCreateInputs = /* GraphQL */ `
+  subscription OnCreateInputs {
+    onCreateInputs {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateInputs = /* GraphQL */ `
+  subscription OnUpdateInputs {
+    onUpdateInputs {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteInputs = /* GraphQL */ `
+  subscription OnDeleteInputs {
+    onDeleteInputs {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;

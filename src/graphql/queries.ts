@@ -115,3 +115,34 @@ export const listEvents = /* GraphQL */ `
     }
   }
 `;
+export const getInputs = /* GraphQL */ `
+  query GetInputs($id: ID!) {
+    getInputs(id: $id) {
+      id
+      key
+      value
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listInputs = /* GraphQL */ `
+  query ListInputs(
+    $filter: ModelInputsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listInputs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        key
+        value
+        type
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
