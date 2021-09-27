@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 import { Link } from "react-router-dom";
+import { CategoryTypes } from '../API';
 
 Amplify.configure(awsExports);
 
@@ -98,20 +99,24 @@ class EventsView extends React.Component<EventsViewProps, IState> {
           return (
 
 
-            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+            <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
               <CardContent>
 
                 <Stack direction='row' spacing={4}>
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {event.name === "" ? '...' : event.name}
+                    <b>name: </b> {event.name === "" ? '...' : event.name}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
+                  <b>account: </b> {event.account}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    ${event.category ? event.category!.getValue().toString() : '...'}
+                  <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
+                  </Typography>
+
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                  ${event.category ? event.category!.getValue().toString() : '...'}
                   </Typography>
 
                 </Stack>

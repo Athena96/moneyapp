@@ -107,16 +107,41 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
                 <Stack direction='row' spacing={4}>
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {budget.name}
+                  <b>name: </b> {budget.name}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
+                  <b>start: </b> {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
+                  <b>end: </b>  {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
                   </Typography>
+                </Stack>
+
+                <Stack direction='row' spacing={4}>
+
+                <Stack direction='column' spacing={0}>
+                  {budget.categories?.map((c,i) => {
+                    return (
+                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                      <b>{c.name}</b>
+                    </Typography>
+                    )
+                  })}
+            
+                </Stack>
+
+                <Stack direction='column' spacing={0}>
+                  {budget.categories?.map((c,i) => {
+                    return (
+                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                     ${c.value}
+                    </Typography>
+                    )
+                  })}
+            
+                </Stack>
                 </Stack>
 
                 <CardActions>

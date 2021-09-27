@@ -89,6 +89,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
         this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
         const options = {
+
           scales: {
             y: {
               beginAtZero: true,

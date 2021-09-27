@@ -69,17 +69,25 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
       {
         label: "brokerage",
         data: [],
-        borderColor: "rgba(37,113,207,1)"
+        borderColor: "rgba(37,113,207,1)",
+        pointBorderWidth: 1,
+        pointRadius: 1,
+
       },
       {
         label: "tax",
         data: [],
-        borderColor: "rgba(0,125,76,1)"
+        borderColor: "rgba(0,125,76,1)",
+        pointBorderWidth: 1,
+        pointRadius: 1,
+
       },
       {
         label: "",
         data: [],
-        borderColor: "rgba(0,0,0,1)"
+        borderColor: "rgba(0,0,0,1)",
+        pointBorderWidth: 1,
+        pointRadius: 1,
       }
     ]
   };
