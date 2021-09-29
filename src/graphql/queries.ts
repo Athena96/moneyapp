@@ -146,3 +146,38 @@ export const listInputs = /* GraphQL */ `
     }
   }
 `;
+export const getAssets = /* GraphQL */ `
+  query GetAssets($id: ID!) {
+    getAssets(id: $id) {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listAssets = /* GraphQL */ `
+  query ListAssets(
+    $filter: ModelAssetsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listAssets(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        ticker
+        quantity
+        hasIndexData
+        account
+        isCurrency
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

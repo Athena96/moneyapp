@@ -209,6 +209,75 @@ export type DeleteInputsInput = {
   id: string,
 };
 
+export type CreateAssetsInput = {
+  id?: string | null,
+  ticker?: string | null,
+  quantity?: number | null,
+  hasIndexData?: number | null,
+  account?: string | null,
+  isCurrency?: number | null,
+};
+
+export type ModelAssetsConditionInput = {
+  ticker?: ModelStringInput | null,
+  quantity?: ModelFloatInput | null,
+  hasIndexData?: ModelIntInput | null,
+  account?: ModelStringInput | null,
+  isCurrency?: ModelIntInput | null,
+  and?: Array< ModelAssetsConditionInput | null > | null,
+  or?: Array< ModelAssetsConditionInput | null > | null,
+  not?: ModelAssetsConditionInput | null,
+};
+
+export type ModelFloatInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
+export type ModelIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
+export type Assets = {
+  __typename: "Assets",
+  id: string,
+  ticker?: string | null,
+  quantity?: number | null,
+  hasIndexData?: number | null,
+  account?: string | null,
+  isCurrency?: number | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateAssetsInput = {
+  id: string,
+  ticker?: string | null,
+  quantity?: number | null,
+  hasIndexData?: number | null,
+  account?: string | null,
+  isCurrency?: number | null,
+};
+
+export type DeleteAssetsInput = {
+  id: string,
+};
+
 export type ModelAccountFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -284,6 +353,24 @@ export type ModelInputsFilterInput = {
 export type ModelInputsConnection = {
   __typename: "ModelInputsConnection",
   items?:  Array<Inputs | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelAssetsFilterInput = {
+  id?: ModelIDInput | null,
+  ticker?: ModelStringInput | null,
+  quantity?: ModelFloatInput | null,
+  hasIndexData?: ModelIntInput | null,
+  account?: ModelStringInput | null,
+  isCurrency?: ModelIntInput | null,
+  and?: Array< ModelAssetsFilterInput | null > | null,
+  or?: Array< ModelAssetsFilterInput | null > | null,
+  not?: ModelAssetsFilterInput | null,
+};
+
+export type ModelAssetsConnection = {
+  __typename: "ModelAssetsConnection",
+  items?:  Array<Assets | null > | null,
   nextToken?: string | null,
 };
 
@@ -527,6 +614,63 @@ export type DeleteInputsMutation = {
   } | null,
 };
 
+export type CreateAssetsMutationVariables = {
+  input: CreateAssetsInput,
+  condition?: ModelAssetsConditionInput | null,
+};
+
+export type CreateAssetsMutation = {
+  createAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateAssetsMutationVariables = {
+  input: UpdateAssetsInput,
+  condition?: ModelAssetsConditionInput | null,
+};
+
+export type UpdateAssetsMutation = {
+  updateAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteAssetsMutationVariables = {
+  input: DeleteAssetsInput,
+  condition?: ModelAssetsConditionInput | null,
+};
+
+export type DeleteAssetsMutation = {
+  deleteAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetAccountQueryVariables = {
   id: string,
 };
@@ -696,6 +840,48 @@ export type ListInputsQuery = {
       key?: string | null,
       value?: string | null,
       type?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetAssetsQueryVariables = {
+  id: string,
+};
+
+export type GetAssetsQuery = {
+  getAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListAssetsQueryVariables = {
+  filter?: ModelAssetsFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListAssetsQuery = {
+  listAssets?:  {
+    __typename: "ModelAssetsConnection",
+    items?:  Array< {
+      __typename: "Assets",
+      id: string,
+      ticker?: string | null,
+      quantity?: number | null,
+      hasIndexData?: number | null,
+      account?: string | null,
+      isCurrency?: number | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -878,6 +1064,48 @@ export type OnDeleteInputsSubscription = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateAssetsSubscription = {
+  onCreateAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateAssetsSubscription = {
+  onUpdateAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteAssetsSubscription = {
+  onDeleteAssets?:  {
+    __typename: "Assets",
+    id: string,
+    ticker?: string | null,
+    quantity?: number | null,
+    hasIndexData?: number | null,
+    account?: string | null,
+    isCurrency?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,

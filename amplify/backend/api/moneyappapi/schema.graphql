@@ -43,3 +43,12 @@ type Inputs @model {
   type: String
 }
 
+type Assets @model {
+  id: ID!
+  ticker: String
+  quantity: Float
+  hasIndexData: Int
+  account: String
+  isCurrency: Int
+}
+

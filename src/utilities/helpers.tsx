@@ -2,10 +2,11 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import { Category } from '../model/Category';
-import { CategoryTypes } from "../API";
+import { Asset } from '../model/Asset';
+import { CategoryTypes, ListAssetsQuery } from "../API";
 
 import { API } from 'aws-amplify'
-import { listAccounts } from '../graphql/queries'
+import { listAccounts, listAssets } from '../graphql/queries'
 import { ListAccountsQuery } from "../API";
 import { ListBudgetsQuery } from "../API";
 import { listBudgets } from '../graphql/queries'
@@ -482,6 +483,21 @@ export async function fetchInputs(componentState: any) {
       componentState.setState({ [i.key]: i.value } as any);
     }
 
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchAssets(componentState: any) {
+  let fetchedAssets: Asset[] = [];
+  try {
+    const response = (await API.graphql({
+      query: listAssets
+    })) as { data: ListAssetsQuery }
+    for (const asset of response.data.listAssets!.items!) {
+      fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, asset!.quantity!, asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
+    }
+    componentState.setState({ assets: fetchedAssets })
   } catch (error) {
     console.log(error);
   }

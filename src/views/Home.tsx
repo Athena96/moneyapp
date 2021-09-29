@@ -6,6 +6,8 @@ import DataView from '../views/DataView';
 import InputsView from '../views/InputsView';
 import EventsView from '../views/EventsView';
 import GraphView from '../views/GraphView';
+import AssetsView from '../views/AssetsView';
+
 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -62,6 +64,8 @@ class Home extends React.Component<IProps, IState> {
 
                   <Tab label="Accounts" />
                   <Tab label="Inputs" />
+                  <Tab label="Assets" />
+
                 </Tabs>
               </Box>
               <br /><br />
@@ -70,6 +74,8 @@ class Home extends React.Component<IProps, IState> {
               <EventsView value={this.state.selectedTab} index={2} />
               <AccountsView value={this.state.selectedTab} index={3} />
               <InputsView value={this.state.selectedTab} index={4} />
+              <AssetsView value={this.state.selectedTab} index={5} />
+
             </Box>
           </div>
         </div>

@@ -176,3 +176,45 @@ export const onDeleteInputs = /* GraphQL */ `
     }
   }
 `;
+export const onCreateAssets = /* GraphQL */ `
+  subscription OnCreateAssets {
+    onCreateAssets {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateAssets = /* GraphQL */ `
+  subscription OnUpdateAssets {
+    onUpdateAssets {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteAssets = /* GraphQL */ `
+  subscription OnDeleteAssets {
+    onDeleteAssets {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;

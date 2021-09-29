@@ -212,3 +212,54 @@ export const deleteInputs = /* GraphQL */ `
     }
   }
 `;
+export const createAssets = /* GraphQL */ `
+  mutation CreateAssets(
+    $input: CreateAssetsInput!
+    $condition: ModelAssetsConditionInput
+  ) {
+    createAssets(input: $input, condition: $condition) {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateAssets = /* GraphQL */ `
+  mutation UpdateAssets(
+    $input: UpdateAssetsInput!
+    $condition: ModelAssetsConditionInput
+  ) {
+    updateAssets(input: $input, condition: $condition) {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteAssets = /* GraphQL */ `
+  mutation DeleteAssets(
+    $input: DeleteAssetsInput!
+    $condition: ModelAssetsConditionInput
+  ) {
+    deleteAssets(input: $input, condition: $condition) {
+      id
+      ticker
+      quantity
+      hasIndexData
+      account
+      isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;

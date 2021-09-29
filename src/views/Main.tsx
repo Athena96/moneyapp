@@ -4,6 +4,7 @@ import * as React from 'react';
 import AccountDetailView from './DetailViews/AccountDetailView';
 import BudgetDetailView from './DetailViews/BudgetDetailView';
 import EventDetailView from './DetailViews/EventDetailView';
+import AssetsView from './AssetsView';
 
 import Home from './Home';
 
@@ -38,6 +39,7 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/events" component={EventDetailView} />
         <Route path="/budgets" component={BudgetDetailView} />
         <Route path="/accounts" component={AccountDetailView} />
+        <Route path="/assets" component={AssetsView} />
 
       </Switch>
     );

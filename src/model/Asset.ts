@@ -1,7 +1,7 @@
 
 import { Key } from "./KeyInterface";
 
-export class Holding implements Key {
+export class Asset implements Key {
     id: string;
     ticker: string;
     quantity: number;
@@ -22,7 +22,6 @@ export class Holding implements Key {
     printEvent() {
         console.log(JSON.stringify(this));
     }
-    
   
     getKey() {
         return this.id;
