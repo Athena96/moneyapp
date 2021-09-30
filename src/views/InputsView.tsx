@@ -17,7 +17,7 @@ import { fetchInputs } from '../utilities/helpers';
 
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
-import { updateInputs } from '../graphql/mutations';
+import { createInputs, deleteInputs, updateInputs } from '../graphql/mutations';
 
 interface InputsViewProps {
   value: number;
@@ -46,6 +46,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     this.componentDidMount = this.componentDidMount.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
 
     this.render = this.render.bind(this);
   }
@@ -65,6 +66,8 @@ class InputsView extends React.Component<InputsViewProps, IState> {
           i.key = value;
         } else if (tp === 'value') {
           i.value = value;
+        } else if (tp === 'type') {
+          i.type = value;
         }
       }
     }
@@ -76,24 +79,30 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     fetchInputs(this);
   }
 
-  handleAddInput() {
+  async handleAddInput() {
+    try {
+      let currInputs: any[] = [];
 
-    let currInputs: any[] = [];
+      if (this.state.inputs) {
+        currInputs = this.state.inputs!;
+      }
 
-    if (this.state.inputs) {
-      currInputs = this.state.inputs!;
+      const newInput = {
+        id: new Date().getTime().toString(),
+        key: 'key',
+        value: 'value',
+        type: 'number'
+      };
+      currInputs.push(newInput);
+
+      this.setState({
+        inputs: currInputs
+      });
+      await API.graphql(graphqlOperation(createInputs, { input: newInput }))
+
+    } catch (err) {
+      console.log('error creating todo:', err)
     }
-
-    currInputs.push({
-      id: new Date().getTime().toString(),
-      key: 'key',
-      value: 'value',
-      type: 'number'
-    });
-
-    this.setState({
-      inputs: currInputs
-    });
   }
 
   getInputToSave(id: string) {
@@ -111,7 +120,30 @@ class InputsView extends React.Component<InputsViewProps, IState> {
       const ipt = this.getInputToSave(id);
       await API.graphql(graphqlOperation(updateInputs, { input: ipt }));
     } catch (err) {
-      console.log('error creating account:', err)
+      console.log('error updating input:', err)
+    }
+  }
+
+  async handleDelete(e: any) {
+    const id = e.target.id;
+    let newInputs = [];
+    let inputToDelete = null;
+
+    for (const input of this.state.inputs) {
+      if (input.id === id) {
+        inputToDelete = {
+          'id': input.id
+        }
+        continue;
+      }
+      newInputs.push(input);
+
+    }
+    this.setState({ inputs: newInputs });
+    try {
+      await API.graphql({ query: deleteInputs, variables: { input: inputToDelete } });
+    } catch (err) {
+      console.log('error:', err)
     }
   }
 
@@ -122,7 +154,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
       return (
         < >
 
-<Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add input +</Button>
+          <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add input +</Button>
           {this.state.inputs ? this.state.inputs.map((input: any, i: number) => {
 
             return !input.type.includes('computed') ? (
@@ -155,8 +187,11 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                           :
                           <><TextField id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
                       }
+                      <TextField id="outlined-basic" variant="outlined" name={`type-${input.key}`} onChange={this.handleChange} value={input.type} />
+
 
                       <Button id={input.id} onClick={this.handleSave} variant="contained">Save</Button>
+                      <Button id={input.id} onClick={this.handleDelete} variant="contained">Delete</Button>
 
 
                     </Stack>
@@ -164,7 +199,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                   </CardContent>
                 </Card>
 
-            
+
               </>
             ) : <>
 
@@ -180,7 +215,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                 </CardContent>
               </Card>
 
-       
+
 
             </>
 
