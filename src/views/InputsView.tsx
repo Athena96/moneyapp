@@ -18,6 +18,7 @@ import { fetchInputs } from '../utilities/helpers';
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { createInputs, deleteInputs, updateInputs } from '../graphql/mutations';
+import { Input } from '../model/Input';
 
 interface InputsViewProps {
   value: number;
@@ -25,7 +26,7 @@ interface InputsViewProps {
 }
 
 interface IState {
-  inputs: any;
+  inputs: Input[];
 }
 
 class InputsView extends React.Component<InputsViewProps, IState> {

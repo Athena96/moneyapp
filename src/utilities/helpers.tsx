@@ -14,6 +14,7 @@ import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery } from "../API";
+import { Input } from '../model/Input';
 
 export interface RowData {
   date: string;
@@ -330,23 +331,12 @@ export async function fetchInputs(componentState: any) {
       query: listInputs
     })) as { data: ListInputsQuery }
     for (const input of response.data.listInputs!.items!) {
-
-      if (input?.type === 'date') {
-        fetchedInputs.push({
-          id: input?.id,
-          key: input?.key!,
-          type: input?.type!,
-          value: new Date(input?.value!)
-        });
-      } else if (input?.type === "number") {
-
-        fetchedInputs.push({
-          id: input?.id,
-          key: input?.key!,
-          type: input?.type!,
-          value: Number(input?.value!)
-        });
-      }
+      fetchedInputs.push(new Input(
+        input?.id!,
+        input?.key!,
+        input?.value!,
+        input?.type!
+      ));
 
       if (input?.key === 'growth') {
         growth = Number(input?.value!);
@@ -357,23 +347,30 @@ export async function fetchInputs(componentState: any) {
     }
 
     // add computed inputs
-    fetchedInputs.push({
-      id: new Date().getTime().toString(),
-      key: "absoluteMonthlyGrowth",
-      type: "computed-number",
-      value: (growth - inflation) / 12 / 100
-    });
+    fetchedInputs.push(new Input(
+      new Date().getTime().toString(),
+      "absoluteMonthlyGrowth",
+      String((growth - inflation) / 12 / 100),
+      "computed-number"
+    ));
 
-    fetchedInputs.push({
-      id: new Date().getTime().toString(),
-      key: "startDate",
-      type: "computed-date",
-      value: new Date()
-    });
+    fetchedInputs.push(new Input(
+      new Date().getTime().toString(),
+      "startDate",
+      new Date().toString(),
+      "computed-date",
+    ));
 
     componentState.setState({ inputs: fetchedInputs } as any);
     for (const i of fetchedInputs) {
-      componentState.setState({ [i.key]: i.value } as any);
+      if (i?.type === 'date' || i?.type === "computed-date") {
+        componentState.setState({ [i.key]: new Date(i.value) } as any);
+
+      } else if (i?.type === "number" || i?.type === "computed-number") {
+
+        componentState.setState({ [i.key]: Number(i.value) } as any);
+
+      }
     }
 
   } catch (error) {
