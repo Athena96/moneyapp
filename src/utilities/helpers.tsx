@@ -218,6 +218,18 @@ export async function fetchStartingBalances(componentState: any) {
       }
     } else {
 
+      if (!componentState.state.balances['brokerage']) {
+        componentState.state.balances['brokerage'] = {
+          0: 0.0
+        }
+      }
+
+      if (!componentState.state.balances['tax']) {
+        componentState.state.balances['tax'] = {
+          0: 0.0
+        }
+      }
+
       const newBrokNonStock = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + entry.quantity : componentState.state.balances['brokerage'][0];
       const currTaxNonStock = entry.account === 'tax' ? componentState.state.balances['tax'][0] + entry.quantity : componentState.state.balances['tax'][0];
 
