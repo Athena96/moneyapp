@@ -183,11 +183,11 @@ export async function fetchStartingBalances(componentState: any) {
             componentState.setState({
               balances: {
                 brokerage: {
-                  [0]: newBrokCurr,
+                  0: newBrokCurr,
 
                 },
                 tax: {
-                  [0]: currTaxCurr,
+                  0: currTaxCurr,
                 }
               }
             })
@@ -205,11 +205,11 @@ export async function fetchStartingBalances(componentState: any) {
             componentState.setState({
               balances: {
                 brokerage: {
-                  [0]: newBrok,
+                  0: newBrok,
 
                 },
                 tax: {
-                  [0]: currTax,
+                  0: currTax,
                 }
               }
             })
@@ -228,11 +228,11 @@ export async function fetchStartingBalances(componentState: any) {
       componentState.setState({
         balances: {
           brokerage: {
-            [0]: newBrokNonStock,
+            0: newBrokNonStock,
 
           },
           tax: {
-            [0]: currTaxNonStock,
+            0: currTaxNonStock,
           }
         }
       })

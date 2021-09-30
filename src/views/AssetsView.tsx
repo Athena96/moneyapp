@@ -1,17 +1,12 @@
 import * as React from 'react';
 
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import { API, graphqlOperation } from 'aws-amplify'
 
-
-import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 import { fetchAssets } from '../utilities/helpers';
 
@@ -148,7 +143,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                 < >
 
                     <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add assets +</Button>
-                    {this.state.assets ? this.state.assets.sort((a,b) => (a.id > b.id) ? 1 : -1 ).map((asset: Asset, i: number) => {
+                    {this.state.assets ? this.state.assets.sort((a, b) => (a.id > b.id) ? 1 : -1).map((asset: Asset, i: number) => {
 
                         return (
                             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>

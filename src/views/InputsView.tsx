@@ -1,9 +1,8 @@
 import * as React from 'react';
 
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
+import { API, graphqlOperation } from 'aws-amplify'
+import { createInputs, deleteInputs, updateInputs } from '../graphql/mutations';
 
-
-import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -13,12 +12,8 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
-import { fetchInputs } from '../utilities/helpers';
-
-import { listInputs } from '../graphql/queries';
-import { ListInputsQuery } from '../API';
-import { createInputs, deleteInputs, updateInputs } from '../graphql/mutations';
 import { Input } from '../model/Input';
+import { fetchInputs } from '../utilities/helpers';
 
 interface InputsViewProps {
   value: number;
@@ -59,12 +54,8 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     const inpts = this.state.inputs;
     const tp = name.split('-')[0];
     const key = name.split('-')[1];
-console.log(value);
-console.log(tp);
-console.log(key);
 
-for (const i of inpts) {
-
+    for (const i of inpts) {
       if (i.key === key) {
         if (tp === 'key') {
           i.key = value;

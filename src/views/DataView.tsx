@@ -3,7 +3,10 @@ import * as React from 'react';
 import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
-import { generateTable, RowData, fetchStartingBalances, fetchEvents, fetchAccounts, fetchBudgets, fetchInputs } from '../utilities/helpers';
+import {
+    generateTable, RowData, fetchStartingBalances,
+    fetchEvents, fetchAccounts, fetchBudgets, fetchInputs
+} from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -50,19 +53,10 @@ class DataView extends React.Component<DataViewProps, IState> {
             dateIm59: null,
             retireDate: null,
             minEnd: null,
-
             events: [],
             budgets: [],
             accounts: [],
-            balances: {
-                brokerage: {
-                    [0]: 0,
-
-                },
-                tax: {
-                    [0]: 0,
-                }
-            }
+            balances: { }
         }
         this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);

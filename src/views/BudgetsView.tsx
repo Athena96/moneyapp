@@ -2,13 +2,9 @@ import * as React from 'react';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createBudget, deleteBudget } from '../graphql/mutations'
-import { ListBudgetsQuery } from "../API";
-import { listBudgets } from '../graphql/queries'
 import awsExports from "../aws-exports";
 
 import { Budget } from '../model/Budget';
-import { Category } from '../model/Category';
-import { CategoryTypes } from "../API";
 import { fetchBudgets } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
@@ -90,7 +86,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
   }
 
   handleEditBudget(event: any) {
-    const idToEdit = (event.target as Element).id;
+    console.log((event.target as Element).id);
   }
 
   render() {
@@ -98,7 +94,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
       <>
         <Button style={{ width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
 
-        {this.state.budgets.sort((a,b) => (a.startDate > b.startDate) ? 1 : -1 ).map((budget: Budget) => {
+        {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget) => {
           return (
 
             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
@@ -106,47 +102,47 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
                 <Stack direction='row' spacing={4}>
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  <b>name: </b> {budget.name}
+                    <b>name: </b> {budget.name}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  <b>start: </b> {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
+                    <b>start: </b> {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  <b>end: </b>  {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
+                    <b>end: </b>  {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
                   </Typography>
                 </Stack>
 
                 <Stack direction='row' spacing={4}>
 
-                <Stack direction='column' spacing={0}>
-                  {budget.categories?.map((c,i) => {
-                    return (
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                      <b>{c.name}</b>
-                    </Typography>
-                    )
-                  })}
-            
-                </Stack>
+                  <Stack direction='column' spacing={0}>
+                    {budget.categories?.map((c, i) => {
+                      return (
+                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                          <b>{c.name}</b>
+                        </Typography>
+                      )
+                    })}
 
-                <Stack direction='column' spacing={0}>
-                  {budget.categories?.map((c,i) => {
-                    return (
-                      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                     ${c.value}
-                    </Typography>
-                    )
-                  })}
-            
-                </Stack>
+                  </Stack>
+
+                  <Stack direction='column' spacing={0}>
+                    {budget.categories?.map((c, i) => {
+                      return (
+                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                          ${c.value}
+                        </Typography>
+                      )
+                    })}
+
+                  </Stack>
                 </Stack>
 
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-                    <Link style={{color: 'white', textDecoration: 'none'}} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
+                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="outlined">Edit</Button></Link>
                     <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="contained">Delete</Button>
                   </Stack>
 
@@ -155,7 +151,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
             </Card>
           )
         })}
-        </>
+      </>
     ) : (<></>);
   }
 

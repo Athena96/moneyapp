@@ -50,15 +50,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       events: [],
       budgets: [],
       accounts: [],
-      balances: {
-        brokerage: {
-          [0]: 0,
-
-        },
-        tax: {
-          [0]: 0,
-        }
-      }
+      balances: { }
     }
     this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -88,18 +80,18 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
       const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
         this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
-        const options = {
+      const options = {
 
-          scales: {
-            y: {
-              beginAtZero: true,
-              min: 0
-            }
+        scales: {
+          y: {
+            beginAtZero: true,
+            min: 0
           }
-        };
-        return (
+        }
+      };
+      return (
         <Container >
-          <Line data={chartData} options={options}/>
+          <Line data={chartData} options={options} />
         </Container >
       );
     } else {
