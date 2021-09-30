@@ -112,8 +112,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             const ipt = this.getAssetToSave(id);
             let d = ipt;
             delete d?.strQuantity;
-            d!.printAsset();
-            console.log(d!)
             await API.graphql(graphqlOperation(updateAssets, { input: d! }));
         } catch (err) {
             console.log('error creating account:', err)

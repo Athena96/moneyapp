@@ -71,7 +71,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         eventToDelete = {
           'id': event.getKey()
         }
-        console.log(event.printEvent());
         continue;
       }
       newEvents.push(event);

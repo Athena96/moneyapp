@@ -85,7 +85,6 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   handleEditAccount(event: any) {
     const idToEdit = (event.target as Element).id;
-    console.log(idToEdit);
   }
 
   render() {

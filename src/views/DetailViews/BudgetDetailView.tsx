@@ -135,17 +135,11 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
   handleDeleteCategory(e: any) {
     const target = e.target;
     const catId = target.id;
-    console.log(`catId ${catId}`)
     let newListOfCategories = []
     if (this.state.categories != null) {
       for (const c of this.state.categories!) {
 
-        console.log(c.getKey())
-        console.log(catId)
-        console.log('---')
-
         if (c.getKey() !== catId) {
-          console.log('!!!')
           newListOfCategories.push(c);
         }
       }

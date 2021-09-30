@@ -271,7 +271,7 @@ export async function fetchEvents(componentState: any) {
           }
           const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
           const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
-          e.printEvent();
+
           fetchedEvents.push(e);
         }
         rep.setState({ events: fetchedEvents })
@@ -299,7 +299,18 @@ export async function fetchAccounts(componentState: any) {
   }
 }
 
+export function getInputForKeyFromList(key: string, inputs: Input[]): Input | null {
+  for (const input of inputs) {
+    if (input.key === key) {
+      return input;
+    }
+  }
+  return null;
+}
 export async function fetchBudgets(componentState: any) {
+
+  // fetch inputs.
+  let inputs: Input[] = await fetchInputs(null);
   let fetchedBudgets: Budget[] = [];
   try {
     const response = (await API.graphql({
@@ -311,7 +322,16 @@ export async function fetchBudgets(componentState: any) {
       if (budget?.categories) {
         cats = [];
         for (const category of budget!.categories!) {
-          cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+          // if category.name === input.name... use input.value.
+          const matchingInput = getInputForKeyFromList(category!.name!, inputs);
+          if (matchingInput != null) {
+            console.log('used intput for budget cat!!')
+            console.log(JSON.stringify(matchingInput));
+
+            cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+          } else {
+            cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+          }
         }
       }
       fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
@@ -322,8 +342,8 @@ export async function fetchBudgets(componentState: any) {
   }
 }
 
-export async function fetchInputs(componentState: any) {
-  let fetchedInputs: any[] = [];
+export async function fetchInputs(componentState: any | null): Promise<Input[]> {
+  let fetchedInputs: Input[] = [];
   let growth = 0.0;
   let inflation = 0.0;
   try {
@@ -361,21 +381,23 @@ export async function fetchInputs(componentState: any) {
       "computed-date",
     ));
 
-    componentState.setState({ inputs: fetchedInputs } as any);
-    for (const i of fetchedInputs) {
-      if (i?.type === 'date' || i?.type === "computed-date") {
-        componentState.setState({ [i.key]: new Date(i.value) } as any);
-
-      } else if (i?.type === "number" || i?.type === "computed-number") {
-
-        componentState.setState({ [i.key]: Number(i.value) } as any);
-
+    if (componentState != null) {
+      componentState.setState({ inputs: fetchedInputs } as any);
+      for (const i of fetchedInputs) {
+        if (i?.type === 'date' || i?.type === "computed-date") {
+          componentState.setState({ [i.key]: new Date(i.value) } as any);
+  
+        } else if (i?.type === "number" || i?.type === "computed-number") {
+          componentState.setState({ [i.key]: Number(i.value) } as any);
+  
+        }
       }
     }
-
   } catch (error) {
     console.log(error);
   }
+
+  return fetchedInputs;
 }
 
 export async function fetchAssets(componentState: any | null): Promise<Asset[]> {

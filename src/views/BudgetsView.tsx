@@ -91,7 +91,6 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
   handleEditBudget(event: any) {
     const idToEdit = (event.target as Element).id;
-    console.log(idToEdit);
   }
 
   render() {

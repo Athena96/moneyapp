@@ -59,8 +59,11 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     const inpts = this.state.inputs;
     const tp = name.split('-')[0];
     const key = name.split('-')[1];
+console.log(value);
+console.log(tp);
+console.log(key);
 
-    for (const i of inpts) {
+for (const i of inpts) {
 
       if (i.key === key) {
         if (tp === 'key') {
