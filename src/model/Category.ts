@@ -27,7 +27,7 @@ export class Category implements Key {
     }
 
     getKey() {
-        return `${this.name}-${this.value}-${this.type.toString()}`
+        return this.id;
     }
 }
 

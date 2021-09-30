@@ -46,7 +46,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleAddCategory = this.handleAddCategory.bind(this);
-
+    this.handleDeleteCategory = this.handleDeleteCategory.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.fetchBudget = this.fetchBudget.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -132,6 +132,26 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
 
   }
 
+  handleDeleteCategory(e: any) {
+    const target = e.target;
+    const catId = target.id;
+    console.log(`catId ${catId}`)
+    let newListOfCategories = []
+    if (this.state.categories != null) {
+      for (const c of this.state.categories!) {
+
+        console.log(c.getKey())
+        console.log(catId)
+        console.log('---')
+
+        if (c.getKey() !== catId) {
+          console.log('!!!')
+          newListOfCategories.push(c);
+        }
+      }
+      this.setState({categories: newListOfCategories});
+    }
+  }
 
   render() {
     return (
@@ -179,6 +199,9 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
                     
                     <p><b>category type</b></p>
                     <TextField id="outlined-basic" name={`${cat.id}-category-type`} variant="outlined" onChange={this.handleChange} value={cat.type} />
+
+                    <br />
+                    <Button id={cat.id} onClick={this.handleDeleteCategory} variant="contained">delete category</Button>
 
                     <br />
                     <Divider />
