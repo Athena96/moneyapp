@@ -108,8 +108,10 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
         if (use(account, date, i, dateIm59, balances, retireDate)) {
           accntUsed = account.name;
           const budget = getCurrentBudget(date, budgets)!;
-          const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
-          balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
+          // const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
+          // balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
+          balances[account.name][i] = balances[account.name][i - 1] + absoluteMonthlyGrowth * balances[account.name][i - 1] + (budget.getTypeSum(CategoryTypes.Income)-budget.getTypeSum(CategoryTypes.Expense));
+
         } else {
           balances[account.name][i] = balances[account.name][i - 1] + absoluteMonthlyGrowth * balances[account.name][i - 1];
           if (balances[account.name][i - 1] <= 0.0) {
