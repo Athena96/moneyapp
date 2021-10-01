@@ -95,9 +95,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
 
         {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
+          // if (event.account !== 'brokerage') return (<></>)
           return (
-
-
             <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
               <CardContent>
 
@@ -107,24 +106,24 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  <b>account: </b> {event.account}
+                    <b>account: </b> {event.account}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
+                    <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                  ${event.category ? event.category!.getValue().toString() : '...'}
+                    ${event.category ? event.category!.getValue().toString() : '...'}
                   </Typography>
 
                 </Stack>
                 <CardActions>
 
                   <Stack direction='row' spacing={4}>
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="outlined">Edit</Button></Link>
 
-                    <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="contained">Delete</Button>
+                    <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
+                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
 
                   </Stack>
                 </CardActions>
@@ -136,6 +135,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       </>
 
     ) : (<></>);
+
+
   }
 
 }

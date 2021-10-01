@@ -157,14 +157,14 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                 <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                   <CardContent>
 
-                    <Stack direction='row' spacing={4}>
-                      <TextField id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
+                    <Stack direction='column' spacing={2}>
+                      <TextField label="Key" id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
                       {
                         (input.type === "date") ?
                           <>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                               <DatePicker
-                                label="Basic example"
+                                label="Date"
                                 value={input.value}
                                 onChange={(newValue) => {
                                   const ipts = this.state.inputs;
@@ -180,13 +180,13 @@ class InputsView extends React.Component<InputsViewProps, IState> {
                             </LocalizationProvider>
                           </>
                           :
-                          <><TextField id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
+                          <><TextField label="Value" id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
                       }
-                      <TextField id="outlined-basic" variant="outlined" name={`type-${input.key}`} onChange={this.handleChange} value={input.type} />
+                      <TextField label="Data Type" id="outlined-basic" variant="outlined" name={`type-${input.key}`} onChange={this.handleChange} value={input.type} />
 
 
+                      <Button id={input.id} onClick={this.handleDelete} variant="outlined">Delete</Button>
                       <Button id={input.id} onClick={this.handleSave} variant="contained">Save</Button>
-                      <Button id={input.id} onClick={this.handleDelete} variant="contained">Delete</Button>
 
 
                     </Stack>

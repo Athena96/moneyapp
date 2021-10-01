@@ -47,9 +47,9 @@ export function getCurrentBudget(date: Date, budgets: Budget[]) {
 
 export function use(account: Account, currentDate: Date, currentDateIndex: number, dateIm59: Date, balances: any, retireDate: Date) {
   // don't USE any of my accounts before my retire date, only GROW them
-  if (currentDate < retireDate) {
-    return false;
-  }
+  // if (currentDate < retireDate) {
+  //   return false;
+  // }
 
   // use brokerage before im 59, then use up my 401k, then go back to my brokerage
   let accntToUse = null;
@@ -337,9 +337,6 @@ export async function fetchBudgets(componentState: any) {
           // if category.name === input.name... use input.value.
           const matchingInput = getInputForKeyFromList(category!.name!, inputs);
           if (matchingInput != null) {
-            console.log('used intput for budget cat!!')
-            console.log(JSON.stringify(matchingInput));
-
             cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
           } else {
             cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
@@ -398,10 +395,10 @@ export async function fetchInputs(componentState: any | null): Promise<Input[]> 
       for (const i of fetchedInputs) {
         if (i?.type === 'date' || i?.type === "computed-date") {
           componentState.setState({ [i.key]: new Date(i.value) } as any);
-  
+
         } else if (i?.type === "number" || i?.type === "computed-number") {
           componentState.setState({ [i.key]: Number(i.value) } as any);
-  
+
         }
       }
     }

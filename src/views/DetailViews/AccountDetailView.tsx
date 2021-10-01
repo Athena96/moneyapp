@@ -46,7 +46,7 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
     const value = target.value;
     const accnt = this.state.account!;
     accnt!.name = value;
-    this.setState({account: accnt});
+    this.setState({ account: accnt });
   }
 
   async handleSave() {
@@ -73,9 +73,10 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
     return (
       <div>
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
+          <h2><b>Account</b></h2>
+
           <Stack spacing={2}>
-            <p><b><b>name</b></b></p>
-            <TextField id="outlined-basic" variant="outlined" onChange={this.handleChange} value={this.state.account?.name!} />
+            <TextField id="outlined-basic" name="name" variant="outlined" onChange={this.handleChange} value={this.state.account?.name!} />
             <Button id={this.state.account?.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
           </Stack>
         </Container>

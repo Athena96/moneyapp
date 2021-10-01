@@ -80,9 +80,9 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
         name: e!.name!,
         date: new Date(e!.date!),
         account: e!.account!,
-        categoryName: e!.category!.name!,
-        categoryValue: e!.category!.value!,
-        categoryType: e!.category!.type!
+        categoryName: e!.category?.name || "",
+        categoryValue: e!.category?.value || 0.0,
+        categoryType: e!.category?.type || CategoryTypes.Expense
       });
     } catch (err) {
       console.log('error:', err)
@@ -95,15 +95,17 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
     return (
       <div>
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
+          <h2><b>Event</b></h2>
+
           <Stack spacing={2}>
-            <p><b><b>name</b></b></p>
-            <TextField id="outlined-basic" name="name" variant="outlined" onChange={this.handleChange} value={this.state.name ? this.state.name : '...'} />
-            <p><b>account</b></p>
-            <TextField id="outlined-basic" name="account" variant="outlined" onChange={this.handleChange} value={this.state.account} />
-            <p><b>date</b></p>
+
+            <TextField label="Name" id="outlined-basic" name="name" variant="outlined" onChange={this.handleChange} value={this.state.name ? this.state.name : '...'} />
+
+            <TextField label="Account" id="outlined-basic" name="account" variant="outlined" onChange={this.handleChange} value={this.state.account} />
+
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="Basic example"
+                label="date"
                 value={this.state.date}
                 onChange={(newValue) => {
                   this.setState({ date: newValue } as any);
@@ -112,15 +114,12 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
               />
             </LocalizationProvider>
 
-            <p><b>category name</b></p>
 
-            <TextField id="outlined-basic" name="categoryName" variant="outlined" onChange={this.handleChange} value={this.state.categoryName} />
-            <p><b>category value</b></p>
+            <TextField label="Category Name" id="outlined-basic" name="categoryName" variant="outlined" onChange={this.handleChange} value={this.state.categoryName} />
 
-            <TextField id="outlined-basic" name="categoryValue" variant="outlined" onChange={this.handleChange} value={this.state.categoryValue} />
-            <p><b>category type</b></p>
+            <TextField label="Category Value" id="outlined-basic" name="categoryValue" variant="outlined" onChange={this.handleChange} value={this.state.categoryValue} />
 
-            <TextField id="outlined-basic" name="categoryType" variant="outlined" onChange={this.handleChange} value={this.state.categoryType} />
+            <TextField label="Category Type" id="outlined-basic" name="categoryType" variant="outlined" onChange={this.handleChange} value={this.state.categoryType} />
 
             <Button id={this.state.id!} onClick={this.handleSave} variant="contained">Save</Button>
 

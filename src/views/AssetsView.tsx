@@ -51,12 +51,10 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         for (const asset of assts) {
 
             if (asset.getKey() === key) {
-                console.log("match....");
                 if (tp === 'ticker') {
                     asset.ticker = value;
                 }
                 if (tp === 'quantity') {
-                    console.log(value)
                     asset.setQuantity(value);
                 }
                 if (tp === 'hasIndexData') {
@@ -148,19 +146,14 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                         return (
                             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                                 <CardContent>
-                                    <Stack direction='column' spacing={0}>
-                                        <p><b>ticker</b></p><TextField id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
-                                        <p><b>quantity</b></p><TextField id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
-
-                                        <p><b>hasIndexData</b></p><TextField id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
-                                        <p><b>account</b></p><TextField id="outlined-basic" variant="outlined" name={`account-${asset.getKey()}`} onChange={this.handleChange} value={asset.account} />
-                                        <p><b>isCurrency</b></p><TextField id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
-                                        <br />
-
-                                        <Button id={asset.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button><br />
+                                    <Stack direction='column' spacing={2}>
+                                        <TextField label="Ticker" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
+                                        <TextField label="Quantity" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
+                                        <TextField label="Has Index Data" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
+                                        <TextField label="Account" id="outlined-basic" variant="outlined" name={`account-${asset.getKey()}`} onChange={this.handleChange} value={asset.account} />
+                                        <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
+                                        <Button id={asset.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
                                         <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
-
-
                                     </Stack>
 
                                 </CardContent>

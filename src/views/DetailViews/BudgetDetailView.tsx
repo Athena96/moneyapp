@@ -83,7 +83,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
         }
       }
 
-      this.setState({categories: cats});
+      this.setState({ categories: cats });
 
     } else {
 
@@ -119,13 +119,13 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
         }
       }
 
-      this.setState({ 
+      this.setState({
         id: e!.id!,
         name: e!.name!,
         startDate: new Date(e!.startDate!),
         endDate: new Date(e!.endDate!),
         categories: cats
-       });
+      });
     } catch (err) {
       console.log('error:', err)
     }
@@ -143,7 +143,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
           newListOfCategories.push(c);
         }
       }
-      this.setState({categories: newListOfCategories});
+      this.setState({ categories: newListOfCategories });
     }
   }
 
@@ -151,13 +151,12 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
     return (
       <div>
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
+          <h2><b>Budget</b></h2>
           <Stack spacing={2}>
-            <p><b><b>name</b></b></p>
-            <TextField id="outlined-basic" name={`name`}  variant="outlined" onChange={this.handleChange} value={this.state.name} />
-            <p><b>start date</b></p>
+            <TextField label="Name" id="outlined-basic" name={`name`} variant="outlined" onChange={this.handleChange} value={this.state.name} />
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="Basic example"
+                label="Start Date"
                 value={this.state.startDate}
                 onChange={(newValue) => {
                   this.setState({ startDate: newValue } as any);
@@ -165,10 +164,9 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
-            <p><b>end date</b></p>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label="Basic example"
+                label="End Date"
                 value={this.state.endDate}
                 onChange={(newValue) => {
                   this.setState({ endDate: newValue } as any);
@@ -180,21 +178,16 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
             <Divider />
 
             <p><b>Categories</b></p>
-            <Stack>
+            <Stack spacing={2}>
               {this.state.categories ? this.state.categories.map((cat, i) => {
                 return (
 
                   <>
-                    <p><b>category name</b></p>
-                    <TextField id="outlined-basic" name={`${cat.id}-category-name`} variant="outlined" onChange={this.handleChange} value={cat.name} />
+                    <TextField label="Category Name" id="outlined-basic" name={`${cat.id}-category-name`} variant="outlined" onChange={this.handleChange} value={cat.name} />
+                    <TextField label="Category Value" id="outlined-basic" name={`${cat.id}-category-value`} variant="outlined" onChange={this.handleChange} value={cat.value} />
+                    <TextField label="Category Type" id="outlined-basic" name={`${cat.id}-category-type`} variant="outlined" onChange={this.handleChange} value={cat.type} />
 
-                    <p><b>category value</b></p>
-                    <TextField id="outlined-basic" name={`${cat.id}-category-value`} variant="outlined" onChange={this.handleChange} value={cat.value} />
-                    
-                    <p><b>category type</b></p>
-                    <TextField id="outlined-basic" name={`${cat.id}-category-type`} variant="outlined" onChange={this.handleChange} value={cat.type} />
 
-                    <br />
                     <Button id={cat.id} onClick={this.handleDeleteCategory} variant="contained">delete category</Button>
 
                     <br />
