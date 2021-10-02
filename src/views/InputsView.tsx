@@ -90,13 +90,16 @@ class InputsView extends React.Component<InputsViewProps, IState> {
         currInputs = this.state.inputs!;
       }
 
-      const newInput = {
+      const newInput: any = {
         id: new Date().getTime().toString(),
         key: 'key',
         value: 'value',
         type: 'number',
-        simulation: this.state.selectedSimulation!.id
       };
+
+      if (this.state.selectedSimulation?.name !== 'default') {
+        newInput['simulation'] = this.state.selectedSimulation!.id;
+      }
       currInputs.push(newInput);
 
       this.setState({

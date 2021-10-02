@@ -58,10 +58,13 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   async handleAddEvents() {
     try {
       let newEvent: any = new Event(new Date().getTime().toString(), '...', new Date(), '...', null);
-      newEvent['simulation'] = this.state.selectedSimulation!.id;
+      if (this.state.selectedSimulation?.name !== 'default') {
+        newEvent['simulation'] = this.state.selectedSimulation!.id;
+      }
 
       let newEvents = [...this.state.events, newEvent]
       this.setState({ events: newEvents });
+
       await API.graphql(graphqlOperation(createEvent, { input: newEvent }));
 
     } catch (err) {
@@ -113,7 +116,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
                 <Stack direction='row' spacing={4}>
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>name: </b> {event.name === "" ? '...' : event.name}
+                    <b>name: </b> {event.name === "" ? '...' : event.name} - {event.id}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
