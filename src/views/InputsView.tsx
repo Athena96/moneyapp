@@ -11,9 +11,10 @@ import TextField from '@mui/material/TextField';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { Simulation } from '../model/Simulation';
 
 import { Input } from '../model/Input';
-import { fetchInputs } from '../utilities/helpers';
+import { fetchInputs, fetchSimulations } from '../utilities/helpers';
 
 interface InputsViewProps {
   value: number;
@@ -21,7 +22,8 @@ interface InputsViewProps {
 }
 
 interface IState {
-  inputs: Input[];
+  inputs: Input[],
+  selectedSimulation: Simulation | null
 }
 
 class InputsView extends React.Component<InputsViewProps, IState> {
@@ -31,7 +33,9 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     super(props);
 
     this.state = {
-      inputs: []
+      inputs: [],
+      selectedSimulation: null
+
     }
     this.handleChange = this.handleChange.bind(this);
 
@@ -71,7 +75,11 @@ class InputsView extends React.Component<InputsViewProps, IState> {
   }
 
   componentDidMount() {
-    fetchInputs(this);
+    fetchSimulations(this).then((simulations) => {
+
+      fetchInputs(this, simulations);
+
+    })
   }
 
   async handleAddInput() {
@@ -86,7 +94,8 @@ class InputsView extends React.Component<InputsViewProps, IState> {
         id: new Date().getTime().toString(),
         key: 'key',
         value: 'value',
-        type: 'number'
+        type: 'number',
+        simulation: this.state.selectedSimulation!.id
       };
       currInputs.push(newInput);
 

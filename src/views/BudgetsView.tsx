@@ -3,9 +3,10 @@ import * as React from 'react';
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createBudget, deleteBudget } from '../graphql/mutations'
 import awsExports from "../aws-exports";
+import { Simulation } from '../model/Simulation';
 
 import { Budget } from '../model/Budget';
-import { fetchBudgets } from '../utilities/helpers';
+import { fetchBudgets, fetchSimulations } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -25,7 +26,8 @@ interface BudgetsViewProps {
 
 interface IState {
   name: string,
-  budgets: Budget[]
+  budgets: Budget[],
+  selectedSimulation: Simulation | null
 }
 
 class BudgetsView extends React.Component<BudgetsViewProps, IState> {
@@ -36,7 +38,9 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
     this.state = {
       name: 'BudgetsView',
-      budgets: []
+      budgets: [],
+      selectedSimulation: null
+
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -47,12 +51,15 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
 
   componentDidMount() {
-    fetchBudgets(this);
+    fetchSimulations(this).then((simulations) => {
+      fetchBudgets(this, simulations);
+    });
   }
 
   async handleAddBudget() {
     try {
-      let newBudget = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), null);
+      let newBudget: any = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), null);
+      newBudget['simulation'] = this.state.selectedSimulation!.id;
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });
       await API.graphql(graphqlOperation(createBudget, { input: newBudget }))

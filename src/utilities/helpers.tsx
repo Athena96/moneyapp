@@ -3,10 +3,10 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import { Category } from '../model/Category';
 import { Asset } from '../model/Asset';
-import { CategoryTypes, ListAssetsQuery } from "../API";
+import { CategoryTypes, ListAssetsQuery, ListSimulationsQuery } from "../API";
 
 import { API } from 'aws-amplify'
-import { listAccounts, listAssets } from '../graphql/queries'
+import { listAccounts, listAssets, listSimulations } from '../graphql/queries'
 import { ListAccountsQuery } from "../API";
 import { ListBudgetsQuery } from "../API";
 import { listBudgets } from '../graphql/queries'
@@ -15,6 +15,7 @@ import { ListInputsQuery } from '../API';
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery } from "../API";
 import { Input } from '../model/Input';
+import { Simulation } from '../model/Simulation';
 
 export interface RowData {
   date: string;
@@ -255,7 +256,9 @@ export async function fetchStartingBalances(componentState: any) {
 }
 
 
-export async function fetchEvents(componentState: any) {
+export async function fetchEvents(componentState: any, simulations: Simulation[]) {
+  const selectedSim = getSelectedSimulation(simulations);
+
   const finnhub = require('finnhub');
   const api_key = finnhub.ApiClient.instance.authentications['api_key'];
   api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
@@ -270,21 +273,28 @@ export async function fetchEvents(componentState: any) {
           query: listEvents
         })) as { data: ListEventsQuery }
         for (const event of response.data.listEvents!.items!) {
-          let value = 0.0;
-          let name = event!.name!;
-          if (event!.category && event?.category.value) {
-            value = event?.category!.value!;
-          }
-          if (event?.name && event?.name?.includes('amzn')) {
-            const parts = event.name.split(' ');
-            const quantity = Number(parts[1]);
-            name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
-            value = Number((quantity * currentAmazonStockPrice - (0.3 * quantity * currentAmazonStockPrice)).toFixed(2));
-          }
-          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
-          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
 
-          fetchedEvents.push(e);
+          if (((event?.simulation === null || event?.simulation === undefined) && selectedSim?.name! === 'default') || (event?.simulation && event?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
+
+            let value = 0.0;
+            let name = event!.name!;
+            if (event!.category && event?.category.value) {
+              value = event?.category!.value!;
+            }
+            if (event?.name && event?.name?.includes('amzn')) {
+              const parts = event.name.split(' ');
+              const quantity = Number(parts[1]);
+              name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
+              value = Number((quantity * currentAmazonStockPrice - (0.3 * quantity * currentAmazonStockPrice)).toFixed(2));
+            }
+            const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
+            const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+
+            fetchedEvents.push(e);
+
+          }
+
+
         }
         rep.setState({ events: fetchedEvents })
       } catch (error) {
@@ -319,39 +329,56 @@ export function getInputForKeyFromList(key: string, inputs: Input[]): Input | nu
   }
   return null;
 }
-export async function fetchBudgets(componentState: any) {
+
+export function getSelectedSimulation(simulations: Simulation[]) {
+  for (const sim of simulations) {
+    if (sim.selected === 1) {
+      return sim;
+    }
+  }
+}
+
+export async function fetchBudgets(componentState: any, simulations: Simulation[]) {
+  const selectedSim = getSelectedSimulation(simulations);
 
   // fetch inputs.
-  let inputs: Input[] = await fetchInputs(null);
+  let inputs: Input[] = await fetchInputs(null, simulations);
   let fetchedBudgets: Budget[] = [];
   try {
     const response = (await API.graphql({
       query: listBudgets
     })) as { data: ListBudgetsQuery }
     for (const budget of response.data.listBudgets!.items!) {
-      let cats = null;
 
-      if (budget?.categories) {
-        cats = [];
-        for (const category of budget!.categories!) {
-          // if category.name === input.name... use input.value.
-          const matchingInput = getInputForKeyFromList(category!.name!, inputs);
-          if (matchingInput != null) {
-            cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-          } else {
-            cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+      if (((budget?.simulation === null || budget?.simulation === undefined) && selectedSim?.name! === 'default') || (budget?.simulation && budget?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
+
+        let cats = null;
+
+        if (budget?.categories) {
+          cats = [];
+          for (const category of budget!.categories!) {
+            // if category.name === input.name... use input.value.
+            const matchingInput = getInputForKeyFromList(category!.name!, inputs);
+            if (matchingInput != null) {
+              cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+            } else {
+              cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+            }
           }
         }
+        fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
       }
-      fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
     }
+
     componentState.setState({ budgets: fetchedBudgets })
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function fetchInputs(componentState: any | null): Promise<Input[]> {
+export async function fetchInputs(componentState: any | null, simulations: Simulation[]): Promise<Input[]> {
+  const selectedSim = getSelectedSimulation(simulations);
+
   let fetchedInputs: Input[] = [];
   let growth = 0.0;
   let inflation = 0.0;
@@ -360,19 +387,24 @@ export async function fetchInputs(componentState: any | null): Promise<Input[]> 
       query: listInputs
     })) as { data: ListInputsQuery }
     for (const input of response.data.listInputs!.items!) {
-      fetchedInputs.push(new Input(
-        input?.id!,
-        input?.key!,
-        input?.value!,
-        input?.type!
-      ));
 
-      if (input?.key === 'growth') {
-        growth = Number(input?.value!);
+      if (((input?.simulation === null || input?.simulation === undefined) && selectedSim?.name! === 'default') || (input?.simulation && input?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
+
+        fetchedInputs.push(new Input(
+          input?.id!,
+          input?.key!,
+          input?.value!,
+          input?.type!
+        ));
+
+        if (input?.key === 'growth') {
+          growth = Number(input?.value!);
+        }
+        if (input?.key === 'inflation') {
+          inflation = Number(input?.value!);
+        }
       }
-      if (input?.key === 'inflation') {
-        inflation = Number(input?.value!);
-      }
+
     }
 
     // add computed inputs
@@ -426,4 +458,24 @@ export async function fetchAssets(componentState: any | null): Promise<Asset[]> 
   }
   return fetchedAssets;
 
+}
+
+export async function fetchSimulations(componentState: any): Promise<Simulation[]> {
+  let fetchedSimulations: Simulation[] = [];
+  try {
+    const response = (await API.graphql({
+      query: listSimulations
+    })) as { data: ListSimulationsQuery }
+    let selSim: any;
+    for (const simulation of response.data.listSimulations!.items!) {
+      fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!));
+      if (simulation?.selected === 1) {
+        selSim = simulation;
+      }
+    }
+    componentState.setState({ simulations: fetchedSimulations, selectedSimulation: selSim })
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedSimulations;
 }

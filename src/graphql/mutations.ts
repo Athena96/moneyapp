@@ -57,6 +57,7 @@ export const createBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -78,6 +79,7 @@ export const updateBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -99,6 +101,7 @@ export const deleteBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -120,6 +123,7 @@ export const createEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -141,6 +145,7 @@ export const updateEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -162,6 +167,7 @@ export const deleteEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -177,6 +183,7 @@ export const createInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -192,6 +199,7 @@ export const updateInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -207,6 +215,7 @@ export const deleteInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -258,6 +267,48 @@ export const deleteAssets = /* GraphQL */ `
       hasIndexData
       account
       isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createSimulation = /* GraphQL */ `
+  mutation CreateSimulation(
+    $input: CreateSimulationInput!
+    $condition: ModelSimulationConditionInput
+  ) {
+    createSimulation(input: $input, condition: $condition) {
+      id
+      name
+      selected
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateSimulation = /* GraphQL */ `
+  mutation UpdateSimulation(
+    $input: UpdateSimulationInput!
+    $condition: ModelSimulationConditionInput
+  ) {
+    updateSimulation(input: $input, condition: $condition) {
+      id
+      name
+      selected
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteSimulation = /* GraphQL */ `
+  mutation DeleteSimulation(
+    $input: DeleteSimulationInput!
+    $condition: ModelSimulationConditionInput
+  ) {
+    deleteSimulation(input: $input, condition: $condition) {
+      id
+      name
+      selected
       createdAt
       updatedAt
     }

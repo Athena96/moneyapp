@@ -5,7 +5,8 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import {
     generateTable, RowData, fetchStartingBalances,
-    fetchEvents, fetchAccounts, fetchBudgets, fetchInputs
+    fetchEvents, fetchAccounts, fetchBudgets, fetchInputs,
+    fetchSimulations
 } from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
@@ -56,7 +57,7 @@ class DataView extends React.Component<DataViewProps, IState> {
             events: [],
             budgets: [],
             accounts: [],
-            balances: { }
+            balances: {}
         }
         this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -64,11 +65,14 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     componentDidMount() {
-        fetchInputs(this);
-        fetchBudgets(this);
+        fetchSimulations(this).then((simulations) => {
+            fetchBudgets(this, simulations);
+            fetchEvents(this, simulations);
+            fetchInputs(this, simulations);
+
+        })
         fetchAccounts(this);
         fetchStartingBalances(this);
-        fetchEvents(this);
     }
 
     inputsAreLoaded() {

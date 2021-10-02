@@ -77,6 +77,7 @@ export type CreateBudgetInput = {
   startDate?: string | null,
   endDate?: string | null,
   categories?: Array< CategoryInput | null > | null,
+  simulation?: string | null,
 };
 
 export type CategoryInput = {
@@ -96,6 +97,7 @@ export type ModelBudgetConditionInput = {
   name?: ModelStringInput | null,
   startDate?: ModelStringInput | null,
   endDate?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelBudgetConditionInput | null > | null,
   or?: Array< ModelBudgetConditionInput | null > | null,
   not?: ModelBudgetConditionInput | null,
@@ -108,6 +110,7 @@ export type Budget = {
   startDate?: string | null,
   endDate?: string | null,
   categories?:  Array<Category | null > | null,
+  simulation?: string | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -126,6 +129,7 @@ export type UpdateBudgetInput = {
   startDate?: string | null,
   endDate?: string | null,
   categories?: Array< CategoryInput | null > | null,
+  simulation?: string | null,
 };
 
 export type DeleteBudgetInput = {
@@ -138,12 +142,14 @@ export type CreateEventInput = {
   date?: string | null,
   account?: string | null,
   category?: CategoryInput | null,
+  simulation?: string | null,
 };
 
 export type ModelEventConditionInput = {
   name?: ModelStringInput | null,
   date?: ModelStringInput | null,
   account?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelEventConditionInput | null > | null,
   or?: Array< ModelEventConditionInput | null > | null,
   not?: ModelEventConditionInput | null,
@@ -156,6 +162,7 @@ export type Event = {
   date?: string | null,
   account?: string | null,
   category?: Category | null,
+  simulation?: string | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -166,6 +173,7 @@ export type UpdateEventInput = {
   date?: string | null,
   account?: string | null,
   category?: CategoryInput | null,
+  simulation?: string | null,
 };
 
 export type DeleteEventInput = {
@@ -177,12 +185,14 @@ export type CreateInputsInput = {
   key?: string | null,
   value?: string | null,
   type?: string | null,
+  simulation?: string | null,
 };
 
 export type ModelInputsConditionInput = {
   key?: ModelStringInput | null,
   value?: ModelStringInput | null,
   type?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelInputsConditionInput | null > | null,
   or?: Array< ModelInputsConditionInput | null > | null,
   not?: ModelInputsConditionInput | null,
@@ -194,6 +204,7 @@ export type Inputs = {
   key?: string | null,
   value?: string | null,
   type?: string | null,
+  simulation?: string | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -203,6 +214,7 @@ export type UpdateInputsInput = {
   key?: string | null,
   value?: string | null,
   type?: string | null,
+  simulation?: string | null,
 };
 
 export type DeleteInputsInput = {
@@ -278,6 +290,39 @@ export type DeleteAssetsInput = {
   id: string,
 };
 
+export type CreateSimulationInput = {
+  id?: string | null,
+  name?: string | null,
+  selected?: number | null,
+};
+
+export type ModelSimulationConditionInput = {
+  name?: ModelStringInput | null,
+  selected?: ModelIntInput | null,
+  and?: Array< ModelSimulationConditionInput | null > | null,
+  or?: Array< ModelSimulationConditionInput | null > | null,
+  not?: ModelSimulationConditionInput | null,
+};
+
+export type Simulation = {
+  __typename: "Simulation",
+  id: string,
+  name?: string | null,
+  selected?: number | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateSimulationInput = {
+  id: string,
+  name?: string | null,
+  selected?: number | null,
+};
+
+export type DeleteSimulationInput = {
+  id: string,
+};
+
 export type ModelAccountFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -313,6 +358,7 @@ export type ModelBudgetFilterInput = {
   name?: ModelStringInput | null,
   startDate?: ModelStringInput | null,
   endDate?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelBudgetFilterInput | null > | null,
   or?: Array< ModelBudgetFilterInput | null > | null,
   not?: ModelBudgetFilterInput | null,
@@ -329,6 +375,7 @@ export type ModelEventFilterInput = {
   name?: ModelStringInput | null,
   date?: ModelStringInput | null,
   account?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelEventFilterInput | null > | null,
   or?: Array< ModelEventFilterInput | null > | null,
   not?: ModelEventFilterInput | null,
@@ -345,6 +392,7 @@ export type ModelInputsFilterInput = {
   key?: ModelStringInput | null,
   value?: ModelStringInput | null,
   type?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelInputsFilterInput | null > | null,
   or?: Array< ModelInputsFilterInput | null > | null,
   not?: ModelInputsFilterInput | null,
@@ -371,6 +419,21 @@ export type ModelAssetsFilterInput = {
 export type ModelAssetsConnection = {
   __typename: "ModelAssetsConnection",
   items?:  Array<Assets | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelSimulationFilterInput = {
+  id?: ModelIDInput | null,
+  name?: ModelStringInput | null,
+  selected?: ModelIntInput | null,
+  and?: Array< ModelSimulationFilterInput | null > | null,
+  or?: Array< ModelSimulationFilterInput | null > | null,
+  not?: ModelSimulationFilterInput | null,
+};
+
+export type ModelSimulationConnection = {
+  __typename: "ModelSimulationConnection",
+  items?:  Array<Simulation | null > | null,
   nextToken?: string | null,
 };
 
@@ -438,6 +501,7 @@ export type CreateBudgetMutation = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -462,6 +526,7 @@ export type UpdateBudgetMutation = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -486,6 +551,7 @@ export type DeleteBudgetMutation = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -510,6 +576,7 @@ export type CreateEventMutation = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -534,6 +601,7 @@ export type UpdateEventMutation = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -558,6 +626,7 @@ export type DeleteEventMutation = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -575,6 +644,7 @@ export type CreateInputsMutation = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -592,6 +662,7 @@ export type UpdateInputsMutation = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -609,6 +680,7 @@ export type DeleteInputsMutation = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -671,6 +743,54 @@ export type DeleteAssetsMutation = {
   } | null,
 };
 
+export type CreateSimulationMutationVariables = {
+  input: CreateSimulationInput,
+  condition?: ModelSimulationConditionInput | null,
+};
+
+export type CreateSimulationMutation = {
+  createSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateSimulationMutationVariables = {
+  input: UpdateSimulationInput,
+  condition?: ModelSimulationConditionInput | null,
+};
+
+export type UpdateSimulationMutation = {
+  updateSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteSimulationMutationVariables = {
+  input: DeleteSimulationInput,
+  condition?: ModelSimulationConditionInput | null,
+};
+
+export type DeleteSimulationMutation = {
+  deleteSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
 export type GetAccountQueryVariables = {
   id: string,
 };
@@ -723,6 +843,7 @@ export type GetBudgetQuery = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -750,6 +871,7 @@ export type ListBudgetsQuery = {
         value?: number | null,
         type?: CategoryTypes | null,
       } | null > | null,
+      simulation?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -775,6 +897,7 @@ export type GetEventQuery = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -802,6 +925,7 @@ export type ListEventsQuery = {
         value?: number | null,
         type?: CategoryTypes | null,
       } | null,
+      simulation?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -820,6 +944,7 @@ export type GetInputsQuery = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -840,6 +965,7 @@ export type ListInputsQuery = {
       key?: string | null,
       value?: string | null,
       type?: string | null,
+      simulation?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -882,6 +1008,42 @@ export type ListAssetsQuery = {
       hasIndexData?: number | null,
       account?: string | null,
       isCurrency?: number | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetSimulationQueryVariables = {
+  id: string,
+};
+
+export type GetSimulationQuery = {
+  getSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListSimulationsQueryVariables = {
+  filter?: ModelSimulationFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListSimulationsQuery = {
+  listSimulations?:  {
+    __typename: "ModelSimulationConnection",
+    items?:  Array< {
+      __typename: "Simulation",
+      id: string,
+      name?: string | null,
+      selected?: number | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -933,6 +1095,7 @@ export type OnCreateBudgetSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -952,6 +1115,7 @@ export type OnUpdateBudgetSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -971,6 +1135,7 @@ export type OnDeleteBudgetSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null > | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -990,6 +1155,7 @@ export type OnCreateEventSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1009,6 +1175,7 @@ export type OnUpdateEventSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1028,6 +1195,7 @@ export type OnDeleteEventSubscription = {
       value?: number | null,
       type?: CategoryTypes | null,
     } | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1040,6 +1208,7 @@ export type OnCreateInputsSubscription = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1052,6 +1221,7 @@ export type OnUpdateInputsSubscription = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1064,6 +1234,7 @@ export type OnDeleteInputsSubscription = {
     key?: string | null,
     value?: string | null,
     type?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1106,6 +1277,39 @@ export type OnDeleteAssetsSubscription = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateSimulationSubscription = {
+  onCreateSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateSimulationSubscription = {
+  onUpdateSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteSimulationSubscription = {
+  onDeleteSimulation?:  {
+    __typename: "Simulation",
+    id: string,
+    name?: string | null,
+    selected?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,

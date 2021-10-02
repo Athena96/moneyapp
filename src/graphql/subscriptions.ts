@@ -45,6 +45,7 @@ export const onCreateBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -63,6 +64,7 @@ export const onUpdateBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -81,6 +83,7 @@ export const onDeleteBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -99,6 +102,7 @@ export const onCreateEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -117,6 +121,7 @@ export const onUpdateEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -135,6 +140,7 @@ export const onDeleteEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -147,6 +153,7 @@ export const onCreateInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -159,6 +166,7 @@ export const onUpdateInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -171,6 +179,7 @@ export const onDeleteInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -213,6 +222,39 @@ export const onDeleteAssets = /* GraphQL */ `
       hasIndexData
       account
       isCurrency
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateSimulation = /* GraphQL */ `
+  subscription OnCreateSimulation {
+    onCreateSimulation {
+      id
+      name
+      selected
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateSimulation = /* GraphQL */ `
+  subscription OnUpdateSimulation {
+    onUpdateSimulation {
+      id
+      name
+      selected
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteSimulation = /* GraphQL */ `
+  subscription OnDeleteSimulation {
+    onDeleteSimulation {
+      id
+      name
+      selected
       createdAt
       updatedAt
     }

@@ -25,7 +25,7 @@ type Budget @model {
   startDate: AWSDateTime
   endDate: AWSDateTime
   categories: [Category]
-
+  simulation: String
 }
 
 type Event @model {
@@ -34,6 +34,7 @@ type Event @model {
   date: AWSDateTime
   account: String
   category: Category
+  simulation: String
 }
 
 type Inputs @model {
@@ -41,6 +42,7 @@ type Inputs @model {
   key: String
   value: String
   type: String
+  simulation: String
 }
 
 type Assets @model {
@@ -52,3 +54,8 @@ type Assets @model {
   isCurrency: Int
 }
 
+type Simulation @model {
+  id: ID!
+  name: String
+  selected: Int
+}

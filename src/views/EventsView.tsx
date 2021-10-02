@@ -3,9 +3,10 @@ import * as React from 'react';
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createEvent, deleteEvent } from '../graphql/mutations'
 import awsExports from "../aws-exports";
-
 import { Event } from '../model/Event';
-import { fetchEvents } from '../utilities/helpers';
+
+import { Simulation } from '../model/Simulation';
+import { fetchEvents, fetchSimulations } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -26,7 +27,9 @@ interface EventsViewProps {
 
 interface IState {
   name: string,
-  events: Event[]
+  events: Event[],
+  selectedSimulation: Simulation | null
+
 }
 
 class EventsView extends React.Component<EventsViewProps, IState> {
@@ -35,7 +38,9 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     super(props);
     this.state = {
       name: 'EventsView',
-      events: []
+      events: [],
+      selectedSimulation: null
+
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleDeleteEvents = this.handleDeleteEvents.bind(this);
@@ -44,15 +49,38 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   componentDidMount() {
-    fetchEvents(this);
+
+    fetchSimulations(this).then((simulations) => {
+      fetchEvents(this, simulations);
+    })
   }
 
   async handleAddEvents() {
     try {
-      let newEvent = new Event(new Date().getTime().toString(), '...', new Date(), '...', null);
+      let newEvent: any = new Event(new Date().getTime().toString(), '...', new Date(), '...', null);
+      newEvent['simulation'] = this.state.selectedSimulation!.id;
+
       let newEvents = [...this.state.events, newEvent]
       this.setState({ events: newEvents });
-      await API.graphql(graphqlOperation(createEvent, { input: newEvent }))
+      await API.graphql(graphqlOperation(createEvent, { input: newEvent }));
+
+
+      // pull budgets
+      // pull events
+      // pull inputs
+
+      // for each budget
+      //  make a copy
+      //  set simulation to the newly created simulation id
+      //  create budget
+
+      // same for events
+      // same for inputs
+
+      
+
+
+
     } catch (err) {
       console.log('error creating todo:', err)
     }

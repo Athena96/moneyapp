@@ -4,7 +4,11 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
-import { generateTable, fetchStartingBalances, fetchAccounts, fetchBudgets, fetchInputs, fetchEvents } from '../utilities/helpers';
+import {
+  generateTable, fetchStartingBalances,
+  fetchAccounts, fetchBudgets, fetchInputs,
+  fetchEvents, fetchSimulations
+} from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
 
@@ -50,7 +54,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       events: [],
       budgets: [],
       accounts: [],
-      balances: { }
+      balances: {}
     }
     this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -59,11 +63,13 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   componentDidMount() {
-    fetchInputs(this);
-    fetchBudgets(this);
+    fetchSimulations(this).then((simulations) => {
+      fetchBudgets(this, simulations);
+      fetchEvents(this, simulations);
+      fetchInputs(this, simulations);
+    })
     fetchAccounts(this);
     fetchStartingBalances(this);
-    fetchEvents(this);
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {

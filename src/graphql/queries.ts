@@ -42,6 +42,7 @@ export const getBudget = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -65,6 +66,7 @@ export const listBudgets = /* GraphQL */ `
           value
           type
         }
+        simulation
         createdAt
         updatedAt
       }
@@ -85,6 +87,7 @@ export const getEvent = /* GraphQL */ `
         value
         type
       }
+      simulation
       createdAt
       updatedAt
     }
@@ -108,6 +111,7 @@ export const listEvents = /* GraphQL */ `
           value
           type
         }
+        simulation
         createdAt
         updatedAt
       }
@@ -122,6 +126,7 @@ export const getInputs = /* GraphQL */ `
       key
       value
       type
+      simulation
       createdAt
       updatedAt
     }
@@ -139,6 +144,7 @@ export const listInputs = /* GraphQL */ `
         key
         value
         type
+        simulation
         createdAt
         updatedAt
       }
@@ -174,6 +180,35 @@ export const listAssets = /* GraphQL */ `
         hasIndexData
         account
         isCurrency
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getSimulation = /* GraphQL */ `
+  query GetSimulation($id: ID!) {
+    getSimulation(id: $id) {
+      id
+      name
+      selected
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listSimulations = /* GraphQL */ `
+  query ListSimulations(
+    $filter: ModelSimulationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSimulations(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        selected
         createdAt
         updatedAt
       }
