@@ -64,23 +64,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       this.setState({ events: newEvents });
       await API.graphql(graphqlOperation(createEvent, { input: newEvent }));
 
-
-      // pull budgets
-      // pull events
-      // pull inputs
-
-      // for each budget
-      //  make a copy
-      //  set simulation to the newly created simulation id
-      //  create budget
-
-      // same for events
-      // same for inputs
-
-      
-
-
-
     } catch (err) {
       console.log('error creating todo:', err)
     }

@@ -3,9 +3,11 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import { Category } from '../model/Category';
 import { Asset } from '../model/Asset';
+import { Input } from '../model/Input';
+import { Simulation } from '../model/Simulation';
 import { CategoryTypes, ListAssetsQuery, ListSimulationsQuery } from "../API";
 
-import { API } from 'aws-amplify'
+import { API, graphqlOperation } from 'aws-amplify'
 import { listAccounts, listAssets, listSimulations } from '../graphql/queries'
 import { ListAccountsQuery } from "../API";
 import { ListBudgetsQuery } from "../API";
@@ -14,8 +16,7 @@ import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery } from "../API";
-import { Input } from '../model/Input';
-import { Simulation } from '../model/Simulation';
+import { createBudget, createEvent, createInputs } from '../graphql/mutations';
 
 export interface RowData {
   date: string;
@@ -25,7 +26,7 @@ export interface RowData {
   accountUsed: string;
 }
 
-export function dateRange(startDate: Date, endDate: Date, steps = 30) {
+export function dateRange(startDate: Date, endDate: Date, steps = 31) {
   const dateArray = [];
   let currentDate = new Date(startDate);
 
@@ -351,7 +352,6 @@ export async function fetchBudgets(componentState: any, simulations: Simulation[
     for (const budget of response.data.listBudgets!.items!) {
 
       if (((budget?.simulation === null || budget?.simulation === undefined) && selectedSim?.name! === 'default') || (budget?.simulation && budget?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
-
         let cats = null;
 
         if (budget?.categories) {
@@ -478,4 +478,201 @@ export async function fetchSimulations(componentState: any): Promise<Simulation[
     console.log(error);
   }
   return fetchedSimulations;
+}
+
+
+// 
+
+export async function fetchDefaultInputs(): Promise<Input[]> {
+  let fetchedInputs: Input[] = [];
+  // let growth = 0.0;
+  // let inflation = 0.0;
+  try {
+    const response = (await API.graphql({
+      query: listInputs
+    })) as { data: ListInputsQuery }
+    for (const input of response.data.listInputs!.items!) {
+
+      if (((input?.simulation === null || input?.simulation === undefined) || (input?.simulation && input?.simulation! === '1633145789870'))) {
+
+        fetchedInputs.push(new Input(
+          input?.id!,
+          input?.key!,
+          input?.value!,
+          input?.type!
+        ));
+
+        // if (input?.key === 'growth') {
+        //   growth = Number(input?.value!);
+        // }
+        // if (input?.key === 'inflation') {
+        //   inflation = Number(input?.value!);
+        // }
+      }
+
+    }
+
+    // add computed inputs
+    // fetchedInputs.push(new Input(
+    //   new Date().getTime().toString(),
+    //   "absoluteMonthlyGrowth",
+    //   String((growth - inflation) / 12 / 100),
+    //   "computed-number"
+    // ));
+
+    // fetchedInputs.push(new Input(
+    //   new Date().getTime().toString(),
+    //   "startDate",
+    //   new Date().toString(),
+    //   "computed-date",
+    // ));
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  return fetchedInputs;
+}
+
+export async function fetchDefaultBudgets(): Promise<Budget[]> {
+
+  // fetch inputs.
+  let inputs: Input[] = await fetchDefaultInputs();
+  let fetchedBudgets: Budget[] = [];
+  try {
+    const response = (await API.graphql({
+      query: listBudgets
+    })) as { data: ListBudgetsQuery }
+    for (const budget of response.data.listBudgets!.items!) {
+
+      if (((budget?.simulation === null || budget?.simulation === undefined) || (budget?.simulation && budget?.simulation! === '1633145789870'))) {
+
+        let cats = null;
+
+        if (budget?.categories) {
+          cats = [];
+          for (const category of budget!.categories!) {
+            // if category.name === input.name... use input.value.
+            const matchingInput = getInputForKeyFromList(category!.name!, inputs);
+            if (matchingInput != null) {
+              cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+            } else {
+              cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
+            }
+          }
+        }
+        fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
+      }
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  return fetchedBudgets;
+}
+
+
+export async function fetchDefaultEvents(): Promise<Event[]> {
+  let fetchedEvents: Event[] = [];
+  try {
+    const response = (await API.graphql({
+      query: listEvents
+    })) as { data: ListEventsQuery }
+
+    for (const event of response.data.listEvents!.items!) {
+      if (((event?.simulation === null || event?.simulation === undefined) || (event?.simulation && event?.simulation! === '1633145789870'))) {
+
+        let value = 0.0;
+        let name = event!.name!;
+        if (event!.category && event?.category.value) {
+          value = event?.category!.value!;
+        }
+
+        const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
+        const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+
+        fetchedEvents.push(e);
+
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return fetchedEvents;
+}
+
+export async function createBudgetBranch(budget: any) {
+  try {
+    await API.graphql(graphqlOperation(createBudget, { input: budget }))
+  } catch (err) {
+    console.log('error creating budget:', err)
+  }
+}
+
+export async function createEventBranch(event: any) {
+  try {
+    await API.graphql(graphqlOperation(createEvent, { input: event }))
+  } catch (err) {
+    console.log('error creating event:', err)
+  }
+}
+
+export async function createInputBranch(ipt: any) {
+  try {
+    await API.graphql(graphqlOperation(createInputs, { input: ipt }))
+  } catch (err) {
+    console.log('error creating input:', err)
+  }
+}
+
+
+
+export async function fetchAllBudgets() {
+  let fetchedBudgets: any = [];
+  try {
+    const response = (await API.graphql({
+      query: listBudgets
+    })) as { data: ListBudgetsQuery }
+    for (const budget of response.data.listBudgets!.items!) {
+      fetchedBudgets.push(budget);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedBudgets;
+}
+
+export async function fetchAllEvents() {
+  let fetchedEvents: any = [];
+  try {
+    const response = (await API.graphql({
+      query: listEvents
+    })) as { data: ListEventsQuery }
+    for (const event of response.data.listEvents!.items!) {
+      fetchedEvents.push(event);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedEvents;
+}
+
+export async function fetchAllInputs() {
+  let fetchedInputs: any = [];
+  try {
+    const response = (await API.graphql({
+      query: listInputs
+    })) as { data: ListInputsQuery }
+    for (const input of response.data.listInputs!.items!) {
+      fetchedInputs.push(input);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedInputs;
 }
