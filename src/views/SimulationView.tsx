@@ -234,7 +234,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                                     <TextField label="Name" id="outlined-basic" variant="outlined" name={`name-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.name} />
                                     <TextField label="Is Selected?" id="outlined-basic" variant="outlined" name={`selected-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.selected} />
 
-                                    <Button id={simulation.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
+
                                     <Button id={simulation.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
                                 </Stack>
 

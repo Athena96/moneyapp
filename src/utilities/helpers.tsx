@@ -177,7 +177,7 @@ export async function fetchStartingBalances(componentState: any) {
         finnhubClient.cryptoCandles(`BINANCE:${entry.ticker}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
           if (data && data.c && data.c.length >= 2) {
             const value: number = data.c[1];
-            console.log(`${entry.ticker} - ${value}`);
+            // console.log(`${entry.ticker} - ${value}`);
 
             const holdingValue = value * entry.quantity;
             const newBrokCurr = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
@@ -199,7 +199,7 @@ export async function fetchStartingBalances(componentState: any) {
         finnhubClient.quote(entry.ticker, (error: any, data: any, response: any) => {
           if (data && data.c) {
             const value: number = data.c;
-            console.log(`${entry.ticker} - ${value}`);
+            // console.log(`${entry.ticker} - ${value}`);
 
             const holdingValue = value * entry.quantity;
             const newBrok = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
@@ -235,8 +235,8 @@ export async function fetchStartingBalances(componentState: any) {
       const newBrokNonStock = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + entry.quantity : componentState.state.balances['brokerage'][0];
       const currTaxNonStock = entry.account === 'tax' ? componentState.state.balances['tax'][0] + entry.quantity : componentState.state.balances['tax'][0];
 
-      console.log(`${entry.ticker} - ${newBrokNonStock}`);
-      console.log(`${entry.ticker} - ${newBrokNonStock}`);
+      // console.log(`${entry.ticker} - ${newBrokNonStock}`);
+      // console.log(`${entry.ticker} - ${newBrokNonStock}`);
 
 
       componentState.setState({
@@ -256,6 +256,23 @@ export async function fetchStartingBalances(componentState: any) {
 
 }
 
+export async function paginateEvents() {
+  let nxtTkn: string | null | undefined;
+  let events: any = []
+  do {
+    const response = (await API.graphql({
+      query: listEvents, variables: { nextToken: nxtTkn }
+    })) as { data: ListEventsQuery }
+  
+    for (const event of response.data.listEvents!.items!) {
+      events.push(event);
+    }
+    nxtTkn = response.data.listEvents?.nextToken;
+  } while (nxtTkn !== null);
+
+  return events;
+
+}
 
 export async function fetchEvents(componentState: any, simulations: Simulation[]) {
   const selectedSim = getSelectedSimulation(simulations);
@@ -270,10 +287,9 @@ export async function fetchEvents(componentState: any, simulations: Simulation[]
       const currentAmazonStockPrice: number = data.c;
       let fetchedEvents: Event[] = [];
       try {
-        const response = (await API.graphql({
-          query: listEvents
-        })) as { data: ListEventsQuery }
-        for (const event of response.data.listEvents!.items!) {
+        const response = await paginateEvents();
+        console.log('CNT: ' + response.length);
+        for (const event of response) {
 
           if (((event?.simulation === null || event?.simulation === undefined) && selectedSim?.name! === 'default') || (event?.simulation && event?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
 
@@ -576,11 +592,8 @@ export async function fetchDefaultBudgets(): Promise<Budget[]> {
 export async function fetchDefaultEvents(): Promise<Event[]> {
   let fetchedEvents: Event[] = [];
   try {
-    const response = (await API.graphql({
-      query: listEvents
-    })) as { data: ListEventsQuery }
-
-    for (const event of response.data.listEvents!.items!) {
+    const response = await paginateEvents();
+    for (const event of response) {
       if (((event?.simulation === null || event?.simulation === undefined) || (event?.simulation && event?.simulation! === '1633145789870'))) {
 
         let value = 0.0;
@@ -648,10 +661,8 @@ export async function fetchAllBudgets() {
 export async function fetchAllEvents() {
   let fetchedEvents: any = [];
   try {
-    const response = (await API.graphql({
-      query: listEvents
-    })) as { data: ListEventsQuery }
-    for (const event of response.data.listEvents!.items!) {
+    const response = await paginateEvents();
+    for (const event of response) {
       fetchedEvents.push(event);
     }
 
