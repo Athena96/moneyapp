@@ -17,6 +17,7 @@ import { ListInputsQuery } from '../API';
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery } from "../API";
 import { createBudget, createEvent, createInputs } from '../graphql/mutations';
+import { getCookie, setCookie } from './CookiesHelper';
 
 export interface RowData {
   date: string;
@@ -161,6 +162,42 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 }
 
 
+function computeCurrentyStartingBalances(componentState: any, currentCurrencyVal: number, asset: Asset) {
+    const value: number = currentCurrencyVal;
+    const holdingValue = value * asset.quantity;
+    const newBrokCurr = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
+    const currTaxCurr = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
+    componentState.setState({
+      balances: {
+        brokerage: {
+          0: newBrokCurr,
+
+        },
+        tax: {
+          0: currTaxCurr,
+        }
+      }
+    })
+}
+
+
+function computeSecuritiesStartingBalances(componentState: any, currentSecurityVal: number, asset: Asset) {
+  const holdingValue = currentSecurityVal * asset.quantity;
+  const newBrok = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
+  const currTax = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
+  componentState.setState({
+    balances: {
+      brokerage: {
+        0: newBrok,
+
+      },
+      tax: {
+        0: currTax,
+      }
+    }
+  })
+}
+
 export async function fetchStartingBalances(componentState: any) {
   const finnhub = require('finnhub');
 
@@ -171,74 +208,53 @@ export async function fetchStartingBalances(componentState: any) {
   const finnhubClient = new finnhub.DefaultApi()
 
   const assets: Asset[] = await fetchAssets(null);
+
+  if (!componentState.state.balances['brokerage']) {
+    componentState.state.balances['brokerage'] = {
+      0: 0.0
+    }
+  }
+
+  if (!componentState.state.balances['tax']) {
+    componentState.state.balances['tax'] = {
+      0: 0.0
+    }
+  }
+
   for (const entry of assets) {
     if (entry.ticker !== null && entry.hasIndexData === 1) {
       if (entry.isCurrency === 1) {
-        finnhubClient.cryptoCandles(`BINANCE:${entry.ticker}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
-          if (data && data.c && data.c.length >= 2) {
-            const value: number = data.c[1];
-            // console.log(`${entry.ticker} - ${value}`);
 
-            const holdingValue = value * entry.quantity;
-            const newBrokCurr = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-            const currTaxCurr = entry.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-            componentState.setState({
-              balances: {
-                brokerage: {
-                  0: newBrokCurr,
+        const cookie = getCookie(entry.ticker);
+        if (cookie) {
+          computeCurrentyStartingBalances(componentState, cookie.getValue(), entry);
+        } else {
+          finnhubClient.cryptoCandles(`BINANCE:${entry.ticker}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
+            if (data && data.c && data.c.length >= 2) {
+              const value: number = data.c[1];
+              setCookie(entry.ticker, value.toString());
+              computeCurrentyStartingBalances(componentState, value, entry);
+            }
+          });
+        }
 
-                },
-                tax: {
-                  0: currTaxCurr,
-                }
-              }
-            })
-          }
-        });
       } else {
-        finnhubClient.quote(entry.ticker, (error: any, data: any, response: any) => {
-          if (data && data.c) {
-            const value: number = data.c;
-            // console.log(`${entry.ticker} - ${value}`);
-
-            const holdingValue = value * entry.quantity;
-            const newBrok = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-            const currTax = entry.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-            componentState.setState({
-              balances: {
-                brokerage: {
-                  0: newBrok,
-
-                },
-                tax: {
-                  0: currTax,
-                }
-              }
-            })
-          }
-        });
+        const stockCookie = getCookie(entry.ticker);
+        if (stockCookie && stockCookie != null) {
+          computeSecuritiesStartingBalances(componentState, stockCookie.getValue(), entry);
+        } else {
+          finnhubClient.quote(entry.ticker, (error: any, data: any, response: any) => {
+            if (data && data.c) {
+              const value: number = data.c;
+              setCookie(entry.ticker, value.toString());
+              computeSecuritiesStartingBalances(componentState, value, entry);
+            }
+          });
+        }
       }
     } else {
-
-      if (!componentState.state.balances['brokerage']) {
-        componentState.state.balances['brokerage'] = {
-          0: 0.0
-        }
-      }
-
-      if (!componentState.state.balances['tax']) {
-        componentState.state.balances['tax'] = {
-          0: 0.0
-        }
-      }
-
       const newBrokNonStock = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + entry.quantity : componentState.state.balances['brokerage'][0];
       const currTaxNonStock = entry.account === 'tax' ? componentState.state.balances['tax'][0] + entry.quantity : componentState.state.balances['tax'][0];
-
-      // console.log(`${entry.ticker} - ${newBrokNonStock}`);
-      // console.log(`${entry.ticker} - ${newBrokNonStock}`);
-
-
       componentState.setState({
         balances: {
           brokerage: {
@@ -274,53 +290,61 @@ export async function paginateEvents() {
 
 }
 
-export async function fetchEvents(componentState: any, simulations: Simulation[]) {
-  const selectedSim = getSelectedSimulation(simulations);
 
+async function computeEvents(currentAmazonStockPrice: number, selectedSim: Simulation, componentState: any) {
+  let fetchedEvents: Event[] = [];
+  try {
+    const response = await paginateEvents();
+    for (const event of response) {
+
+      if (((event?.simulation === null || event?.simulation === undefined) && selectedSim?.name! === 'default') || (event?.simulation && event?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
+
+        let value = 0.0;
+        let name = event!.name!;
+        if (event!.category && event?.category.value) {
+          value = event?.category!.value!;
+        }
+
+        // if the event is an AMZN stock RSU vesting, then use todays current stock price for this.
+        if (event?.name && event?.name?.includes('amzn')) {
+          const parts = event.name.split(' ');
+          const quantity = Number(parts[1]);
+          name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
+          value = Number((quantity * currentAmazonStockPrice - (0.3 * quantity * currentAmazonStockPrice)).toFixed(2));
+        }
+        const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
+        const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+
+        fetchedEvents.push(e);
+      }
+    }
+    componentState.setState({ events: fetchedEvents })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function fetchEvents(componentState: any, simulations: Simulation[]) {
+  
+  const selectedSim = getSelectedSimulation(simulations);
   const finnhub = require('finnhub');
   const api_key = finnhub.ApiClient.instance.authentications['api_key'];
   api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
   const finnhubClient = new finnhub.DefaultApi()
   const rep = componentState;
-  finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
-    if (data && data.c) {
-      const currentAmazonStockPrice: number = data.c;
-      let fetchedEvents: Event[] = [];
-      try {
-        const response = await paginateEvents();
-        console.log('CNT: ' + response.length);
-        for (const event of response) {
 
-          if (((event?.simulation === null || event?.simulation === undefined) && selectedSim?.name! === 'default') || (event?.simulation && event?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
-
-            let value = 0.0;
-            let name = event!.name!;
-            if (event!.category && event?.category.value) {
-              value = event?.category!.value!;
-            }
-            if (event?.name && event?.name?.includes('amzn')) {
-              const parts = event.name.split(' ');
-              const quantity = Number(parts[1]);
-              name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
-              value = Number((quantity * currentAmazonStockPrice - (0.3 * quantity * currentAmazonStockPrice)).toFixed(2));
-            }
-            const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
-            const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
-
-            fetchedEvents.push(e);
-
-          }
-
-
-        }
-        rep.setState({ events: fetchedEvents })
-      } catch (error) {
-        console.log(error);
+  const stockCookie = getCookie("AMZN");
+  if (stockCookie) {
+    computeEvents(stockCookie.getValue(), selectedSim!, rep);
+  } else {
+    finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
+      if (data && data.c) {
+        const currentAmazonStockPrice: number = data.c;
+        setCookie("AMZN", currentAmazonStockPrice.toString());
+        computeEvents(currentAmazonStockPrice, selectedSim!, rep);
       }
-    }
-  });
-
-
+    });
+  }
 }
 
 export async function fetchAccounts(componentState: any) {
@@ -495,9 +519,6 @@ export async function fetchSimulations(componentState: any): Promise<Simulation[
   }
   return fetchedSimulations;
 }
-
-
-// 
 
 export async function fetchDefaultInputs(): Promise<Input[]> {
   let fetchedInputs: Input[] = [];
