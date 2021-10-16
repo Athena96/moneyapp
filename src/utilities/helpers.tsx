@@ -41,8 +41,9 @@ export function dateRange(startDate: Date, endDate: Date, steps = 31) {
 }
 
 export function getCurrentBudget(date: Date, budgets: Budget[]) {
+  date.setHours(0, 0, 0);
   for (const budget of budgets) {
-    if (date >= budget.startDate && date <= budget.endDate) {
+    if (date >= new Date(budget.startDate.setHours(0, 0, 0)) && date <= new Date(budget.endDate.setHours(0, 0, 0))) {
       return budget;
     }
   }
@@ -111,6 +112,7 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
         if (use(account, date, i, dateIm59, balances, retireDate)) {
           accntUsed = account.name;
           const budget = getCurrentBudget(date, budgets)!;
+          console.log('here: ' + balances[account.name][i - 1])
           const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
           balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
         } else {
@@ -163,21 +165,21 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 
 
 function computeCurrentyStartingBalances(componentState: any, currentCurrencyVal: number, asset: Asset) {
-    const value: number = currentCurrencyVal;
-    const holdingValue = value * asset.quantity;
-    const newBrokCurr = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-    const currTaxCurr = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-    componentState.setState({
-      balances: {
-        brokerage: {
-          0: newBrokCurr,
+  const value: number = currentCurrencyVal;
+  const holdingValue = value * asset.quantity;
+  const newBrokCurr = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
+  const currTaxCurr = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
+  componentState.setState({
+    balances: {
+      brokerage: {
+        0: newBrokCurr,
 
-        },
-        tax: {
-          0: currTaxCurr,
-        }
+      },
+      tax: {
+        0: currTaxCurr,
       }
-    })
+    }
+  })
 }
 
 
@@ -279,7 +281,7 @@ export async function paginateEvents() {
     const response = (await API.graphql({
       query: listEvents, variables: { nextToken: nxtTkn }
     })) as { data: ListEventsQuery }
-  
+
     for (const event of response.data.listEvents!.items!) {
       events.push(event);
     }
@@ -297,8 +299,7 @@ async function computeEvents(currentAmazonStockPrice: number, selectedSim: Simul
     const response = await paginateEvents();
     for (const event of response) {
 
-      if (((event?.simulation === null || event?.simulation === undefined) && selectedSim?.name! === 'default') || (event?.simulation && event?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
-
+      if (event?.simulation && event?.simulation! === selectedSim?.id!) {
         let value = 0.0;
         let name = event!.name!;
         if (event!.category && event?.category.value) {
@@ -325,7 +326,7 @@ async function computeEvents(currentAmazonStockPrice: number, selectedSim: Simul
 }
 
 export async function fetchEvents(componentState: any, simulations: Simulation[]) {
-  
+
   const selectedSim = getSelectedSimulation(simulations);
   const finnhub = require('finnhub');
   const api_key = finnhub.ApiClient.instance.authentications['api_key'];
@@ -390,8 +391,7 @@ export async function fetchBudgets(componentState: any, simulations: Simulation[
       query: listBudgets
     })) as { data: ListBudgetsQuery }
     for (const budget of response.data.listBudgets!.items!) {
-
-      if (((budget?.simulation === null || budget?.simulation === undefined) && selectedSim?.name! === 'default') || (budget?.simulation && budget?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
+      if (budget?.simulation && budget?.simulation! === selectedSim?.id!) {
         let cats = null;
 
         if (budget?.categories) {
@@ -423,13 +423,13 @@ export async function fetchInputs(componentState: any | null, simulations: Simul
   let growth = 0.0;
   let inflation = 0.0;
   try {
+    // #todo: waistful im getting ALL inputs, but should query by simulation ID.
     const response = (await API.graphql({
       query: listInputs
     })) as { data: ListInputsQuery }
     for (const input of response.data.listInputs!.items!) {
 
-      if (((input?.simulation === null || input?.simulation === undefined) && selectedSim?.name! === 'default') || (input?.simulation && input?.simulation! === selectedSim?.id! && selectedSim?.name! !== 'default')) {
-
+      if (input?.simulation && input?.simulation! === selectedSim?.id!) {
         fetchedInputs.push(new Input(
           input?.id!,
           input?.key!,

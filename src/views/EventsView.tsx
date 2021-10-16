@@ -58,9 +58,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   async handleAddEvents() {
     try {
       let newEvent: any = new Event(new Date().getTime().toString(), '...', new Date(), '...', null);
-      if (this.state.selectedSimulation?.name !== 'default') {
-        newEvent['simulation'] = this.state.selectedSimulation!.id;
-      }
+      newEvent['simulation'] = this.state.selectedSimulation!.id;
 
       let newEvents = [...this.state.events, newEvent]
       this.setState({ events: newEvents });

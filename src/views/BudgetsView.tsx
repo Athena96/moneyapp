@@ -59,11 +59,8 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
   async handleAddBudget() {
     try {
       let newBudget: any = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), null);
-      
-      if (this.state.selectedSimulation?.name !== 'default') {
-        newBudget['simulation'] = this.state.selectedSimulation!.id;
-      }
-      
+      newBudget['simulation'] = this.state.selectedSimulation!.id;
+
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });
       await API.graphql(graphqlOperation(createBudget, { input: newBudget }))
