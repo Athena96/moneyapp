@@ -59,11 +59,10 @@ class Home extends React.Component<IProps, IState> {
                 <Tabs variant="scrollable"
                   scrollButtons
                   allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
+                  <Tab label="Accounts" />
                   <Tab label="Data" />
                   <Tab label="Budgets" />
                   <Tab label="Events" />
-
-                  <Tab label="Accounts" />
                   <Tab label="Inputs" />
                   <Tab label="Assets" />
                   <Tab label="Simulations" />
@@ -71,10 +70,11 @@ class Home extends React.Component<IProps, IState> {
                 </Tabs>
               </Box>
               <br /><br />
-              <DataView value={this.state.selectedTab} index={0} />
-              <BudgetsView value={this.state.selectedTab} index={1} />
-              <EventsView value={this.state.selectedTab} index={2} />
-              <AccountsView value={this.state.selectedTab} index={3} />
+              <AccountsView value={this.state.selectedTab} index={0} />
+
+              <DataView value={this.state.selectedTab} index={1} />
+              <BudgetsView value={this.state.selectedTab} index={2} />
+              <EventsView value={this.state.selectedTab} index={3} />
               <InputsView value={this.state.selectedTab} index={4} />
               <AssetsView value={this.state.selectedTab} index={5} />
               <SimulationView value={this.state.selectedTab} index={6} />

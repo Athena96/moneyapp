@@ -112,7 +112,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
         if (use(account, date, i, dateIm59, balances, retireDate)) {
           accntUsed = account.name;
           const budget = getCurrentBudget(date, budgets)!;
-          console.log('here: ' + balances[account.name][i - 1])
           const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
           balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
         } else {
@@ -520,7 +519,7 @@ export async function fetchSimulations(componentState: any): Promise<Simulation[
   return fetchedSimulations;
 }
 
-export async function fetchDefaultInputs(): Promise<Input[]> {
+export async function fetchDefaultInputs(selectedSimulationId: string): Promise<Input[]> {
   let fetchedInputs: Input[] = [];
   // let growth = 0.0;
   // let inflation = 0.0;
@@ -530,7 +529,7 @@ export async function fetchDefaultInputs(): Promise<Input[]> {
     })) as { data: ListInputsQuery }
     for (const input of response.data.listInputs!.items!) {
 
-      if (((input?.simulation === null || input?.simulation === undefined) || (input?.simulation && input?.simulation! === '1633145789870'))) {
+      if (input?.simulation && input?.simulation! === selectedSimulationId) {
 
         fetchedInputs.push(new Input(
           input?.id!,
@@ -571,10 +570,10 @@ export async function fetchDefaultInputs(): Promise<Input[]> {
   return fetchedInputs;
 }
 
-export async function fetchDefaultBudgets(): Promise<Budget[]> {
+export async function fetchDefaultBudgets(selectedSimulationId: string): Promise<Budget[]> {
 
   // fetch inputs.
-  let inputs: Input[] = await fetchDefaultInputs();
+  let inputs: Input[] = await fetchDefaultInputs(selectedSimulationId);
   let fetchedBudgets: Budget[] = [];
   try {
     const response = (await API.graphql({
@@ -582,7 +581,7 @@ export async function fetchDefaultBudgets(): Promise<Budget[]> {
     })) as { data: ListBudgetsQuery }
     for (const budget of response.data.listBudgets!.items!) {
 
-      if (((budget?.simulation === null || budget?.simulation === undefined) || (budget?.simulation && budget?.simulation! === '1633145789870'))) {
+      if (budget?.simulation && budget?.simulation! === selectedSimulationId) {
 
         let cats = null;
 
@@ -610,12 +609,12 @@ export async function fetchDefaultBudgets(): Promise<Budget[]> {
 }
 
 
-export async function fetchDefaultEvents(): Promise<Event[]> {
+export async function fetchDefaultEvents(selectedSimulationId: string): Promise<Event[]> {
   let fetchedEvents: Event[] = [];
   try {
     const response = await paginateEvents();
     for (const event of response) {
-      if (((event?.simulation === null || event?.simulation === undefined) || (event?.simulation && event?.simulation! === '1633145789870'))) {
+      if (event?.simulation && event?.simulation! === selectedSimulationId) {
 
         let value = 0.0;
         let name = event!.name!;

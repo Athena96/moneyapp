@@ -47,6 +47,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.render = this.render.bind(this);
+        this.getSelectedSimulation = this.getSelectedSimulation.bind(this);
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -77,60 +78,73 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         fetchSimulations(this);
     }
 
+    getSelectedSimulation() {
+        for (const simulation of this.state.simulations) {
+            if (simulation.selected === 1) {
+                return simulation;
+            }
+        }
+    }
+
     async handleAddSimulation() {
-        try {
-            let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0);
-            let newSimulations = [...this.state.simulations, newSimulation]
-            this.setState({ simulations: newSimulations });
-            await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
+        if (window.confirm('Are you sure you want to ADD a new Simulation? This will copy all current Budget/Events/Inputs to a new Simulation branch.')) {
+            try {
+                let selectedSim = this.getSelectedSimulation()!;
+                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0);
+                let newSimulations = [...this.state.simulations, newSimulation]
+                this.setState({ simulations: newSimulations });
+                await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
 
-            // pull budgets default, where simulation == null
-            const defaultBudgets: Budget[] = await fetchDefaultBudgets();
+                // pull budgets from the current selected simulation
+                const defaultBudgets: Budget[] = await fetchDefaultBudgets(selectedSim.getKey());
 
-            // pull events
-            const defaultEvents: Event[] = await fetchDefaultEvents();
+                // pull events  ...
+                const defaultEvents: Event[] = await fetchDefaultEvents(selectedSim.getKey());
 
-            // pull inputs
-            const defaultInputs: Input[] = await fetchDefaultInputs();
+                // pull inputs  ...
+                const defaultInputs: Input[] = await fetchDefaultInputs(selectedSim.getKey());
 
-            // for each budget
-            //  make a copy
-            //  set simulation to the newly created simulation id
-            //  create budget
-            for (const budget of defaultBudgets) {
-                const cpBudget: any = budget;
-                cpBudget['simulation'] = newSimulation.id;
-                cpBudget['id'] = new Date().getTime().toString()
-                console.log('cpBudget: ' + JSON.stringify(cpBudget))
-                let i = 0;
-                for (const cat of cpBudget['categories']) {
-                    cat['id'] = (new Date().getTime() + i).toString();
-                    i += 1;
+                // for each budget
+                //  make a copy
+                //  set simulation to the newly created simulation id
+                //  create budget
+                for (const budget of defaultBudgets) {
+                    const cpBudget: any = budget;
+                    cpBudget['simulation'] = newSimulation.id;
+                    cpBudget['id'] = new Date().getTime().toString()
+                    console.log('cpBudget: ' + JSON.stringify(cpBudget))
+                    let i = 0;
+                    for (const cat of cpBudget['categories']) {
+                        cat['id'] = (new Date().getTime() + i).toString();
+                        i += 1;
+                    }
+                    await createBudgetBranch(cpBudget);
                 }
-                await createBudgetBranch(cpBudget);
+
+                // same for events
+                for (const event of defaultEvents) {
+                    const cpEvent: any = event;
+                    cpEvent['simulation'] = newSimulation.id;
+                    cpEvent['id'] = new Date().getTime().toString()
+
+                    await createEventBranch(cpEvent);
+                }
+
+                // same for inputs
+                for (const input of defaultInputs) {
+                    const cpInput: any = input;
+                    cpInput['simulation'] = newSimulation.id;
+                    cpInput['id'] = new Date().getTime().toString()
+                    await createInputBranch(cpInput);
+                }
+            } catch (err) {
+                console.log('error creating...:', err)
             }
 
-            // same for events
-            for (const event of defaultEvents) {
-                const cpEvent: any = event;
-                cpEvent['simulation'] = newSimulation.id;
-                cpEvent['id'] = new Date().getTime().toString()
+        } else {
+            console.log('did not create new Simulation.');
+            return;
 
-                await createEventBranch(cpEvent);
-            }
-
-            // same for inputs
-            for (const input of defaultInputs) {
-                const cpInput: any = input;
-                cpInput['simulation'] = newSimulation.id;
-                cpInput['id'] = new Date().getTime().toString()
-                await createInputBranch(cpInput);
-            }
-
-
-
-        } catch (err) {
-            console.log('error creating...:', err)
         }
     }
 
@@ -154,65 +168,72 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     }
 
     async handleDelete(event: any) {
-        const idToDelete = (event.target as Element).id;
-        let newSimulations = [];
-        let simulationToDelete = null;
+        if (window.confirm('Are you sure you want to DELETE this simulation? It will delete all associated Budgets/Events/Inputs...')) {
+            const idToDelete = (event.target as Element).id;
+            let newSimulations = [];
+            let simulationToDelete = null;
 
-        for (const simulation of this.state.simulations) {
-            if (simulation.getKey() === idToDelete) {
-                simulationToDelete = {
-                    'id': simulation.getKey()
+            for (const simulation of this.state.simulations) {
+                if (simulation.getKey() === idToDelete) {
+                    simulationToDelete = {
+                        'id': simulation.getKey()
+                    }
+                    continue;
                 }
-                continue;
+                newSimulations.push(simulation);
+
             }
-            newSimulations.push(simulation);
-
-        }
-        this.setState({ simulations: newSimulations });
-        try {
-            await API.graphql({ query: deleteSimulation, variables: { input: simulationToDelete } });
+            this.setState({ simulations: newSimulations });
+            try {
+                await API.graphql({ query: deleteSimulation, variables: { input: simulationToDelete } });
 
 
-            // get all budgets
-            //  if simulation == simtodelte.id
-            //  delete
-            const budgets = await fetchAllBudgets();
-            const events = await fetchAllEvents();
-            const inputs = await fetchAllInputs();
+                // get all budgets
+                //  if simulation == simtodelte.id
+                //  delete
+                const budgets = await fetchAllBudgets();
+                const events = await fetchAllEvents();
+                const inputs = await fetchAllInputs();
 
-            for (const b of budgets) {
-                if (Object.keys(b).includes('simulation') && b['simulation'] === simulationToDelete!['id']) {
-                    try {
-                        await API.graphql({ query: deleteBudget, variables: { input: { 'id': b['id'] } } });
-                    } catch (err) {
-                        console.log('error:', err)
+                for (const b of budgets) {
+                    if (Object.keys(b).includes('simulation') && b['simulation'] === simulationToDelete!['id']) {
+                        try {
+                            await API.graphql({ query: deleteBudget, variables: { input: { 'id': b['id'] } } });
+                        } catch (err) {
+                            console.log('error:', err)
+                        }
                     }
                 }
-            }
 
-            for (const e of events) {
-                if (Object.keys(e).includes('simulation') && e['simulation'] === simulationToDelete!['id']) {
-                    try {
-                        await API.graphql({ query: deleteEvent, variables: { input: { 'id': e['id'] } } });
-                    } catch (err) {
-                        console.log('error:', err)
+                for (const e of events) {
+                    if (Object.keys(e).includes('simulation') && e['simulation'] === simulationToDelete!['id']) {
+                        try {
+                            await API.graphql({ query: deleteEvent, variables: { input: { 'id': e['id'] } } });
+                        } catch (err) {
+                            console.log('error:', err)
+                        }
                     }
                 }
-            }
 
-            for (const i of inputs) {
-                if (Object.keys(i).includes('simulation') && i['simulation'] === simulationToDelete!['id']) {
-                    try {
-                        await API.graphql({ query: deleteInputs, variables: { input: { 'id': i['id'] } } });
-                    } catch (err) {
-                        console.log('error:', err)
+                for (const i of inputs) {
+                    if (Object.keys(i).includes('simulation') && i['simulation'] === simulationToDelete!['id']) {
+                        try {
+                            await API.graphql({ query: deleteInputs, variables: { input: { 'id': i['id'] } } });
+                        } catch (err) {
+                            console.log('error:', err)
+                        }
                     }
                 }
+
+
+            } catch (err) {
+                console.log('error:', err)
             }
 
 
-        } catch (err) {
-            console.log('error:', err)
+        } else {
+            console.log('chose not to delete');
+            return;
         }
     }
 
@@ -223,7 +244,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     render() {
         return this.props.index === this.props.value ? (
             <>
-                <Button style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation</Button>
+                <Button style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation + </Button>
 
                 {this.state.simulations.map((simulation: Simulation) => {
                     return (
@@ -235,8 +256,10 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                                     <TextField label="Is Selected?" id="outlined-basic" variant="outlined" name={`selected-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.selected} />
 
 
+                                    <Button id={simulation.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
                                     <Button id={simulation.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
                                 </Stack>
+
 
                             </CardContent>
                         </Card>
