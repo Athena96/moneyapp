@@ -8,7 +8,7 @@ export class Budget implements Key {
     name: string;
     startDate: Date;
     endDate: Date;
-    categories: Category[] | null
+    categories: Category[] | null;
 
     constructor(id: string, name: string, startDate: Date, endDate: Date, categories: Category[] | null) {
         this.id = id;

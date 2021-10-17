@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import { Link } from "react-router-dom";
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
+import { BudgetFactory } from '../model/BudgetFactory';
 
 Amplify.configure(awsExports);
 
@@ -47,6 +48,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleDeleteBudget = this.handleDeleteBudget.bind(this);
     this.handleAddBudget = this.handleAddBudget.bind(this);
+    this.handleDuplicateBudget = this.handleDuplicateBudget.bind(this);
     this.render = this.render.bind(this);
   }
 
@@ -71,26 +73,54 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
   }
 
-  async handleDeleteBudget(event: any) {
-    const idToDelete = (event.target as Element).id;
-    let newBudgets = [];
-    let budgetToDelete = null;
-
-    for (const budget of this.state.budgets) {
-      if (budget.getKey() === idToDelete) {
-        budgetToDelete = {
-          'id': budget.getKey()
-        }
-        continue;
+  getBudgetWithId(budgetId: string, budgets: Budget[]) {
+    for (const budget of budgets) {
+      if (budget.getKey() === budgetId) {
+        return budget;
       }
-      newBudgets.push(budget);
-
     }
-    this.setState({ budgets: newBudgets });
+  }
+
+  async handleDuplicateBudget(event: any) {
+    const idToDuplicate = (event.target as Element).id;
+    const budgetToDuplicate = this.getBudgetWithId(idToDuplicate, this.state.budgets)!;
     try {
-      await API.graphql({ query: deleteBudget, variables: { input: budgetToDelete } });
+      let newBudget: any = BudgetFactory.fromBudget(budgetToDuplicate);
+      newBudget['simulation'] = this.state.selectedSimulation!.id;
+
+      console.log('fromBudget ' + JSON.stringify(newBudget));
+      let newBudgets = [...this.state.budgets, newBudget]
+      this.setState({ budgets: newBudgets });
+      await API.graphql(graphqlOperation(createBudget, { input: newBudget }))
     } catch (err) {
-      console.log('error:', err)
+      console.log('error creating todo:', err)
+    }
+  }
+
+  async handleDeleteBudget(event: any) {
+    if (window.confirm('Are you sure you want to DELETE this Budget?')) {
+      const idToDelete = (event.target as Element).id;
+      let newBudgets = [];
+      let budgetToDelete = null;
+
+      for (const budget of this.state.budgets) {
+        if (budget.getKey() === idToDelete) {
+          budgetToDelete = {
+            'id': budget.getKey()
+          }
+          continue;
+        }
+        newBudgets.push(budget);
+
+      }
+      this.setState({ budgets: newBudgets });
+      try {
+        await API.graphql({ query: deleteBudget, variables: { input: budgetToDelete } });
+      } catch (err) {
+        console.log('error:', err)
+      }
+    } else {
+      console.log('did not delete the budget.')
     }
   }
 
@@ -152,6 +182,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
                   <Stack direction='row' spacing={4}>
                     <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="outlined">Delete</Button>
+                    <Button id={budget.getKey()} onClick={this.handleDuplicateBudget} variant="contained">Duplicate</Button>
                     <Link style={{ color: 'white', textDecoration: 'none' }} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="contained">Edit</Button></Link>
 
                   </Stack>
