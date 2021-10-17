@@ -5,7 +5,7 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
 import {
-  generateTable, fetchStartingBalances,
+  generateGraphData, fetchStartingBalances,
   fetchAccounts, fetchBudgets, fetchInputs,
   fetchEvents, fetchSimulations
 } from '../utilities/helpers';
@@ -84,7 +84,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   render() {
     if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
-      const chartData = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
+      const chartData = generateGraphData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
         this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
       const options = {
         scales: {

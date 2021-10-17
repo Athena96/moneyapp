@@ -131,8 +131,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
   return data;
 }
 
-// chart data
-export function generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, 
+export function generateGraphData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, 
   myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
   var tmpChartData: any = {
     labels: [],
@@ -165,11 +164,7 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
-  dates.map((date, i) => {
-
-
-    let eventDesc = "";
-    let accntUsed = "";
+  dates.forEach((date, i) => {
 
     if (i > 0) {
       // for each account, compute their currentDay balance, then return the entry to put it in the table
@@ -177,7 +172,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
-          accntUsed = account.name;
           const budget = getCurrentBudget(date, budgets)!;
           const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
           balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
@@ -193,7 +187,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
           // if the event is to be debited from the account, and it occurs this month/year then account for it
           if (event.account === account.name) {
             if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
-              eventDesc += event.name;
               if (event.category) {
                 if (event.category!.type === CategoryTypes.Expense) {
                   balances[account.name][i] -= event.category!.getValue();
@@ -202,7 +195,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
                   balances[account.name][i] += event.category!.getValue();
                 }
               }
-              if (event.name !== "") eventDesc += ' -- ';
             }
           }
         }
@@ -213,7 +205,6 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
     tmpChartData.datasets[0].data.push(balances['brokerage'][i].toFixed(2));
     tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
     tmpChartData.datasets[2].data.push(minEnd);
-
   });
 
   return tmpChartData;
