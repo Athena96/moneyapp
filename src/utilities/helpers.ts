@@ -1,6 +1,6 @@
-import { Event } from '../model/Event';
-import { Budget } from '../model/Budget';
-import { Account } from '../model/Account';
+import { Event } from '../model/Base/Event';
+import { Budget } from '../model/Base/Budget';
+import { Account } from '../model/Base/Account';
 import { CategoryTypes } from "../API";
 
 export interface RowData {
@@ -193,4 +193,8 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
   });
 
   return tmpChartData;
+}
+
+export function cleanNumberDataInput(input: string) {
+  return input.replace(/[^\d.-]/g, '');
 }

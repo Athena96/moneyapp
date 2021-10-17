@@ -1,5 +1,5 @@
 
-import { Account } from '../model/Account';
+import { Account } from '../model/Base/Account';
 import { ListAccountsQuery } from "../API";
 import { API } from 'aws-amplify'
 import { listAccounts } from '../graphql/queries'

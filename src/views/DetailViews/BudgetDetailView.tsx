@@ -5,8 +5,8 @@ import { getBudget } from '../../graphql/queries'
 import awsExports from "../../aws-exports";
 import { CategoryTypes, GetBudgetQuery } from "../../API";
 
-import { Budget } from '../../model/Budget';
-import { Category } from '../../model/Category';
+import { Budget } from '../../model/Base/Budget';
+import { Category } from '../../model/Base/Category';
 
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -17,6 +17,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { updateBudget } from '../../graphql/mutations';
+import { cleanNumberDataInput } from '../../utilities/helpers';
 
 Amplify.configure(awsExports);
 
@@ -79,7 +80,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
       const catname = parts[2]
       for (const c of cats) {
         if (id === c.id) {
-          (c as any)[catname] = value;
+          (c as any)[catname] = cleanNumberDataInput(value);
         }
       }
 

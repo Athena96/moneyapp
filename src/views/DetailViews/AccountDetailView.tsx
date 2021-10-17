@@ -6,7 +6,7 @@ import { updateAccount } from '../../graphql/mutations';
 import { GetAccountQuery } from "../../API";
 import awsExports from "../../aws-exports";
 
-import { Account } from '../../model/Account';
+import { Account } from '../../model/Base/Account';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';

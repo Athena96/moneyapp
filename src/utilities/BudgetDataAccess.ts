@@ -1,8 +1,8 @@
 
-import { Simulation } from '../model/Simulation';
-import { Input } from '../model/Input';
-import { Budget } from '../model/Budget';
-import { Category } from '../model/Category';
+import { Simulation } from '../model/Base/Simulation';
+import { Input } from '../model/Base/Input';
+import { Budget } from '../model/Base/Budget';
+import { Category } from '../model/Base/Category';
 
 import { ListBudgetsQuery } from "../API";
 import { API, graphqlOperation } from 'aws-amplify'

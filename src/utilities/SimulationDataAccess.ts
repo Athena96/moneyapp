@@ -1,5 +1,5 @@
 
-import { Simulation } from '../model/Simulation';
+import { Simulation } from '../model/Base/Simulation';
 import { listSimulations } from '../graphql/queries'
 import { ListSimulationsQuery } from "../API";
 import { API } from 'aws-amplify'

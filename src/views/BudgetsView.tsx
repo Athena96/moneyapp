@@ -3,9 +3,9 @@ import * as React from 'react';
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createBudget, deleteBudget } from '../graphql/mutations'
 import awsExports from "../aws-exports";
-import { Simulation } from '../model/Simulation';
+import { Simulation } from '../model/Base/Simulation';
 
-import { Budget } from '../model/Budget';
+import { Budget } from '../model/Base/Budget';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography';
 import { Link } from "react-router-dom";
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
-import { BudgetFactory } from '../model/BudgetFactory';
+import { BudgetFactory } from '../model/FactoryMethods/BudgetFactory';
 
 Amplify.configure(awsExports);
 

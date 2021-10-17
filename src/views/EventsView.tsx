@@ -3,9 +3,9 @@ import * as React from 'react';
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createEvent, deleteEvent } from '../graphql/mutations'
 import awsExports from "../aws-exports";
-import { Event } from '../model/Event';
+import { Event } from '../model/Base/Event';
 
-import { Simulation } from '../model/Simulation';
+import { Simulation } from '../model/Base/Simulation';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';

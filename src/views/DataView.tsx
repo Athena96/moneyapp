@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { Event } from '../model/Event';
-import { Budget } from '../model/Budget';
-import { Account } from '../model/Account';
+import { Event } from '../model/Base/Event';
+import { Budget } from '../model/Base/Budget';
+import { Account } from '../model/Base/Account';
 import {
     RowData,
     generateData

@@ -2,11 +2,11 @@
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery } from "../API";
 import { createEvent } from '../graphql/mutations';
-import { Event } from '../model/Event';
+import { Event } from '../model/Base/Event';
 
-import { Category } from '../model/Category';
+import { Category } from '../model/Base/Category';
 
-import { Simulation } from '../model/Simulation';
+import { Simulation } from '../model/Base/Simulation';
 
 import { API, graphqlOperation } from 'aws-amplify'
 import { SimulationDataAccess } from './SimulationDataAccess';

@@ -1,5 +1,5 @@
 
-import { Key } from "./KeyInterface";
+import { Key } from "../Interfaces/KeyInterface";
 
 export class Simulation implements Key {
 

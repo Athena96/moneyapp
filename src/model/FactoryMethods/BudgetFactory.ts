@@ -1,5 +1,5 @@
 
-import { Budget } from "./Budget";
+import { Budget } from "../Base/Budget";
 
 export class BudgetFactory {
 

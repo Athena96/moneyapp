@@ -1,5 +1,5 @@
 
-import { Asset } from '../model/Asset';
+import { Asset } from '../model/Base/Asset';
 import { API } from 'aws-amplify'
 import { ListAssetsQuery } from "../API";
 import { listAssets } from '../graphql/queries'

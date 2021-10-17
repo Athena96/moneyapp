@@ -1,6 +1,6 @@
 import { Category } from "./Category";
-import { CategoryTypes } from "../API";
-import { Key } from "./KeyInterface";
+import { CategoryTypes } from "../../API";
+import { Key } from "../Interfaces/KeyInterface";
 
 export class Budget implements Key {
 

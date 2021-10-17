@@ -1,5 +1,5 @@
 import { Category } from "./Category";
-import { Key } from "./KeyInterface";
+import { Key } from "../Interfaces/KeyInterface";
 
 export class Event implements Key {
     id: string;

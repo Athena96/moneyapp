@@ -4,7 +4,7 @@ import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createAccount, deleteAccount } from '../graphql/mutations'
 import awsExports from "../aws-exports";
 
-import { Account } from '../model/Account';
+import { Account } from '../model/Base/Account';
 // import { fetchAccounts } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';

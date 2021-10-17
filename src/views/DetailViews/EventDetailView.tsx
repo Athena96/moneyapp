@@ -5,8 +5,8 @@ import { getEvent } from '../../graphql/queries'
 import { CategoryTypes, GetEventQuery } from "../../API";
 import awsExports from "../../aws-exports";
 
-import { Event } from '../../model/Event';
-import { Category } from '../../model/Category';
+import { Event } from '../../model/Base/Event';
+import { Category } from '../../model/Base/Category';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -16,6 +16,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { updateEvent } from '../../graphql/mutations';
+import { cleanNumberDataInput } from '../../utilities/helpers';
 
 Amplify.configure(awsExports);
 
@@ -59,7 +60,11 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
     const target = e.target;
     const value = target.value;
     const name = target.name;
-    this.setState({ [name]: value } as any);
+    if (name === 'categoryValue') {
+      this.setState({ [name]: cleanNumberDataInput(value) } as any);
+    } else {
+      this.setState({ [name]: value } as any);
+    }
   }
 
   async handleSave() {

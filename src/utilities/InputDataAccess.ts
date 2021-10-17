@@ -1,6 +1,6 @@
 
-import { Input } from '../model/Input';
-import { Simulation } from '../model/Simulation';
+import { Input } from '../model/Base/Input';
+import { Simulation } from '../model/Base/Simulation';
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { API, graphqlOperation } from 'aws-amplify'

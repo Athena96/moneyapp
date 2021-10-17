@@ -10,15 +10,16 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import { Simulation } from '../model/Simulation';
-import { Budget } from '../model/Budget';
-import { Event } from '../model/Event';
-import { Input } from '../model/Input';
+import { Simulation } from '../model/Base/Simulation';
+import { Budget } from '../model/Base/Budget';
+import { Event } from '../model/Base/Event';
+import { Input } from '../model/Base/Input';
 
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
+import { cleanNumberDataInput } from '../utilities/helpers';
 
 interface SimulationViewProps {
     value: number;
@@ -64,7 +65,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     sim.name = value;
                 }
                 if (tp === 'selected') {
-                    sim.selected = Number(value);
+                    sim.selected = Number(cleanNumberDataInput(value));
                 }
 
             }

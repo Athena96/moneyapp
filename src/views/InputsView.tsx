@@ -11,11 +11,12 @@ import TextField from '@mui/material/TextField';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Simulation } from '../model/Simulation';
+import { Simulation } from '../model/Base/Simulation';
 
-import { Input } from '../model/Input';
+import { Input } from '../model/Base/Input';
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
+import { cleanNumberDataInput } from '../utilities/helpers';
 
 interface InputsViewProps {
   value: number;
@@ -65,7 +66,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
         if (tp === 'key') {
           i.key = value;
         } else if (tp === 'value') {
-          i.value = value;
+          i.value = cleanNumberDataInput(value);
         } else if (tp === 'type') {
           i.type = value;
         }

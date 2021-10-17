@@ -10,8 +10,9 @@ import TextField from '@mui/material/TextField';
 
 
 import { createAssets, deleteAssets, updateAssets } from '../graphql/mutations';
-import { Asset } from '../model/Asset';
+import { Asset } from '../model/Base/Asset';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
+import { cleanNumberDataInput } from '../utilities/helpers';
 
 interface AssetsViewProps {
     value: number;
@@ -55,7 +56,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                     asset.ticker = value;
                 }
                 if (tp === 'quantity') {
-                    asset.setQuantity(value);
+                    asset.setQuantity(cleanNumberDataInput(value));
                 }
                 if (tp === 'hasIndexData') {
                     asset.hasIndexData = Number(value);
