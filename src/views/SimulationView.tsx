@@ -15,13 +15,10 @@ import { Budget } from '../model/Budget';
 import { Event } from '../model/Event';
 import { Input } from '../model/Input';
 
-import {
-    fetchDefaultEvents,
-    fetchDefaultInputs,
-    createEventBranch, createInputBranch, fetchAllEvents, fetchAllInputs
-} from '../utilities/helpers';
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
+import { InputDataAccess } from '../utilities/InputDataAccess';
+import { EventDataAccess } from '../utilities/EventDataAccess';
 
 interface SimulationViewProps {
     value: number;
@@ -93,10 +90,10 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
 
                 // pull events  ...
-                const defaultEvents: Event[] = await fetchDefaultEvents(selectedSim.getKey());
+                const defaultEvents: Event[] = await EventDataAccess.fetchDefaultEvents(selectedSim.getKey());
 
                 // pull inputs  ...
-                const defaultInputs: Input[] = await fetchDefaultInputs(selectedSim.getKey());
+                const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
 
                 // for each budget
                 //  make a copy
@@ -121,7 +118,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     cpEvent['simulation'] = newSimulation.id;
                     cpEvent['id'] = new Date().getTime().toString()
 
-                    await createEventBranch(cpEvent);
+                    await EventDataAccess.createEventBranch(cpEvent);
                 }
 
                 // same for inputs
@@ -129,7 +126,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     const cpInput: any = input;
                     cpInput['simulation'] = newSimulation.id;
                     cpInput['id'] = new Date().getTime().toString()
-                    await createInputBranch(cpInput);
+                    await InputDataAccess.createInputBranch(cpInput);
                 }
             } catch (err) {
                 console.log('error creating...:', err)
@@ -186,8 +183,8 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 //  if simulation == simtodelte.id
                 //  delete
                 const budgets = await BudgetDataAccess.fetchAllBudgets();
-                const events = await fetchAllEvents();
-                const inputs = await fetchAllInputs();
+                const events = await EventDataAccess.fetchAllEvents();
+                const inputs = await InputDataAccess.fetchAllInputs();
 
                 for (const b of budgets) {
                     if (Object.keys(b).includes('simulation') && b['simulation'] === simulationToDelete!['id']) {

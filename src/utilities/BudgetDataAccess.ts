@@ -10,7 +10,8 @@ import { listBudgets } from '../graphql/queries'
 import { createBudget } from '../graphql/mutations';
 import { CategoryTypes } from "../API";
 import { SimulationDataAccess } from './SimulationDataAccess';
-import { fetchDefaultInputs, fetchInputs, getInputForKeyFromList } from './helpers';
+
+import { InputDataAccess } from './InputDataAccess';
 
 export class BudgetDataAccess {
 
@@ -18,7 +19,7 @@ export class BudgetDataAccess {
         const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
 
         // fetch inputs.
-        let inputs: Input[] = await fetchInputs(null, simulations);
+        let inputs: Input[] = await InputDataAccess.fetchInputs(null, simulations);
         let fetchedBudgets: Budget[] = [];
         try {
             const response = (await API.graphql({
@@ -32,7 +33,7 @@ export class BudgetDataAccess {
                         cats = [];
                         for (const category of budget!.categories!) {
                             // if category.name === input.name... use input.value.
-                            const matchingInput = getInputForKeyFromList(category!.name!, inputs);
+                            const matchingInput = InputDataAccess.getInputForKeyFromList(category!.name!, inputs);
                             if (matchingInput != null) {
                                 cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
                             } else {
@@ -53,7 +54,7 @@ export class BudgetDataAccess {
     static async fetchDefaultBudgets(selectedSimulationId: string): Promise<Budget[]> {
 
         // fetch inputs.
-        let inputs: Input[] = await fetchDefaultInputs(selectedSimulationId);
+        let inputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSimulationId);
         let fetchedBudgets: Budget[] = [];
         try {
             const response = (await API.graphql({
@@ -69,7 +70,7 @@ export class BudgetDataAccess {
                         cats = [];
                         for (const category of budget!.categories!) {
                             // if category.name === input.name... use input.value.
-                            const matchingInput = getInputForKeyFromList(category!.name!, inputs);
+                            const matchingInput = InputDataAccess.getInputForKeyFromList(category!.name!, inputs);
                             if (matchingInput != null) {
                                 cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
                             } else {

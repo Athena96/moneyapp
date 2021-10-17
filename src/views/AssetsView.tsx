@@ -8,10 +8,10 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 
-import { fetchAssets } from '../utilities/helpers';
 
 import { createAssets, deleteAssets, updateAssets } from '../graphql/mutations';
 import { Asset } from '../model/Asset';
+import { AssetDataAccess } from '../utilities/AssetDataAccess';
 
 interface AssetsViewProps {
     value: number;
@@ -73,7 +73,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     }
 
     componentDidMount() {
-        fetchAssets(this);
+        AssetDataAccess.fetchAssets(this);
     }
 
     async handleAddInput() {
