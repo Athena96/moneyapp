@@ -4,7 +4,7 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import {
-    RowData, fetchStartingBalances,
+    RowData,
     generateData
 } from '../utilities/helpers';
 
@@ -22,6 +22,7 @@ import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import '../App.css';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
+import { AssetDataAccess } from '../utilities/AssetDataAccess';
 
 interface DataViewProps {
     value: number;
@@ -76,7 +77,7 @@ class DataView extends React.Component<DataViewProps, IState> {
 
         })
         AccountDataAccess.fetchAccounts(this);
-        fetchStartingBalances(this);
+        AssetDataAccess.fetchStartingBalances(this);
     }
 
     inputsAreLoaded() {

@@ -5,7 +5,7 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
 import {
-  generateGraphData, fetchStartingBalances
+  generateGraphData
 } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
@@ -18,6 +18,7 @@ import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
+import { AssetDataAccess } from '../utilities/AssetDataAccess';
 
 interface GraphsViewProps {
 }
@@ -72,7 +73,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       InputDataAccess.fetchInputs(this, simulations);
     })
     AccountDataAccess.fetchAccounts(this);
-    fetchStartingBalances(this);
+    AssetDataAccess.fetchStartingBalances(this);
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
