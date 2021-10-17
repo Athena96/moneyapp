@@ -146,52 +146,13 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
       }
     ]
   };
-
-  // create a list of dates incrementing by 1 month
-  const dates = dateRange(startDate, endDate);
-  dates.forEach((date, i) => {
-
-    if (i > 0) {
-      // for each account, compute their currentDay balance, then return the entry to put it in the table
-      for (const account of myaccounts) {
-
-        // USE or GROW the account?
-        if (use(account, date, i, dateIm59, balances, retireDate)) {
-          const budget = getCurrentBudget(date, budgets)!;
-          const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
-          balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
-        } else {
-          balances[account.name][i] = balances[account.name][i - 1] + absoluteMonthlyGrowth * balances[account.name][i - 1];
-          if (balances[account.name][i - 1] <= 0.0) {
-            balances[account.name][i] = 0.0;
-          }
-        }
-
-        // Apply Events regardless if im using the account or not
-        for (const event of events) {
-          // if the event is to be debited from the account, and it occurs this month/year then account for it
-          if (event.account === account.name) {
-            if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
-              if (event.category) {
-                if (event.category!.type === CategoryTypes.Expense) {
-                  balances[account.name][i] -= event.category!.getValue();
-                }
-                if (event.category!.type === CategoryTypes.Income) {
-                  balances[account.name][i] += event.category!.getValue();
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    tmpChartData.labels.push(`${date.getMonth() + 1}/${date.getFullYear()}`);
-    tmpChartData.datasets[0].data.push(balances['brokerage'][i].toFixed(2));
-    tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
+  let data = generateData(balances, events, budgets, absoluteMonthlyGrowth!, myaccounts, startDate!, endDate!, dateIm59!, retireDate!, minEnd!)
+  data.forEach((dataRow, i) => {
+    tmpChartData.labels.push(`${dataRow.date}`);
+    tmpChartData.datasets[0].data.push(Number(dataRow.brokerageBal.replace('$','')));
+    tmpChartData.datasets[1].data.push(Number(dataRow.taxBal.replace('$','')));
     tmpChartData.datasets[2].data.push(minEnd);
   });
-
   return tmpChartData;
 }
 

@@ -87,48 +87,20 @@ export class InputDataAccess {
 
     static async fetchDefaultInputs(selectedSimulationId: string): Promise<Input[]> {
         let fetchedInputs: Input[] = [];
-        // let growth = 0.0;
-        // let inflation = 0.0;
         try {
             const response = (await API.graphql({
                 query: listInputs
             })) as { data: ListInputsQuery }
             for (const input of response.data.listInputs!.items!) {
-
                 if (input?.simulation && input?.simulation! === selectedSimulationId) {
-
                     fetchedInputs.push(new Input(
                         input?.id!,
                         input?.key!,
                         input?.value!,
                         input?.type!
                     ));
-
-                    // if (input?.key === 'growth') {
-                    //   growth = Number(input?.value!);
-                    // }
-                    // if (input?.key === 'inflation') {
-                    //   inflation = Number(input?.value!);
-                    // }
                 }
-
             }
-
-            // add computed inputs
-            // fetchedInputs.push(new Input(
-            //   new Date().getTime().toString(),
-            //   "absoluteMonthlyGrowth",
-            //   String((growth - inflation) / 12 / 100),
-            //   "computed-number"
-            // ));
-
-            // fetchedInputs.push(new Input(
-            //   new Date().getTime().toString(),
-            //   "startDate",
-            //   new Date().toString(),
-            //   "computed-date",
-            // ));
-
         } catch (error) {
             console.log(error);
         }
