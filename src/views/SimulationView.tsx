@@ -16,10 +16,12 @@ import { Event } from '../model/Event';
 import { Input } from '../model/Input';
 
 import {
-    fetchDefaultBudgets, fetchDefaultEvents,
-    fetchDefaultInputs, fetchSimulations, createBudgetBranch,
-    createEventBranch, createInputBranch, fetchAllBudgets, fetchAllEvents, fetchAllInputs
+    fetchDefaultEvents,
+    fetchDefaultInputs,
+    createEventBranch, createInputBranch, fetchAllEvents, fetchAllInputs
 } from '../utilities/helpers';
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 
 interface SimulationViewProps {
     value: number;
@@ -47,7 +49,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.render = this.render.bind(this);
-        this.getSelectedSimulation = this.getSelectedSimulation.bind(this);
+
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -75,28 +77,20 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     }
 
     componentDidMount() {
-        fetchSimulations(this);
-    }
-
-    getSelectedSimulation() {
-        for (const simulation of this.state.simulations) {
-            if (simulation.selected === 1) {
-                return simulation;
-            }
-        }
+        SimulationDataAccess.fetchSimulations(this);
     }
 
     async handleAddSimulation() {
         if (window.confirm('Are you sure you want to ADD a new Simulation? This will copy all current Budget/Events/Inputs to a new Simulation branch.')) {
             try {
-                let selectedSim = this.getSelectedSimulation()!;
+                let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
                 let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0);
                 let newSimulations = [...this.state.simulations, newSimulation]
                 this.setState({ simulations: newSimulations });
                 await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
 
                 // pull budgets from the current selected simulation
-                const defaultBudgets: Budget[] = await fetchDefaultBudgets(selectedSim.getKey());
+                const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
 
                 // pull events  ...
                 const defaultEvents: Event[] = await fetchDefaultEvents(selectedSim.getKey());
@@ -118,7 +112,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                         cat['id'] = (new Date().getTime() + i).toString();
                         i += 1;
                     }
-                    await createBudgetBranch(cpBudget);
+                    await BudgetDataAccess.createBudgetBranch(cpBudget);
                 }
 
                 // same for events
@@ -191,7 +185,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 // get all budgets
                 //  if simulation == simtodelte.id
                 //  delete
-                const budgets = await fetchAllBudgets();
+                const budgets = await BudgetDataAccess.fetchAllBudgets();
                 const events = await fetchAllEvents();
                 const inputs = await fetchAllInputs();
 

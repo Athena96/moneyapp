@@ -5,16 +5,18 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 
 import {
-  generateGraphData, fetchStartingBalances,
-  fetchAccounts, fetchBudgets, fetchInputs,
-  fetchEvents, fetchSimulations
+  generateGraphData, fetchStartingBalances, fetchInputs,
+  fetchEvents
 } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
+import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
 import '../App.css';
 
 import { Line } from "react-chartjs-2";
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 
 interface GraphsViewProps {
 }
@@ -63,12 +65,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   componentDidMount() {
-    fetchSimulations(this).then((simulations) => {
-      fetchBudgets(this, simulations);
+    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
+      BudgetDataAccess.fetchBudgets(this, simulations);
       fetchEvents(this, simulations);
       fetchInputs(this, simulations);
     })
-    fetchAccounts(this);
+    AccountDataAccess.fetchAccounts(this);
     fetchStartingBalances(this);
   }
 

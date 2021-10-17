@@ -5,19 +5,17 @@ import { Category } from '../model/Category';
 import { Asset } from '../model/Asset';
 import { Input } from '../model/Input';
 import { Simulation } from '../model/Simulation';
-import { CategoryTypes, ListAssetsQuery, ListSimulationsQuery } from "../API";
+import { CategoryTypes, ListAssetsQuery } from "../API";
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { listAccounts, listAssets, listSimulations } from '../graphql/queries'
-import { ListAccountsQuery } from "../API";
-import { ListBudgetsQuery } from "../API";
-import { listBudgets } from '../graphql/queries'
+import { listAssets } from '../graphql/queries'
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { listEvents } from '../graphql/queries'
 import { ListEventsQuery } from "../API";
-import { createBudget, createEvent, createInputs } from '../graphql/mutations';
+import { createEvent, createInputs } from '../graphql/mutations';
 import { getCookie, setCookie } from './CookiesHelper';
+import { SimulationDataAccess } from './SimulationDataAccess';
 
 export interface RowData {
   date: string;
@@ -26,6 +24,283 @@ export interface RowData {
   note: string;
   accountUsed: string;
 }
+
+// events
+
+export async function paginateEvents() {
+  let nxtTkn: string | null | undefined;
+  let events: any = []
+  do {
+    const response = (await API.graphql({
+      query: listEvents, variables: { nextToken: nxtTkn }
+    })) as { data: ListEventsQuery }
+
+    for (const event of response.data.listEvents!.items!) {
+      events.push(event);
+    }
+    nxtTkn = response.data.listEvents?.nextToken;
+  } while (nxtTkn !== null);
+
+  return events;
+
+}
+
+export async function fetchEvents(componentState: any, simulations: Simulation[]) {
+
+  const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
+  const finnhub = require('finnhub');
+  const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+  api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+  const finnhubClient = new finnhub.DefaultApi()
+  const rep = componentState;
+
+  const stockCookie = getCookie("AMZN");
+  if (stockCookie) {
+    computeEvents(stockCookie.getValue(), selectedSim!, rep);
+  } else {
+    finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
+      if (data && data.c) {
+        const currentAmazonStockPrice: number = data.c;
+        setCookie("AMZN", currentAmazonStockPrice.toString());
+        computeEvents(currentAmazonStockPrice, selectedSim!, rep);
+      }
+    });
+  }
+}
+
+export async function fetchDefaultEvents(selectedSimulationId: string): Promise<Event[]> {
+  let fetchedEvents: Event[] = [];
+  try {
+    const response = await paginateEvents();
+    for (const event of response) {
+      if (event?.simulation && event?.simulation! === selectedSimulationId) {
+
+        let value = 0.0;
+        let name = event!.name!;
+        if (event!.category && event?.category.value) {
+          value = event?.category!.value!;
+        }
+
+        const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
+        const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+
+        fetchedEvents.push(e);
+
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return fetchedEvents;
+}
+
+export async function fetchAllEvents() {
+  let fetchedEvents: any = [];
+  try {
+    const response = await paginateEvents();
+    for (const event of response) {
+      fetchedEvents.push(event);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedEvents;
+}
+
+// accounts
+
+// budgets
+
+// inputs
+export async function fetchInputs(componentState: any | null, simulations: Simulation[]): Promise<Input[]> {
+  const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
+
+  let fetchedInputs: Input[] = [];
+  let growth = 0.0;
+  let inflation = 0.0;
+  try {
+    // #todo: waistful im getting ALL inputs, but should query by simulation ID.
+    const response = (await API.graphql({
+      query: listInputs
+    })) as { data: ListInputsQuery }
+    for (const input of response.data.listInputs!.items!) {
+
+      if (input?.simulation && input?.simulation! === selectedSim?.id!) {
+        fetchedInputs.push(new Input(
+          input?.id!,
+          input?.key!,
+          input?.value!,
+          input?.type!
+        ));
+
+        if (input?.key === 'growth') {
+          growth = Number(input?.value!);
+        }
+        if (input?.key === 'inflation') {
+          inflation = Number(input?.value!);
+        }
+      }
+
+    }
+
+    // add computed inputs
+    fetchedInputs.push(new Input(
+      new Date().getTime().toString(),
+      "absoluteMonthlyGrowth",
+      String((growth - inflation) / 12 / 100),
+      "computed-number"
+    ));
+
+    fetchedInputs.push(new Input(
+      new Date().getTime().toString(),
+      "startDate",
+      new Date().toString(),
+      "computed-date",
+    ));
+
+    if (componentState != null) {
+      componentState.setState({ inputs: fetchedInputs } as any);
+      for (const i of fetchedInputs) {
+        if (i?.type === 'date' || i?.type === "computed-date") {
+          componentState.setState({ [i.key]: new Date(i.value) } as any);
+
+        } else if (i?.type === "number" || i?.type === "computed-number") {
+          componentState.setState({ [i.key]: Number(i.value) } as any);
+
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return fetchedInputs;
+}
+
+export function getInputForKeyFromList(key: string, inputs: Input[]): Input | null {
+  for (const input of inputs) {
+    if (input.key === key) {
+      return input;
+    }
+  }
+  return null;
+}
+
+export async function fetchDefaultInputs(selectedSimulationId: string): Promise<Input[]> {
+  let fetchedInputs: Input[] = [];
+  // let growth = 0.0;
+  // let inflation = 0.0;
+  try {
+    const response = (await API.graphql({
+      query: listInputs
+    })) as { data: ListInputsQuery }
+    for (const input of response.data.listInputs!.items!) {
+
+      if (input?.simulation && input?.simulation! === selectedSimulationId) {
+
+        fetchedInputs.push(new Input(
+          input?.id!,
+          input?.key!,
+          input?.value!,
+          input?.type!
+        ));
+
+        // if (input?.key === 'growth') {
+        //   growth = Number(input?.value!);
+        // }
+        // if (input?.key === 'inflation') {
+        //   inflation = Number(input?.value!);
+        // }
+      }
+
+    }
+
+    // add computed inputs
+    // fetchedInputs.push(new Input(
+    //   new Date().getTime().toString(),
+    //   "absoluteMonthlyGrowth",
+    //   String((growth - inflation) / 12 / 100),
+    //   "computed-number"
+    // ));
+
+    // fetchedInputs.push(new Input(
+    //   new Date().getTime().toString(),
+    //   "startDate",
+    //   new Date().toString(),
+    //   "computed-date",
+    // ));
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  return fetchedInputs;
+}
+
+export async function fetchAllInputs() {
+  let fetchedInputs: any = [];
+  try {
+    const response = (await API.graphql({
+      query: listInputs
+    })) as { data: ListInputsQuery }
+    for (const input of response.data.listInputs!.items!) {
+      fetchedInputs.push(input);
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedInputs;
+}
+
+// simulations
+
+// assets
+export async function fetchAssets(componentState: any | null): Promise<Asset[]> {
+  let fetchedAssets: Asset[] = [];
+  try {
+    const response = (await API.graphql({
+      query: listAssets
+    })) as { data: ListAssetsQuery }
+    for (const asset of response.data.listAssets!.items!) {
+      fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, String(asset!.quantity!), asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
+    }
+    if (componentState !== null) {
+      componentState.setState({ assets: fetchedAssets })
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return fetchedAssets;
+
+}
+
+export async function createEventBranch(event: any) {
+  try {
+    await API.graphql(graphqlOperation(createEvent, { input: event }))
+  } catch (err) {
+    console.log('error creating event:', err)
+  }
+}
+
+export async function createInputBranch(ipt: any) {
+  try {
+    await API.graphql(graphqlOperation(createInputs, { input: ipt }))
+  } catch (err) {
+    console.log('error creating input:', err)
+  }
+}
+
+
+
+
+
+
+
+
+// actual general helpers
 
 export function dateRange(startDate: Date, endDate: Date, steps = 31) {
   const dateArray = [];
@@ -67,7 +342,6 @@ export function use(account: Account, currentDate: Date, currentDateIndex: numbe
 
   return account.name === accntToUse;
 }
-
 
 export function generateData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, 
   myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
@@ -211,42 +485,7 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
 }
 
 
-function computeCurrentyStartingBalances(componentState: any, currentCurrencyVal: number, asset: Asset) {
-  const value: number = currentCurrencyVal;
-  const holdingValue = value * asset.quantity;
-  const newBrokCurr = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-  const currTaxCurr = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-  componentState.setState({
-    balances: {
-      brokerage: {
-        0: newBrokCurr,
-
-      },
-      tax: {
-        0: currTaxCurr,
-      }
-    }
-  })
-}
-
-
-function computeSecuritiesStartingBalances(componentState: any, currentSecurityVal: number, asset: Asset) {
-  const holdingValue = currentSecurityVal * asset.quantity;
-  const newBrok = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-  const currTax = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-  componentState.setState({
-    balances: {
-      brokerage: {
-        0: newBrok,
-
-      },
-      tax: {
-        0: currTax,
-      }
-    }
-  })
-}
-
+// data manipulation
 export async function fetchStartingBalances(componentState: any) {
   const finnhub = require('finnhub');
 
@@ -321,24 +560,40 @@ export async function fetchStartingBalances(componentState: any) {
 
 }
 
-export async function paginateEvents() {
-  let nxtTkn: string | null | undefined;
-  let events: any = []
-  do {
-    const response = (await API.graphql({
-      query: listEvents, variables: { nextToken: nxtTkn }
-    })) as { data: ListEventsQuery }
+function computeCurrentyStartingBalances(componentState: any, currentCurrencyVal: number, asset: Asset) {
+  const value: number = currentCurrencyVal;
+  const holdingValue = value * asset.quantity;
+  const newBrokCurr = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
+  const currTaxCurr = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
+  componentState.setState({
+    balances: {
+      brokerage: {
+        0: newBrokCurr,
 
-    for (const event of response.data.listEvents!.items!) {
-      events.push(event);
+      },
+      tax: {
+        0: currTaxCurr,
+      }
     }
-    nxtTkn = response.data.listEvents?.nextToken;
-  } while (nxtTkn !== null);
-
-  return events;
-
+  })
 }
 
+function computeSecuritiesStartingBalances(componentState: any, currentSecurityVal: number, asset: Asset) {
+  const holdingValue = currentSecurityVal * asset.quantity;
+  const newBrok = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
+  const currTax = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
+  componentState.setState({
+    balances: {
+      brokerage: {
+        0: newBrok,
+
+      },
+      tax: {
+        0: currTax,
+      }
+    }
+  })
+}
 
 async function computeEvents(currentAmazonStockPrice: number, selectedSim: Simulation, componentState: any) {
   let fetchedEvents: Event[] = [];
@@ -370,388 +625,4 @@ async function computeEvents(currentAmazonStockPrice: number, selectedSim: Simul
   } catch (error) {
     console.log(error);
   }
-}
-
-export async function fetchEvents(componentState: any, simulations: Simulation[]) {
-
-  const selectedSim = getSelectedSimulation(simulations);
-  const finnhub = require('finnhub');
-  const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-  api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-  const finnhubClient = new finnhub.DefaultApi()
-  const rep = componentState;
-
-  const stockCookie = getCookie("AMZN");
-  if (stockCookie) {
-    computeEvents(stockCookie.getValue(), selectedSim!, rep);
-  } else {
-    finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
-      if (data && data.c) {
-        const currentAmazonStockPrice: number = data.c;
-        setCookie("AMZN", currentAmazonStockPrice.toString());
-        computeEvents(currentAmazonStockPrice, selectedSim!, rep);
-      }
-    });
-  }
-}
-
-export async function fetchAccounts(componentState: any) {
-  let fetchedAccounts: Account[] = [];
-  try {
-    const response = (await API.graphql({
-      query: listAccounts
-    })) as { data: ListAccountsQuery }
-    for (const account of response.data.listAccounts!.items!) {
-      fetchedAccounts.push(new Account(account!.id!, account!.name!));
-    }
-    componentState.setState({ accounts: fetchedAccounts })
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export function getInputForKeyFromList(key: string, inputs: Input[]): Input | null {
-  for (const input of inputs) {
-    if (input.key === key) {
-      return input;
-    }
-  }
-  return null;
-}
-
-export function getSelectedSimulation(simulations: Simulation[]) {
-  for (const sim of simulations) {
-    if (sim.selected === 1) {
-      return sim;
-    }
-  }
-}
-
-export async function fetchBudgets(componentState: any, simulations: Simulation[]) {
-  const selectedSim = getSelectedSimulation(simulations);
-
-  // fetch inputs.
-  let inputs: Input[] = await fetchInputs(null, simulations);
-  let fetchedBudgets: Budget[] = [];
-  try {
-    const response = (await API.graphql({
-      query: listBudgets
-    })) as { data: ListBudgetsQuery }
-    for (const budget of response.data.listBudgets!.items!) {
-      if (budget?.simulation && budget?.simulation! === selectedSim?.id!) {
-        let cats = null;
-
-        if (budget?.categories) {
-          cats = [];
-          for (const category of budget!.categories!) {
-            // if category.name === input.name... use input.value.
-            const matchingInput = getInputForKeyFromList(category!.name!, inputs);
-            if (matchingInput != null) {
-              cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-            } else {
-              cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-            }
-          }
-        }
-        fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
-      }
-    }
-
-    componentState.setState({ budgets: fetchedBudgets })
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function fetchInputs(componentState: any | null, simulations: Simulation[]): Promise<Input[]> {
-  const selectedSim = getSelectedSimulation(simulations);
-
-  let fetchedInputs: Input[] = [];
-  let growth = 0.0;
-  let inflation = 0.0;
-  try {
-    // #todo: waistful im getting ALL inputs, but should query by simulation ID.
-    const response = (await API.graphql({
-      query: listInputs
-    })) as { data: ListInputsQuery }
-    for (const input of response.data.listInputs!.items!) {
-
-      if (input?.simulation && input?.simulation! === selectedSim?.id!) {
-        fetchedInputs.push(new Input(
-          input?.id!,
-          input?.key!,
-          input?.value!,
-          input?.type!
-        ));
-
-        if (input?.key === 'growth') {
-          growth = Number(input?.value!);
-        }
-        if (input?.key === 'inflation') {
-          inflation = Number(input?.value!);
-        }
-      }
-
-    }
-
-    // add computed inputs
-    fetchedInputs.push(new Input(
-      new Date().getTime().toString(),
-      "absoluteMonthlyGrowth",
-      String((growth - inflation) / 12 / 100),
-      "computed-number"
-    ));
-
-    fetchedInputs.push(new Input(
-      new Date().getTime().toString(),
-      "startDate",
-      new Date().toString(),
-      "computed-date",
-    ));
-
-    if (componentState != null) {
-      componentState.setState({ inputs: fetchedInputs } as any);
-      for (const i of fetchedInputs) {
-        if (i?.type === 'date' || i?.type === "computed-date") {
-          componentState.setState({ [i.key]: new Date(i.value) } as any);
-
-        } else if (i?.type === "number" || i?.type === "computed-number") {
-          componentState.setState({ [i.key]: Number(i.value) } as any);
-
-        }
-      }
-    }
-  } catch (error) {
-    console.log(error);
-  }
-
-  return fetchedInputs;
-}
-
-export async function fetchAssets(componentState: any | null): Promise<Asset[]> {
-  let fetchedAssets: Asset[] = [];
-  try {
-    const response = (await API.graphql({
-      query: listAssets
-    })) as { data: ListAssetsQuery }
-    for (const asset of response.data.listAssets!.items!) {
-      fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, String(asset!.quantity!), asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
-    }
-    if (componentState !== null) {
-      componentState.setState({ assets: fetchedAssets })
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  return fetchedAssets;
-
-}
-
-export async function fetchSimulations(componentState: any): Promise<Simulation[]> {
-  let fetchedSimulations: Simulation[] = [];
-  try {
-    const response = (await API.graphql({
-      query: listSimulations
-    })) as { data: ListSimulationsQuery }
-    let selSim: any;
-    for (const simulation of response.data.listSimulations!.items!) {
-      fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!));
-      if (simulation?.selected === 1) {
-        selSim = simulation;
-      }
-    }
-    componentState.setState({ simulations: fetchedSimulations, selectedSimulation: selSim })
-  } catch (error) {
-    console.log(error);
-  }
-  return fetchedSimulations;
-}
-
-export async function fetchDefaultInputs(selectedSimulationId: string): Promise<Input[]> {
-  let fetchedInputs: Input[] = [];
-  // let growth = 0.0;
-  // let inflation = 0.0;
-  try {
-    const response = (await API.graphql({
-      query: listInputs
-    })) as { data: ListInputsQuery }
-    for (const input of response.data.listInputs!.items!) {
-
-      if (input?.simulation && input?.simulation! === selectedSimulationId) {
-
-        fetchedInputs.push(new Input(
-          input?.id!,
-          input?.key!,
-          input?.value!,
-          input?.type!
-        ));
-
-        // if (input?.key === 'growth') {
-        //   growth = Number(input?.value!);
-        // }
-        // if (input?.key === 'inflation') {
-        //   inflation = Number(input?.value!);
-        // }
-      }
-
-    }
-
-    // add computed inputs
-    // fetchedInputs.push(new Input(
-    //   new Date().getTime().toString(),
-    //   "absoluteMonthlyGrowth",
-    //   String((growth - inflation) / 12 / 100),
-    //   "computed-number"
-    // ));
-
-    // fetchedInputs.push(new Input(
-    //   new Date().getTime().toString(),
-    //   "startDate",
-    //   new Date().toString(),
-    //   "computed-date",
-    // ));
-
-  } catch (error) {
-    console.log(error);
-  }
-
-  return fetchedInputs;
-}
-
-export async function fetchDefaultBudgets(selectedSimulationId: string): Promise<Budget[]> {
-
-  // fetch inputs.
-  let inputs: Input[] = await fetchDefaultInputs(selectedSimulationId);
-  let fetchedBudgets: Budget[] = [];
-  try {
-    const response = (await API.graphql({
-      query: listBudgets
-    })) as { data: ListBudgetsQuery }
-    for (const budget of response.data.listBudgets!.items!) {
-
-      if (budget?.simulation && budget?.simulation! === selectedSimulationId) {
-
-        let cats = null;
-
-        if (budget?.categories) {
-          cats = [];
-          for (const category of budget!.categories!) {
-            // if category.name === input.name... use input.value.
-            const matchingInput = getInputForKeyFromList(category!.name!, inputs);
-            if (matchingInput != null) {
-              cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-            } else {
-              cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-            }
-          }
-        }
-        fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
-      }
-    }
-
-  } catch (error) {
-    console.log(error);
-  }
-
-  return fetchedBudgets;
-}
-
-
-export async function fetchDefaultEvents(selectedSimulationId: string): Promise<Event[]> {
-  let fetchedEvents: Event[] = [];
-  try {
-    const response = await paginateEvents();
-    for (const event of response) {
-      if (event?.simulation && event?.simulation! === selectedSimulationId) {
-
-        let value = 0.0;
-        let name = event!.name!;
-        if (event!.category && event?.category.value) {
-          value = event?.category!.value!;
-        }
-
-        const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
-        const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
-
-        fetchedEvents.push(e);
-
-      }
-    }
-  } catch (error) {
-    console.log(error);
-  }
-
-  return fetchedEvents;
-}
-
-export async function createBudgetBranch(budget: any) {
-  try {
-    await API.graphql(graphqlOperation(createBudget, { input: budget }))
-  } catch (err) {
-    console.log('error creating budget:', err)
-  }
-}
-
-export async function createEventBranch(event: any) {
-  try {
-    await API.graphql(graphqlOperation(createEvent, { input: event }))
-  } catch (err) {
-    console.log('error creating event:', err)
-  }
-}
-
-export async function createInputBranch(ipt: any) {
-  try {
-    await API.graphql(graphqlOperation(createInputs, { input: ipt }))
-  } catch (err) {
-    console.log('error creating input:', err)
-  }
-}
-
-
-
-export async function fetchAllBudgets() {
-  let fetchedBudgets: any = [];
-  try {
-    const response = (await API.graphql({
-      query: listBudgets
-    })) as { data: ListBudgetsQuery }
-    for (const budget of response.data.listBudgets!.items!) {
-      fetchedBudgets.push(budget);
-    }
-
-  } catch (error) {
-    console.log(error);
-  }
-  return fetchedBudgets;
-}
-
-export async function fetchAllEvents() {
-  let fetchedEvents: any = [];
-  try {
-    const response = await paginateEvents();
-    for (const event of response) {
-      fetchedEvents.push(event);
-    }
-
-  } catch (error) {
-    console.log(error);
-  }
-  return fetchedEvents;
-}
-
-export async function fetchAllInputs() {
-  let fetchedInputs: any = [];
-  try {
-    const response = (await API.graphql({
-      query: listInputs
-    })) as { data: ListInputsQuery }
-    for (const input of response.data.listInputs!.items!) {
-      fetchedInputs.push(input);
-    }
-
-  } catch (error) {
-    console.log(error);
-  }
-  return fetchedInputs;
 }

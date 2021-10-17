@@ -5,7 +5,7 @@ import { createAccount, deleteAccount } from '../graphql/mutations'
 import awsExports from "../aws-exports";
 
 import { Account } from '../model/Account';
-import { fetchAccounts } from '../utilities/helpers';
+// import { fetchAccounts } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -15,6 +15,7 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
 import { Link } from "react-router-dom";
+import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
 Amplify.configure(awsExports);
 
@@ -46,7 +47,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
   }
 
   componentDidMount() {
-    fetchAccounts(this);
+    AccountDataAccess.fetchAccounts(this);
   }
 
   async handleAddAccount() {

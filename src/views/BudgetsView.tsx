@@ -6,7 +6,6 @@ import awsExports from "../aws-exports";
 import { Simulation } from '../model/Simulation';
 
 import { Budget } from '../model/Budget';
-import { fetchBudgets, fetchSimulations } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -16,6 +15,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Link } from "react-router-dom";
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 
 Amplify.configure(awsExports);
 
@@ -51,8 +52,8 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
 
   componentDidMount() {
-    fetchSimulations(this).then((simulations) => {
-      fetchBudgets(this, simulations);
+    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
+      BudgetDataAccess.fetchBudgets(this, simulations);
     });
   }
 

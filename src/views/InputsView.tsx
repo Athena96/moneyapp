@@ -14,7 +14,8 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Simulation } from '../model/Simulation';
 
 import { Input } from '../model/Input';
-import { fetchInputs, fetchSimulations } from '../utilities/helpers';
+import { fetchInputs } from '../utilities/helpers';
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 
 interface InputsViewProps {
   value: number;
@@ -75,7 +76,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
   }
 
   componentDidMount() {
-    fetchSimulations(this).then((simulations) => {
+    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
 
       fetchInputs(this, simulations);
 

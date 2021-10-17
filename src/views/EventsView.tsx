@@ -6,7 +6,7 @@ import awsExports from "../aws-exports";
 import { Event } from '../model/Event';
 
 import { Simulation } from '../model/Simulation';
-import { fetchEvents, fetchSimulations } from '../utilities/helpers';
+import { fetchEvents } from '../utilities/helpers';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -17,6 +17,7 @@ import Stack from '@mui/material/Stack';
 
 import { Link } from "react-router-dom";
 import { CategoryTypes } from '../API';
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 
 Amplify.configure(awsExports);
 
@@ -50,7 +51,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   componentDidMount() {
 
-    fetchSimulations(this).then((simulations) => {
+    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
       fetchEvents(this, simulations);
     })
   }

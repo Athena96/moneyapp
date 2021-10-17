@@ -5,8 +5,7 @@ import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import {
     RowData, fetchStartingBalances,
-    fetchEvents, fetchAccounts, fetchBudgets, fetchInputs,
-    fetchSimulations,
+    fetchEvents, fetchInputs,
     generateData
 } from '../utilities/helpers';
 
@@ -17,6 +16,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { AccountDataAccess } from '../utilities/AccountDataAccess';
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 
 import '../App.css';
 
@@ -66,13 +68,13 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     componentDidMount() {
-        fetchSimulations(this).then((simulations) => {
-            fetchBudgets(this, simulations);
+        SimulationDataAccess.fetchSimulations(this).then((simulations) => {
+            BudgetDataAccess.fetchBudgets(this, simulations);
             fetchEvents(this, simulations);
             fetchInputs(this, simulations);
 
         })
-        fetchAccounts(this);
+        AccountDataAccess.fetchAccounts(this);
         fetchStartingBalances(this);
     }
 
