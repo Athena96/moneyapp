@@ -145,11 +145,11 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>start: </b> {(budget.startDate.getMonth() + 1).toString()}/{budget.startDate.getFullYear().toString()}
+                    <b>start: </b> {budget.startDate.toString()}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>end: </b>  {(budget.endDate.getMonth() + 1).toString()}/{budget.endDate.getFullYear().toString()}
+                    <b>end: </b>  {budget.endDate.toString()}
                   </Typography>
                 </Stack>
 

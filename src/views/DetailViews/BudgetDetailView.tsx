@@ -80,7 +80,12 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
       const catname = parts[2]
       for (const c of cats) {
         if (id === c.id) {
-          (c as any)[catname] = cleanNumberDataInput(value);
+          if (name.includes("category-value")) {
+            (c as any)[catname] = cleanNumberDataInput(value);
+          } else {
+           
+          (c as any)[catname] = value; 
+          }
         }
       }
 
