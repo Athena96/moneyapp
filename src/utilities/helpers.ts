@@ -68,7 +68,72 @@ export function use(account: Account, currentDate: Date, currentDateIndex: numbe
   return account.name === accntToUse;
 }
 
-export function generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
+
+export function generateData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, 
+  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
+
+  // create a list of dates incrementing by 1 month
+  const dates = dateRange(startDate, endDate);
+  let data = dates.map((date, i) => {
+    let eventDesc = "";
+    let accntUsed = "";
+
+    if (i > 0) {
+      // for each account, compute their currentDay balance, then return the entry to put it in the table
+      for (const account of myaccounts) {
+
+        // USE or GROW the account?
+        if (use(account, date, i, dateIm59, balances, retireDate)) {
+          accntUsed = account.name;
+          const budget = getCurrentBudget(date, budgets)!;
+          const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
+          balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
+        } else {
+          balances[account.name][i] = balances[account.name][i - 1] + absoluteMonthlyGrowth * balances[account.name][i - 1];
+          if (balances[account.name][i - 1] <= 0.0) {
+            balances[account.name][i] = 0.0;
+          }
+        }
+
+        // Apply Events regardless if im using the account or not
+        for (const event of events) {
+          // if the event is to be debited from the account, and it occurs this month/year then account for it
+          if (event.account === account.name) {
+            if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
+              eventDesc += event.name;
+              if (event.category) {
+                if (event.category!.type === CategoryTypes.Expense) {
+                  balances[account.name][i] -= event.category!.getValue();
+                }
+                if (event.category!.type === CategoryTypes.Income) {
+                  balances[account.name][i] += event.category!.getValue();
+                }
+              }
+              if (event.name !== "") eventDesc += ' -- ';
+            }
+          }
+        }
+      }
+    }
+
+    const r: RowData = {
+      date: `${date.getMonth() + 1}/${date.getFullYear()}`,
+      brokerageBal: `$${balances['brokerage'][i].toFixed(2)}`,
+      taxBal: `$${balances['tax'][i].toFixed(2)}`,
+      note: eventDesc,
+      accountUsed: accntUsed
+    };
+
+    return r;
+
+  });
+
+  return data;
+}
+
+// chart data
+export function generateTable(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number, 
+  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
   var tmpChartData: any = {
     labels: [],
     datasets: [
@@ -100,7 +165,9 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
-  let data = dates.map((date, i) => {
+  dates.map((date, i) => {
+
+
     let eventDesc = "";
     let accntUsed = "";
 
@@ -147,19 +214,9 @@ export function generateTable(balances: any, events: Event[], budgets: Budget[],
     tmpChartData.datasets[1].data.push(balances['tax'][i].toFixed(2));
     tmpChartData.datasets[2].data.push(minEnd);
 
-    const r: RowData = {
-      date: `${date.getMonth() + 1}/${date.getFullYear()}`,
-      brokerageBal: `$${balances['brokerage'][i].toFixed(2)}`,
-      taxBal: `$${balances['tax'][i].toFixed(2)}`,
-      note: eventDesc,
-      accountUsed: accntUsed
-    };
-
-    return r;
-
   });
 
-  return [data, tmpChartData];
+  return tmpChartData;
 }
 
 

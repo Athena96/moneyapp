@@ -4,9 +4,10 @@ import { Event } from '../model/Event';
 import { Budget } from '../model/Budget';
 import { Account } from '../model/Account';
 import {
-    generateTable, RowData, fetchStartingBalances,
+    RowData, fetchStartingBalances,
     fetchEvents, fetchAccounts, fetchBudgets, fetchInputs,
-    fetchSimulations
+    fetchSimulations,
+    generateData
 } from '../utilities/helpers';
 
 import Table from '@mui/material/Table';
@@ -82,7 +83,7 @@ class DataView extends React.Component<DataViewProps, IState> {
     render() {
         if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
 
-            const [balanceData, chartData] = generateTable(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
+            const balanceData = generateData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
                 this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
             return this.props.index === this.props.value ? (
                 <>
