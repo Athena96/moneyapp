@@ -46,7 +46,7 @@ class App extends React.Component<IProps, IState> {
             <Toolbar>
 
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-               <Link style={{color: 'white', textDecoration: 'none'}} to="/">Money App</Link>
+               <Link style={{color: 'white', textDecoration: 'none'}} to="/">Money money monay</Link>
               </Typography>
 
             </Toolbar>
