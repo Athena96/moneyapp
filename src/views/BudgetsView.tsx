@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { BudgetFactory } from '../model/FactoryMethods/BudgetFactory';
+import { getObjectWithId } from '../utilities/helpers';
 
 Amplify.configure(awsExports);
 
@@ -73,22 +74,13 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
   }
 
-  getBudgetWithId(budgetId: string, budgets: Budget[]) {
-    for (const budget of budgets) {
-      if (budget.getKey() === budgetId) {
-        return budget;
-      }
-    }
-  }
-
   async handleDuplicateBudget(event: any) {
     const idToDuplicate = (event.target as Element).id;
-    const budgetToDuplicate = this.getBudgetWithId(idToDuplicate, this.state.budgets)!;
+    const budgetToDuplicate = getObjectWithId(idToDuplicate, this.state.budgets)! as Budget;
     try {
       let newBudget: any = BudgetFactory.fromBudget(budgetToDuplicate);
       newBudget['simulation'] = this.state.selectedSimulation!.id;
 
-      console.log('fromBudget ' + JSON.stringify(newBudget));
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });
       await API.graphql(graphqlOperation(createBudget, { input: newBudget }))

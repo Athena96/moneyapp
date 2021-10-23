@@ -18,6 +18,8 @@ import { Link } from "react-router-dom";
 import { CategoryTypes } from '../API';
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
+import { EventFactory } from '../model/FactoryMethods/EventFactory';
+import { getObjectWithId } from '../utilities/helpers';
 
 Amplify.configure(awsExports);
 
@@ -45,6 +47,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleDeleteEvents = this.handleDeleteEvents.bind(this);
+    this.handleDuplicateEvent = this.handleDuplicateEvent.bind(this);
     this.handleAddEvents = this.handleAddEvents.bind(this);
     this.render = this.render.bind(this);
   }
@@ -71,7 +74,20 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     }
   }
 
+  async handleDuplicateEvent(event: any) {
+    const idToDuplicate = (event.target as Element).id;
+    const eventToDuplicate = getObjectWithId(idToDuplicate, this.state.events)! as Event;
+    try {
+      let newEvent: any = EventFactory.fromEvent(eventToDuplicate);
+      newEvent['simulation'] = this.state.selectedSimulation!.id;
 
+      let newEvents = [...this.state.events, newEvent]
+      this.setState({ events: newEvents });
+      await API.graphql(graphqlOperation(createEvent, { input: newEvent }))
+    } catch (err) {
+      console.log('error creating event:', err)
+    }
+  }
 
   async handleDeleteEvents(event: any) {
     const idToDelete = (event.target as Element).id;
@@ -136,6 +152,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
                   <Stack direction='row' spacing={4}>
 
                     <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
+                    <Button id={event.getKey()} onClick={this.handleDuplicateEvent} variant="contained">Duplicate</Button>
                     <Link style={{ color: 'white', textDecoration: 'none' }} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
 
                   </Stack>

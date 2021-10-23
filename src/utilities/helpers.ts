@@ -2,6 +2,7 @@ import { Event } from '../model/Base/Event';
 import { Budget } from '../model/Base/Budget';
 import { Account } from '../model/Base/Account';
 import { CategoryTypes } from "../API";
+import { Key } from '../model/Interfaces/KeyInterface';
 
 export interface RowData {
   date: string;
@@ -149,8 +150,8 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
   let data = generateData(balances, events, budgets, absoluteMonthlyGrowth!, myaccounts, startDate!, endDate!, dateIm59!, retireDate!, minEnd!)
   data.forEach((dataRow, i) => {
     tmpChartData.labels.push(`${dataRow.date}`);
-    tmpChartData.datasets[0].data.push(Number(dataRow.brokerageBal.replace('$','')));
-    tmpChartData.datasets[1].data.push(Number(dataRow.taxBal.replace('$','')));
+    tmpChartData.datasets[0].data.push(Number(dataRow.brokerageBal.replace('$', '')));
+    tmpChartData.datasets[1].data.push(Number(dataRow.taxBal.replace('$', '')));
     tmpChartData.datasets[2].data.push(minEnd);
   });
   return tmpChartData;
@@ -158,4 +159,12 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
 
 export function cleanNumberDataInput(input: string) {
   return input.replace(/[^\d.-]/g, '');
+}
+
+export function getObjectWithId(idToFind: string, keyObjects: Key[]) {
+  for (const obj of keyObjects) {
+    if (obj.getKey() === idToFind) {
+      return obj;
+    }
+  }
 }
