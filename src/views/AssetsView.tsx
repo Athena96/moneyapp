@@ -13,6 +13,7 @@ import { createAssets, deleteAssets, updateAssets } from '../graphql/mutations';
 import { Asset } from '../model/Base/Asset';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 interface AssetsViewProps {
     value: number;
@@ -60,9 +61,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                 }
                 if (tp === 'hasIndexData') {
                     asset.hasIndexData = Number(value);
-                }
-                if (tp === 'account') {
-                    asset.account = value;
                 }
                 if (tp === 'isCurrency') {
                     asset.isCurrency = Number(value);
@@ -134,6 +132,11 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             console.log('error:', err)
         }
     }
+
+    handleDropChange = (event: SelectChangeEvent) => {
+        const accnt = event.target.value as string;
+        this.setState({ 'account': accnt } as any);
+    };
     render() {
 
         if (this.props.index === this.props.value) {
@@ -151,7 +154,19 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                                         <TextField label="Ticker" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
                                         <TextField label="Quantity" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
                                         <TextField label="Has Index Data" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
-                                        <TextField label="Account" id="outlined-basic" variant="outlined" name={`account-${asset.getKey()}`} onChange={this.handleChange} value={asset.account} />
+                                        <FormControl fullWidth>
+                                            <InputLabel id="demo-simple-select-label">Account</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={asset.account}
+                                                label="Account"
+                                                onChange={this.handleDropChange}
+                                            >
+                                                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
+                                                <MenuItem value={'tax'}>Tax</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                         <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
                                         <Button id={asset.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
                                         <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>

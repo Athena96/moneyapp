@@ -30,7 +30,7 @@ class Home extends React.Component<IProps, IState> {
 
     super(props);
     this.state = {
-      selectedTab: 2
+      selectedTab: 1
     }
 
     this.render = this.render.bind(this);
@@ -46,12 +46,10 @@ class Home extends React.Component<IProps, IState> {
     return (
       <div >
 
-
         <div >
           <div>
             <GraphView />
           </div>
-
 
           <div>
             <Box sx={{ width: '100%' }}>
@@ -59,7 +57,7 @@ class Home extends React.Component<IProps, IState> {
                 <Tabs variant="scrollable"
                   scrollButtons
                   allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
-                  <Tab label="Accounts" />
+                  {/* <Tab label="Accounts" /> */}
                   <Tab label="Data" />
                   <Tab label="Budgets" />
                   <Tab label="Events" />
@@ -70,14 +68,14 @@ class Home extends React.Component<IProps, IState> {
                 </Tabs>
               </Box>
               <br /><br />
-              <AccountsView value={this.state.selectedTab} index={0} />
+              {/* <AccountsView value={this.state.selectedTab} index={0} /> */}
 
-              <DataView value={this.state.selectedTab} index={1} />
-              <BudgetsView value={this.state.selectedTab} index={2} />
-              <EventsView value={this.state.selectedTab} index={3} />
-              <InputsView value={this.state.selectedTab} index={4} />
-              <AssetsView value={this.state.selectedTab} index={5} />
-              <SimulationView value={this.state.selectedTab} index={6} />
+              <DataView value={this.state.selectedTab} index={0} />
+              <BudgetsView value={this.state.selectedTab} index={1} />
+              <EventsView value={this.state.selectedTab} index={2} />
+              <InputsView value={this.state.selectedTab} index={3} />
+              <AssetsView value={this.state.selectedTab} index={4} />
+              <SimulationView value={this.state.selectedTab} index={5} />
 
             </Box>
           </div>

@@ -39,7 +39,7 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/home" component={Home} />
         <Route path="/events" component={EventDetailView} />
         <Route path="/budgets" component={BudgetDetailView} />
-        <Route path="/accounts" component={AccountDetailView} />
+        {/* <Route path="/accounts" component={AccountDetailView} /> */}
         <Route path="/assets" component={AssetsView} />
         <Route path="/simulations" component={SimulationView} />
 

@@ -17,6 +17,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import { updateEvent } from '../../graphql/mutations';
 import { cleanNumberDataInput } from '../../utilities/helpers';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 
 Amplify.configure(awsExports);
 
@@ -94,7 +95,10 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
     }
 
   }
-
+  handleDropChange = (event: SelectChangeEvent) => {
+    const accnt = event.target.value as string;
+    this.setState({ 'account': accnt } as any);
+  };
 
   render() {
     return (
@@ -106,7 +110,19 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
 
             <TextField label="Name" id="outlined-basic" name="name" variant="outlined" onChange={this.handleChange} value={this.state.name ? this.state.name : '...'} />
 
-            <TextField label="Account" id="outlined-basic" name="account" variant="outlined" onChange={this.handleChange} value={this.state.account} />
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Account</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={this.state.account}
+                label="Account"
+                onChange={this.handleDropChange}
+              >
+                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
+                <MenuItem value={'tax'}>Tax</MenuItem>
+              </Select>
+            </FormControl>
 
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
