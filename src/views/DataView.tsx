@@ -86,7 +86,6 @@ class DataView extends React.Component<DataViewProps, IState> {
 
     render() {
         if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
-
             const balanceData = generateData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
                 this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
             return this.props.index === this.props.value ? (

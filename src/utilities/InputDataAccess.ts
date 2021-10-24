@@ -11,6 +11,26 @@ import { SimulationDataAccess } from './SimulationDataAccess';
 
 export class InputDataAccess {
 
+
+    static async paginateInputs() {
+        let nxtTkn: string | null | undefined;
+        let events: any = []
+        do {
+            const response = (await API.graphql({
+                query: listInputs, variables: { nextToken: nxtTkn }
+            })) as { data: ListInputsQuery }
+
+            for (const event of response.data.listInputs!.items!) {
+                events.push(event);
+            }
+            nxtTkn = response.data.listInputs?.nextToken;
+        } while (nxtTkn !== null);
+
+        return events;
+
+    }
+
+
     static async fetchInputs(componentState: any | null, simulations: Simulation[]): Promise<Input[]> {
         const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
 
@@ -19,10 +39,8 @@ export class InputDataAccess {
         let inflation = 0.0;
         try {
             // #todo: waistful im getting ALL inputs, but should query by simulation ID.
-            const response = (await API.graphql({
-                query: listInputs
-            })) as { data: ListInputsQuery }
-            for (const input of response.data.listInputs!.items!) {
+            const response = await InputDataAccess.paginateInputs();
+            for (const input of response) {
 
                 if (input?.simulation && input?.simulation! === selectedSim?.id!) {
                     fetchedInputs.push(new Input(
@@ -88,10 +106,8 @@ export class InputDataAccess {
     static async fetchDefaultInputs(selectedSimulationId: string): Promise<Input[]> {
         let fetchedInputs: Input[] = [];
         try {
-            const response = (await API.graphql({
-                query: listInputs
-            })) as { data: ListInputsQuery }
-            for (const input of response.data.listInputs!.items!) {
+            const response = await InputDataAccess.fetchAllInputs();
+            for (const input of response) {
                 if (input?.simulation && input?.simulation! === selectedSimulationId) {
                     fetchedInputs.push(new Input(
                         input?.id!,
@@ -111,10 +127,9 @@ export class InputDataAccess {
     static async fetchAllInputs() {
         let fetchedInputs: any = [];
         try {
-            const response = (await API.graphql({
-                query: listInputs
-            })) as { data: ListInputsQuery }
-            for (const input of response.data.listInputs!.items!) {
+            const response = await InputDataAccess.fetchAllInputs();
+
+            for (const input of response) {
                 fetchedInputs.push(input);
             }
 
