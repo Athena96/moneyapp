@@ -126,6 +126,19 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
         <Button style={{ width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
 
         {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget) => {
+
+          let invest = null;
+          if (budget.categories) {
+            invest = 0;
+            for (const cat of budget.categories) {
+              if (cat.name.includes('paycheck')) {
+                invest += cat.value;
+              } else {
+                invest -= cat.value;
+              }
+            }
+          }
+
           return (
 
             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
@@ -143,7 +156,16 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                     <b>end: </b>  {budget.endDate.toString()}
                   </Typography>
+
                 </Stack>
+
+
+                {
+                  invest ?
+                    <><Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                      <b>invest: </b> (per month)<b>${invest.toFixed(2)}</b>   (per year)<b>${(invest * 12).toFixed(2)}</b>
+                    </Typography></> : <></>
+                }
 
                 <Stack direction='row' spacing={4}>
 
