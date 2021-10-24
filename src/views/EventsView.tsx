@@ -131,7 +131,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
                 <Stack direction='row' spacing={4}>
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>name: </b> {event.name === "" ? '...' : event.name} - {event.id}
+                    <b>name: </b> {event.name === "" ? '...' : event.name}
                   </Typography>
 
                   <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>

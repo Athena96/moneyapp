@@ -88,6 +88,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
             if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
               eventDesc += event.name;
               if (event.category) {
+                eventDesc += ` $${event.category.getValue()}`;
                 if (event.category!.type === CategoryTypes.Expense) {
                   balances[account.name][i] -= event.category!.getValue();
                 }
@@ -95,7 +96,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
                   balances[account.name][i] += event.category!.getValue();
                 }
               }
-              if (event.name !== "") eventDesc += ' -- ';
+              eventDesc += ' | ';
             }
           }
         }

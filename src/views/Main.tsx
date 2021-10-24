@@ -1,7 +1,6 @@
 
 import * as React from 'react';
 
-import AccountDetailView from './DetailViews/AccountDetailView';
 import BudgetDetailView from './DetailViews/BudgetDetailView';
 import EventDetailView from './DetailViews/EventDetailView';
 import AssetsView from './AssetsView';
