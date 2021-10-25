@@ -124,7 +124,7 @@ export class EventDataAccess {
             const parts = event.name.split(' ');
             const quantity = Number(parts[1]);
             name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
-            value = Number((quantity * currentAmazonStockPrice - (0.3 * quantity * currentAmazonStockPrice)).toFixed(2));
+            value = Number((quantity * currentAmazonStockPrice - (0.299 * quantity * currentAmazonStockPrice)).toFixed(2));
           }
           const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
           const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
