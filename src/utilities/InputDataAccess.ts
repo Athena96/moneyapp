@@ -127,7 +127,7 @@ export class InputDataAccess {
     static async fetchAllInputs() {
         let fetchedInputs: any = [];
         try {
-            const response = await InputDataAccess.fetchAllInputs();
+            const response = await InputDataAccess.paginateInputs();
 
             for (const input of response) {
                 fetchedInputs.push(input);
