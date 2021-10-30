@@ -6,9 +6,11 @@ import { deleteBudget } from '../graphql/mutations'
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import LoadingButton from "@mui/lab/LoadingButton";
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { Simulation } from '../model/Base/Simulation';
 import { Budget } from '../model/Base/Budget';
@@ -28,6 +30,8 @@ interface SimulationViewProps {
 
 interface IState {
     simulations: Simulation[];
+    isLoading: boolean;
+
 }
 
 class SimulationView extends React.Component<SimulationViewProps, IState> {
@@ -37,7 +41,9 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         super(props);
 
         this.state = {
-            simulations: []
+            simulations: [],
+            isLoading: false
+
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -80,11 +86,11 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
     async handleAddSimulation() {
         if (window.confirm('Are you sure you want to ADD a new Simulation? This will copy all current Budget/Events/Inputs to a new Simulation branch.')) {
+            this.setState({ isLoading: true });
             try {
                 let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
                 let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0);
                 let newSimulations = [...this.state.simulations, newSimulation]
-                this.setState({ simulations: newSimulations });
                 await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
 
                 // pull budgets from the current selected simulation
@@ -129,8 +135,13 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     cpInput['id'] = new Date().getTime().toString()
                     await InputDataAccess.createInputBranch(cpInput);
                 }
+
+                this.setState({ simulations: newSimulations });
+                this.setState({ isLoading: false });
+
             } catch (err) {
-                console.log('error creating...:', err)
+                console.log('error creating...:', err);
+                this.setState({ isLoading: false });
             }
 
         } else {
@@ -173,9 +184,10 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     continue;
                 }
                 newSimulations.push(simulation);
-
             }
-            this.setState({ simulations: newSimulations });
+
+            this.setState({ isLoading: true });
+
             try {
                 await API.graphql({ query: deleteSimulation, variables: { input: simulationToDelete } });
 
@@ -217,12 +229,12 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     }
                 }
 
-
+                this.setState({ simulations: newSimulations });
+                this.setState({ isLoading: false });
             } catch (err) {
-                console.log('error:', err)
+                console.log('error:', err);
+                this.setState({ isLoading: false });
             }
-
-
         } else {
             console.log('chose not to delete');
             return;
@@ -236,7 +248,13 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     render() {
         return this.props.index === this.props.value ? (
             <>
-                <Button style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation + </Button>
+
+                {this.state.isLoading ? <><Box style={{ textAlign: 'center' }}>
+                    <LinearProgress />
+                    <br />
+                </Box></> : <></>}
+
+                {this.state.isLoading ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation + </LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation + </LoadingButton></>}
 
                 {this.state.simulations.map((simulation: Simulation) => {
                     return (
@@ -247,9 +265,8 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                                     <TextField label="Name" id="outlined-basic" variant="outlined" name={`name-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.name} />
                                     <TextField label="Is Selected?" id="outlined-basic" variant="outlined" name={`selected-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.selected} />
 
-
-                                    <Button id={simulation.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
-                                    <Button id={simulation.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
+                                    <LoadingButton id={simulation.getKey()} onClick={this.handleDelete} variant="outlined">Delete</LoadingButton>
+                                    <LoadingButton id={simulation.getKey()} onClick={this.handleSave} variant="contained">Save</LoadingButton>
                                 </Stack>
 
 
