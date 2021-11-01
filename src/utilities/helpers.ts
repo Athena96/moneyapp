@@ -64,10 +64,9 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     let eventDesc = "";
     let accntUsed = "";
 
-    if (i > 0) {
-      // for each account, compute their currentDay balance, then return the entry to put it in the table
-      for (const account of myaccounts) {
-
+    // for each account, compute their currentDay balance, then return the entry to put it in the table
+    for (const account of myaccounts) {
+      if (i > 0) {
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
           accntUsed = account.name;
@@ -80,24 +79,33 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
             balances[account.name][i] = 0.0;
           }
         }
+      }
 
-        // Apply Events regardless if im using the account or not
-        for (const event of events) {
-          // if the event is to be debited from the account, and it occurs this month/year then account for it
-          if (event.account === account.name) {
-            if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
-              eventDesc += event.name;
-              if (event.category) {
-                eventDesc += ` $${event.category.getValue()}`;
-                if (event.category!.type === CategoryTypes.Expense) {
+      // Apply Events regardless if im using the account or not
+      for (const event of events) {
+        // if the event is to be debited from the account, and it occurs this month/year then account for it
+        if (event.account === account.name) {
+          if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
+            eventDesc += event.name;
+            
+            if (event.category) {
+              switch(event.category.type){
+                case CategoryTypes.Expense:
+                  eventDesc += ` -$${event.category.getValue()}`;
                   balances[account.name][i] -= event.category!.getValue();
-                }
-                if (event.category!.type === CategoryTypes.Income) {
+                  break;
+                case CategoryTypes.Income:
+                  eventDesc += ` +$${event.category.getValue()}`;
                   balances[account.name][i] += event.category!.getValue();
-                }
+                  break;
+                default:
+                  eventDesc += ` ERROR`;
+                  balances[account.name][i] -= event.category!.getValue();
+                  break;
               }
-              eventDesc += ' | ';
             }
+            
+            eventDesc += ' | ';
           }
         }
       }
