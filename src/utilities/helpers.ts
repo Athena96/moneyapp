@@ -79,37 +79,37 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
             balances[account.name][i] = 0.0;
           }
         }
+      }
 
+      // Apply Events regardless if im using the account or not
+      for (const event of events) {
+        // if the event is to be debited from the account, and it occurs this month/year then account for it
+        if (event.account === account.name) {
+          if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
+            eventDesc += event.name;
 
-        // Apply Events regardless if im using the account or not
-        for (const event of events) {
-          // if the event is to be debited from the account, and it occurs this month/year then account for it
-          if (event.account === account.name) {
-            if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
-              eventDesc += event.name;
-
-              if (event.category) {
-                switch (event.category.type) {
-                  case CategoryTypes.Expense:
-                    eventDesc += ` -$${event.category.getValue()}`;
-                    balances[account.name][i] -= event.category!.getValue();
-                    break;
-                  case CategoryTypes.Income:
-                    eventDesc += ` +$${event.category.getValue()}`;
-                    balances[account.name][i] += event.category!.getValue();
-                    break;
-                  default:
-                    eventDesc += ` ERROR`;
-                    balances[account.name][i] -= event.category!.getValue();
-                    break;
-                }
+            if (event.category) {
+              switch (event.category.type) {
+                case CategoryTypes.Expense:
+                  eventDesc += ` -$${event.category.getValue()}`;
+                  balances[account.name][i] -= event.category!.getValue();
+                  break;
+                case CategoryTypes.Income:
+                  eventDesc += ` +$${event.category.getValue()}`;
+                  balances[account.name][i] += event.category!.getValue();
+                  break;
+                default:
+                  eventDesc += ` ERROR`;
+                  balances[account.name][i] -= event.category!.getValue();
+                  break;
               }
-
-              eventDesc += ' | ';
             }
+
+            eventDesc += ' | ';
           }
         }
       }
+      // }
     }
 
     const r: RowData = {

@@ -42,6 +42,7 @@ interface IState {
     retireDate: Date | null;
     accounts: Account[];
     balances: any;
+    balanceData: any | null;
 }
 
 class DataView extends React.Component<DataViewProps, IState> {
@@ -62,32 +63,33 @@ class DataView extends React.Component<DataViewProps, IState> {
             events: [],
             budgets: [],
             accounts: [],
-            balances: {}
+            balances: {},
+            balanceData: null
         }
-        this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.render = this.render.bind(this);
+        this.getData = this.getData.bind(this);
     }
 
     componentDidMount() {
-        SimulationDataAccess.fetchSimulations(this).then((simulations) => {
-            BudgetDataAccess.fetchBudgets(this, simulations);
-            EventDataAccess.fetchEvents(this, simulations);
-            InputDataAccess.fetchInputs(this, simulations);
-
-        })
-        AccountDataAccess.fetchAccounts(this);
-        AssetDataAccess.fetchStartingBalances(this);
+        this.getData();
     }
+    async getData() {
+        const simulations = await SimulationDataAccess.fetchSimulations(this);
+        await BudgetDataAccess.fetchBudgets(this, simulations);
+        await EventDataAccess.fetchEvents(this, simulations);
+        await InputDataAccess.fetchInputs(this, simulations);
+        await AccountDataAccess.fetchAccounts(this);
+        await AssetDataAccess.fetchStartingBalances(this);
+        const balanceData = generateData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
+            this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
 
-    inputsAreLoaded() {
-        return this.state.growth != null && this.state.inflation != null && this.state.absoluteMonthlyGrowth != null;
+        this.setState({ balanceData: balanceData });
+
     }
 
     render() {
-        if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
-            const balanceData = generateData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
-                this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
+        if (this.state.balanceData) {
             return this.props.index === this.props.value ? (
                 <>
                     <TableContainer component={Paper}>
@@ -101,7 +103,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {balanceData.map((row: RowData) => (
+                                {this.state.balanceData.map((row: RowData) => (
                                     <TableRow
                                         style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
                                         key={row.date}

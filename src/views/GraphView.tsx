@@ -37,6 +37,7 @@ interface IState {
   retireDate: Date | null;
   accounts: Account[];
   balances: any;
+  chartData: any | null;
 }
 
 class GraphsView extends React.Component<GraphsViewProps, IState> {
@@ -58,22 +59,31 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       events: [],
       budgets: [],
       accounts: [],
-      balances: {}
+      balances: {},
+      chartData: null
     }
-    this.inputsAreLoaded = this.inputsAreLoaded.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.getData = this.getData.bind(this);
   }
 
   componentDidMount() {
-    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
-      BudgetDataAccess.fetchBudgets(this, simulations);
-      EventDataAccess.fetchEvents(this, simulations);
-      InputDataAccess.fetchInputs(this, simulations);
-    })
-    AccountDataAccess.fetchAccounts(this);
-    AssetDataAccess.fetchStartingBalances(this);
+    this.getData();
+  }
+
+  async getData() {
+    const simulations = await SimulationDataAccess.fetchSimulations(this);
+    await BudgetDataAccess.fetchBudgets(this, simulations);
+    await EventDataAccess.fetchEvents(this, simulations);
+    await InputDataAccess.fetchInputs(this, simulations);
+    await AccountDataAccess.fetchAccounts(this);
+    await AssetDataAccess.fetchStartingBalances(this);
+    const chartData = generateGraphData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
+      this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
+
+    this.setState({ chartData: chartData });
+
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -82,14 +92,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
-  inputsAreLoaded() {
-    return this.state.growth != null && this.state.inflation != null && this.state.absoluteMonthlyGrowth != null;
-  }
-
   render() {
-    if (this.state.accounts.length > 0 && this.state.budgets.length > 0 && this.inputsAreLoaded() && this.state.events.length > 0) {
-      const chartData = generateGraphData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
-        this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
+    if (this.state.chartData) {
       const options = {
         scales: {
           y: {
@@ -100,7 +104,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       };
       return (
         <Container >
-          <Line data={chartData} options={options} />
+          <Line data={this.state.chartData} options={options} />
         </Container >
       );
     } else {
