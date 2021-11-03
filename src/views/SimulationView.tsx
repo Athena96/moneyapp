@@ -110,7 +110,6 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     const cpBudget: any = budget;
                     cpBudget['simulation'] = newSimulation.id;
                     cpBudget['id'] = new Date().getTime().toString()
-                    console.log('cpBudget: ' + JSON.stringify(cpBudget))
                     let i = 0;
                     for (const cat of cpBudget['categories']) {
                         cat['id'] = (new Date().getTime() + i).toString();
