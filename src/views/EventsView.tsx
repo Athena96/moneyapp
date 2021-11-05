@@ -138,25 +138,26 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   async handleDeleteEvents(event: any) {
     const idToDelete = (event.target as Element).id;
-    console.log(`idToDelete: ${idToDelete}`)
-    let newEvents = [];
-    let eventToDelete = null;
+    if (window.confirm('Are you sure you want to DELETE this Event?')) {
 
-    for (const event of this.state.events) {
-      if (event.getKey() === idToDelete) {
-        eventToDelete = {
-          'id': event.getKey()
+      let newEvents = [];
+      let eventToDelete = null;
+
+      for (const event of this.state.events) {
+        if (event.getKey() === idToDelete) {
+          eventToDelete = {
+            'id': event.getKey()
+          }
+          continue;
         }
-        continue;
+        newEvents.push(event);
       }
-      newEvents.push(event);
-
-    }
-    this.setState({ events: newEvents });
-    try {
-      await API.graphql({ query: deleteEvent, variables: { input: eventToDelete } });
-    } catch (err) {
-      console.log('error:', err)
+      this.setState({ events: newEvents });
+      try {
+        await API.graphql({ query: deleteEvent, variables: { input: eventToDelete } });
+      } catch (err) {
+        console.log('error:', err)
+      }
     }
   }
 

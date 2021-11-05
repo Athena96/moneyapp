@@ -112,24 +112,26 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
     async handleDelete(event: any) {
         const idToDelete = (event.target as Element).id;
-        let newAssets = [];
-        let assetToDelete = null;
+        if (window.confirm('Are you sure you want to DELETE this Asset?')) {
+            let newAssets = [];
+            let assetToDelete = null;
 
-        for (const asset of this.state.assets) {
-            if (asset.getKey() === idToDelete) {
-                assetToDelete = {
-                    'id': asset.getKey()
+            for (const asset of this.state.assets) {
+                if (asset.getKey() === idToDelete) {
+                    assetToDelete = {
+                        'id': asset.getKey()
+                    }
+                    continue;
                 }
-                continue;
-            }
-            newAssets.push(asset);
+                newAssets.push(asset);
 
-        }
-        this.setState({ assets: newAssets });
-        try {
-            await API.graphql({ query: deleteAssets, variables: { input: assetToDelete } });
-        } catch (err) {
-            console.log('error:', err)
+            }
+            this.setState({ assets: newAssets });
+            try {
+                await API.graphql({ query: deleteAssets, variables: { input: assetToDelete } });
+            } catch (err) {
+                console.log('error:', err)
+            }
         }
     }
 
