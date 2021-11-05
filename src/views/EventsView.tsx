@@ -97,7 +97,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async handleAddEvents() {
-    await this.addEvent(new Date().getTime().toString(), '...', new Date(), '...', null);
+    await this.addEvent(new Date().getTime().toString(), '...', new Date(), 'brokerage', null);
   }
 
   async handleBulkAddEvents() {
@@ -110,9 +110,9 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       const dates = dateRange(this.state.bulkAddStartDate, this.state.bulkAddEndDate);
       let i = 0
       for (const eventDate of dates) {
-        console.log('-> ' + eventDate);
+        const key = (Math.floor(eventDate.getTime() + Math.random())).toString();
         const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue, this.state.bulkAddEventCatType);
-        await this.addEvent(eventDate.getTime().toString(), this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
+        await this.addEvent(key, this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
       }
     } catch (err) {
       console.log(err);
@@ -180,6 +180,11 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     this.setState({ 'bulkAddAccount': accnt } as any);
   };
 
+  handleCategoryTypeChange = (event: SelectChangeEvent) => {
+    const catType = event.target.value as string;
+    const tp = catType === 'Expense' ? CategoryTypes.Expense : CategoryTypes.Income;
+    this.setState({ 'bulkAddEventCatType': tp });
+  };
 
   render() {
     return this.props.index === this.props.value ? (
@@ -239,7 +244,21 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
         <br />
         <br />
-        <TextField label="Category Type" id="outlined-basic" name="bulkAddEventCatType" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventCatType} />
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={this.state.bulkAddEventCatType}
+            label="Category Type"
+            onChange={this.handleCategoryTypeChange}
+          >
+            <MenuItem value={'Expense'}>Expense</MenuItem>
+            <MenuItem value={'Income'}>Income</MenuItem>
+          </Select>
+        </FormControl>
+
+
         <br />
         <br />
         {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
