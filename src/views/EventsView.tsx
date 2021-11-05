@@ -18,6 +18,7 @@ import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import TextField from '@mui/material/TextField';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import LoadingButton from "@mui/lab/LoadingButton";
 import { cleanNumberDataInput } from '../utilities/helpers';
 
 import { Link } from "react-router-dom";
@@ -44,8 +45,8 @@ interface IState {
   bulkAddEventCatType: CategoryTypes,
   bulkAddStartDate: Date,
   bulkAddEndDate: Date,
-  selectedSimulation: Simulation | null
-
+  selectedSimulation: Simulation | null,
+  isBulkAddingEvents: boolean
 }
 
 class EventsView extends React.Component<EventsViewProps, IState> {
@@ -61,8 +62,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       bulkAddEventCatType: CategoryTypes.Expense,
       bulkAddStartDate: new Date(),
       bulkAddEndDate: new Date(),
-      selectedSimulation: null
-
+      selectedSimulation: null,
+      isBulkAddingEvents: false
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleDeleteEvents = this.handleDeleteEvents.bind(this);
@@ -75,7 +76,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   componentDidMount() {
-
     SimulationDataAccess.fetchSimulations(this).then((simulations) => {
       EventDataAccess.fetchEvents(this, simulations);
     })
@@ -101,19 +101,24 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async handleBulkAddEvents() {
-
+    this.setState({ isBulkAddingEvents: true });
     // start date
     // end date
     // for date from start to end
     // create event
-    const dates = dateRange(this.state.bulkAddStartDate, this.state.bulkAddEndDate);
-    let i = 0
-    for (const eventDate of dates) {
-      console.log('-> ' + eventDate);
-      const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue, this.state.bulkAddEventCatType);
-      await this.addEvent(eventDate.getTime().toString(), this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
+    try {
+      const dates = dateRange(this.state.bulkAddStartDate, this.state.bulkAddEndDate);
+      let i = 0
+      for (const eventDate of dates) {
+        console.log('-> ' + eventDate);
+        const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue, this.state.bulkAddEventCatType);
+        await this.addEvent(eventDate.getTime().toString(), this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isBulkAddingEvents: false });
     }
-
   }
 
   async handleDuplicateEvent(event: any) {
@@ -182,7 +187,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
         <br />
         <br />
-        <Button style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</Button>
+        {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
+
         <br />
         <br />
 
