@@ -13,6 +13,10 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Link } from "react-router-dom";
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
@@ -31,6 +35,7 @@ interface IState {
   name: string,
   budgets: Budget[],
   selectedSimulation: Simulation | null
+  dropdowns: any;
 }
 
 class BudgetsView extends React.Component<BudgetsViewProps, IState> {
@@ -42,8 +47,8 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.state = {
       name: 'BudgetsView',
       budgets: [],
-      selectedSimulation: null
-
+      selectedSimulation: null,
+      dropdowns: {}
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -51,6 +56,8 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.handleAddBudget = this.handleAddBudget.bind(this);
     this.handleDuplicateBudget = this.handleDuplicateBudget.bind(this);
     this.render = this.render.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+
   }
 
 
@@ -120,17 +127,31 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     console.log((event.target as Element).id);
   }
 
+  handleChange = (panel: string) => (
+    event: React.ChangeEvent<unknown>,
+    isExpanded: boolean,
+  ) => {
+    let mp = this.state.dropdowns;
+    if (mp[panel] && mp[panel] === false) {
+      mp[panel] = true;
+    } else {
+      mp[panel] = false;
+    }
+    this.setState({ dropdowns: mp });
+  }
+
   render() {
     return this.props.index === this.props.value ? (
       <>
         <Button style={{ width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
-
+        <br />   <br />
         {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget) => {
 
           let invest = null;
           if (budget.categories) {
             invest = 0;
             for (const cat of budget.categories) {
+              if (cat.name.toLowerCase().match(/tax/)) continue;
               if (cat.name.includes('paycheck')) {
                 invest += cat.value;
               } else {
@@ -140,70 +161,78 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
           }
 
           return (
-
-            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-              <CardContent>
-
-                <Stack direction='row' spacing={4}>
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>name: </b> {budget.name}
+            <>
+              <Accordion key={budget.getKey()} expanded={this.state.dropdowns[budget.getKey()]} onChange={this.handleChange(budget.getKey())}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1bh-content"
+                  id="panel1bh-header"
+                >
+                  <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                    {budget.name}
                   </Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>
 
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>start: </b> {budget.startDate.toString()}
+                    <b>Start</b>: {budget.startDate.getMonth() + 1}/{budget.startDate.getDate()}/{budget.startDate.getFullYear()}  &nbsp; <b>End</b>: {budget.endDate.getMonth() + 1}/{budget.endDate.getDate()}/{budget.endDate.getFullYear()} &nbsp;
+
+                    {budget.endDate.getFullYear() - budget.startDate.getFullYear()} YRs  &nbsp;
+
+
+                    {
+                      invest ?
+                        <><b>invest: </b> (per month) <b>${invest.toFixed(2)}</b>   (per year)<b> ${(invest * 12).toFixed(2)}</b>
+                        </> : <></>
+                    }
+
                   </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
 
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>end: </b>  {budget.endDate.toString()}
-                  </Typography>
+                  <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+                    <CardContent>
 
-                </Stack>
+                      <Stack direction='row' spacing={4}>
 
+                        <Stack direction='column' spacing={0}>
+                          {budget.categories?.map((c, i) => {
+                            return (
+                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                <b>{c.name}</b>
+                              </Typography>
+                            )
+                          })}
 
-                {
-                  invest ?
-                    <><Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                      <b>invest: </b> (per month)<b>${invest.toFixed(2)}</b>   (per year)<b>${(invest * 12).toFixed(2)}</b>
-                    </Typography></> : <></>
-                }
+                        </Stack>
 
-                <Stack direction='row' spacing={4}>
+                        <Stack direction='column' spacing={0}>
+                          {budget.categories?.map((c, i) => {
+                            return (
+                              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                ${c.value}
+                              </Typography>
+                            )
+                          })}
 
-                  <Stack direction='column' spacing={0}>
-                    {budget.categories?.map((c, i) => {
-                      return (
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                          <b>{c.name}</b>
-                        </Typography>
-                      )
-                    })}
+                        </Stack>
+                      </Stack>
 
-                  </Stack>
+                      <CardActions>
 
-                  <Stack direction='column' spacing={0}>
-                    {budget.categories?.map((c, i) => {
-                      return (
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                          ${c.value}
-                        </Typography>
-                      )
-                    })}
+                        <Stack direction='row' spacing={1}>
+                          <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="outlined">Delete</Button>
+                          <Button id={budget.getKey()} onClick={this.handleDuplicateBudget} variant="contained">Duplicate</Button>
+                          <Link style={{ color: 'white', textDecoration: 'none' }} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="contained">Edit</Button></Link>
 
-                  </Stack>
-                </Stack>
+                        </Stack>
 
-                <CardActions>
+                      </CardActions>
+                    </CardContent>
+                  </Card>
 
-                  <Stack direction='row' spacing={4}>
-                    <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="outlined">Delete</Button>
-                    <Button id={budget.getKey()} onClick={this.handleDuplicateBudget} variant="contained">Duplicate</Button>
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="contained">Edit</Button></Link>
-
-                  </Stack>
-
-                </CardActions>
-              </CardContent>
-            </Card>
+                </AccordionDetails>
+              </Accordion>
+              <br />
+            </>
           )
         })}
       </>
