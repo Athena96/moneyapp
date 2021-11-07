@@ -18,6 +18,7 @@ import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import TextField from '@mui/material/TextField';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import LoadingButton from "@mui/lab/LoadingButton";
 import { cleanNumberDataInput } from '../utilities/helpers';
 
 import { Link } from "react-router-dom";
@@ -44,8 +45,8 @@ interface IState {
   bulkAddEventCatType: CategoryTypes,
   bulkAddStartDate: Date,
   bulkAddEndDate: Date,
-  selectedSimulation: Simulation | null
-
+  selectedSimulation: Simulation | null,
+  isBulkAddingEvents: boolean
 }
 
 class EventsView extends React.Component<EventsViewProps, IState> {
@@ -61,8 +62,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       bulkAddEventCatType: CategoryTypes.Expense,
       bulkAddStartDate: new Date(),
       bulkAddEndDate: new Date(),
-      selectedSimulation: null
-
+      selectedSimulation: null,
+      isBulkAddingEvents: false
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleDeleteEvents = this.handleDeleteEvents.bind(this);
@@ -75,7 +76,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   componentDidMount() {
-
     SimulationDataAccess.fetchSimulations(this).then((simulations) => {
       EventDataAccess.fetchEvents(this, simulations);
     })
@@ -97,23 +97,28 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async handleAddEvents() {
-    await this.addEvent(new Date().getTime().toString(), '...', new Date(), '...', null);
+    await this.addEvent(new Date().getTime().toString(), '...', new Date(), 'brokerage', null);
   }
 
   async handleBulkAddEvents() {
-
+    this.setState({ isBulkAddingEvents: true });
     // start date
     // end date
     // for date from start to end
     // create event
-    const dates = dateRange(this.state.bulkAddStartDate, this.state.bulkAddEndDate);
-    let i = 0
-    for (const eventDate of dates) {
-      console.log('-> ' + eventDate);
-      const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue, this.state.bulkAddEventCatType);
-      await this.addEvent(eventDate.getTime().toString(), this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
+    try {
+      const dates = dateRange(this.state.bulkAddStartDate, this.state.bulkAddEndDate);
+      let i = 0
+      for (const eventDate of dates) {
+        const key = (Math.floor(eventDate.getTime() + Math.random())).toString();
+        const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue, this.state.bulkAddEventCatType);
+        await this.addEvent(key, this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ isBulkAddingEvents: false });
     }
-
   }
 
   async handleDuplicateEvent(event: any) {
@@ -133,25 +138,26 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   async handleDeleteEvents(event: any) {
     const idToDelete = (event.target as Element).id;
-    console.log(`idToDelete: ${idToDelete}`)
-    let newEvents = [];
-    let eventToDelete = null;
+    if (window.confirm('Are you sure you want to DELETE this Event?')) {
 
-    for (const event of this.state.events) {
-      if (event.getKey() === idToDelete) {
-        eventToDelete = {
-          'id': event.getKey()
+      let newEvents = [];
+      let eventToDelete = null;
+
+      for (const event of this.state.events) {
+        if (event.getKey() === idToDelete) {
+          eventToDelete = {
+            'id': event.getKey()
+          }
+          continue;
         }
-        continue;
+        newEvents.push(event);
       }
-      newEvents.push(event);
-
-    }
-    this.setState({ events: newEvents });
-    try {
-      await API.graphql({ query: deleteEvent, variables: { input: eventToDelete } });
-    } catch (err) {
-      console.log('error:', err)
+      this.setState({ events: newEvents });
+      try {
+        await API.graphql({ query: deleteEvent, variables: { input: eventToDelete } });
+      } catch (err) {
+        console.log('error:', err)
+      }
     }
   }
 
@@ -175,6 +181,11 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     this.setState({ 'bulkAddAccount': accnt } as any);
   };
 
+  handleCategoryTypeChange = (event: SelectChangeEvent) => {
+    const catType = event.target.value as string;
+    const tp = catType === 'Expense' ? CategoryTypes.Expense : CategoryTypes.Income;
+    this.setState({ 'bulkAddEventCatType': tp });
+  };
 
   render() {
     return this.props.index === this.props.value ? (
@@ -182,7 +193,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
         <br />
         <br />
-        <Button style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</Button>
+        {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
+
         <br />
         <br />
 
@@ -233,7 +245,21 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
         <br />
         <br />
-        <TextField label="Category Type" id="outlined-basic" name="bulkAddEventCatType" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventCatType} />
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={this.state.bulkAddEventCatType}
+            label="Category Type"
+            onChange={this.handleCategoryTypeChange}
+          >
+            <MenuItem value={'Expense'}>Expense</MenuItem>
+            <MenuItem value={'Income'}>Income</MenuItem>
+          </Select>
+        </FormControl>
+
+
         <br />
         <br />
         {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {

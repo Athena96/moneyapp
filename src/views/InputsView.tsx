@@ -132,24 +132,26 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   async handleDelete(e: any) {
     const id = e.target.id;
-    let newInputs = [];
-    let inputToDelete = null;
+    if (window.confirm('Are you sure you want to DELETE this Input?')) {
+      let newInputs = [];
+      let inputToDelete = null;
 
-    for (const input of this.state.inputs) {
-      if (input.id === id) {
-        inputToDelete = {
-          'id': input.id
+      for (const input of this.state.inputs) {
+        if (input.id === id) {
+          inputToDelete = {
+            'id': input.id
+          }
+          continue;
         }
-        continue;
-      }
-      newInputs.push(input);
+        newInputs.push(input);
 
-    }
-    this.setState({ inputs: newInputs });
-    try {
-      await API.graphql({ query: deleteInputs, variables: { input: inputToDelete } });
-    } catch (err) {
-      console.log('error:', err)
+      }
+      this.setState({ inputs: newInputs });
+      try {
+        await API.graphql({ query: deleteInputs, variables: { input: inputToDelete } });
+      } catch (err) {
+        console.log('error:', err)
+      }
     }
   }
 

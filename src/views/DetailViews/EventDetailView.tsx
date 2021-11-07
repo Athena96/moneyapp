@@ -41,7 +41,7 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
       id: "",
       name: "",
       date: new Date(),
-      account: "",
+      account: "brokerage",
       categoryName: "",
       categoryValue: 0.0,
       categoryType: CategoryTypes.Expense
@@ -100,6 +100,13 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
     this.setState({ 'account': accnt } as any);
   };
 
+
+  handleCategoryTypeChange = (event: SelectChangeEvent) => {
+    const catType = event.target.value as string;
+    const tp = catType === 'Expense' ? CategoryTypes.Expense : CategoryTypes.Income;
+    this.setState({ 'categoryType': tp });
+  };
+
   render() {
     return (
       <div>
@@ -140,8 +147,19 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
 
             <TextField label="Category Value" id="outlined-basic" name="categoryValue" variant="outlined" onChange={this.handleChange} value={this.state.categoryValue} />
 
-            <TextField label="Category Type" id="outlined-basic" name="categoryType" variant="outlined" onChange={this.handleChange} value={this.state.categoryType} />
-
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={this.state.categoryType}
+                label="Category Type"
+                onChange={this.handleCategoryTypeChange}
+              >
+                <MenuItem value={'Expense'}>Expense</MenuItem>
+                <MenuItem value={'Income'}>Income</MenuItem>
+              </Select>
+            </FormControl>
             <Button id={this.state.id!} onClick={this.handleSave} variant="contained">Save</Button>
 
           </Stack>
