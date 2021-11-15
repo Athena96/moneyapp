@@ -20,10 +20,11 @@ export function dateRange(startDate: Date, endDate: Date, steps = 31) {
 
   while (currentDate <= new Date(endDate)) {
     dateArray.push(new Date(currentDate));
-    // Use UTC date to prevent problems with time zones and DST
-    currentDate.setUTCDate(currentDate.getUTCDate() + steps);
+    var month = currentDate.getMonth() + 1; // increment the month
+    var year = month === 0 ? currentDate.getFullYear() + 1 : currentDate.getFullYear(); // if it incremented to January, then increment the year.
+    currentDate = new Date(year, month, 1);
   }
-
+  
   return dateArray;
 }
 
