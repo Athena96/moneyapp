@@ -216,3 +216,37 @@ export const listSimulations = /* GraphQL */ `
     }
   }
 `;
+export const budgetsBySimulationId = /* GraphQL */ `
+  query BudgetsBySimulationId(
+    $simulation: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelBudgetFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    budgetsBySimulationId(
+      simulation: $simulation
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        name
+        startDate
+        endDate
+        categories {
+          id
+          name
+          value
+          type
+        }
+        simulation
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

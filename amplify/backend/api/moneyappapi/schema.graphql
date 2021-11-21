@@ -19,7 +19,8 @@ type Category {
 }
 
 
-type Budget @model {
+type Budget @model 
+@key(name: "budgetsBySimulationId", fields: ["simulation"], queryField: "budgetsBySimulationId") {
   id: ID!
   name: String
   startDate: AWSDateTime

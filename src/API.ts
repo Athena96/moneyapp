@@ -437,6 +437,12 @@ export type ModelSimulationConnection = {
   nextToken?: string | null,
 };
 
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
+
 export type CreateAccountMutationVariables = {
   input: CreateAccountInput,
   condition?: ModelAccountConditionInput | null,
@@ -1044,6 +1050,38 @@ export type ListSimulationsQuery = {
       id: string,
       name?: string | null,
       selected?: number | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type BudgetsBySimulationIdQueryVariables = {
+  simulation?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelBudgetFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type BudgetsBySimulationIdQuery = {
+  budgetsBySimulationId?:  {
+    __typename: "ModelBudgetConnection",
+    items?:  Array< {
+      __typename: "Budget",
+      id: string,
+      name?: string | null,
+      startDate?: string | null,
+      endDate?: string | null,
+      categories?:  Array< {
+        __typename: "Category",
+        id?: string | null,
+        name?: string | null,
+        value?: number | null,
+        type?: CategoryTypes | null,
+      } | null > | null,
+      simulation?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
