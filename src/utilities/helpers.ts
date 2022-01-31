@@ -65,6 +65,9 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     let eventDesc = "";
     let accntUsed = "";
 
+    let dateToSlowGroth = new Date(2030,05,15); // todo get this from Inputs
+    let growth = (date > dateToSlowGroth) ? ((7.2-2.75)/12/100) : absoluteMonthlyGrowth; // todo, get growth and inflation from Inputs
+    
     // for each account, compute their currentDay balance, then return the entry to put it in the table
     for (const account of myaccounts) {
       if (i > 0) {
@@ -73,9 +76,9 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
           accntUsed = account.name;
           const budget = getCurrentBudget(date, budgets)!;
           const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
-          balances[account.name][i] = afterSpending + absoluteMonthlyGrowth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
+          balances[account.name][i] = afterSpending + growth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
         } else {
-          balances[account.name][i] = balances[account.name][i - 1] + absoluteMonthlyGrowth * balances[account.name][i - 1];
+          balances[account.name][i] = balances[account.name][i - 1] + growth * balances[account.name][i - 1];
           if (balances[account.name][i - 1] <= 0.0) {
             balances[account.name][i] = 0.0;
           }
