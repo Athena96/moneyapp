@@ -65,11 +65,11 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     let eventDesc = "";
     let accntUsed = "";
 
-    let dateToSlowGroth = new Date(2030,5,15); // todo get this from Inputs
-    let growth = (date > dateToSlowGroth) ? ((7.2-2.75)/12/100) : absoluteMonthlyGrowth; // todo, get growth and inflation from Inputs
-    console.log(`growth used: ${growth} - ${(date > dateToSlowGroth)}`);
     // for each account, compute their currentDay balance, then return the entry to put it in the table
     for (const account of myaccounts) {
+      let dateToSlowGroth = new Date(2061,5,15); // todo get this from Inputs when I'm 65
+      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? ((7.2-2.75)/12/100) : absoluteMonthlyGrowth; // todo, get growth and inflation from Inputs
+
       if (i > 0) {
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
