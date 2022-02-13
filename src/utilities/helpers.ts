@@ -8,6 +8,7 @@ export interface RowData {
   date: string;
   brokerageBal: string;
   taxBal: string;
+  sum: string;
   note: string;
   accountUsed: string;
 }
@@ -120,6 +121,8 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
       date: `${date.getMonth() + 1}/${date.getFullYear()}`,
       brokerageBal: `$${balances['brokerage'][i].toFixed(2)}`,
       taxBal: `$${balances['tax'][i].toFixed(2)}`,
+      sum: `$${(balances['brokerage'][i]+balances['tax'][i]).toFixed(2)}`,
+
       note: eventDesc,
       accountUsed: accntUsed
     };
