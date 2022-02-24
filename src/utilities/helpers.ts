@@ -57,11 +57,72 @@ export function use(account: Account, currentDate: Date, currentDateIndex: numbe
   return account.name === accntToUse;
 }
 
+function getRandom(min:any, max:any) {
+  return Math.random() * (max - min) + min;
+}
+
+function getArr(size:any, avg:any, min:any, max:any) {
+  let arr:any[] = [];
+  let tmax = max;
+  let tmin = min;
+  while (arr.length < size) {
+    const variable1 = +getRandom(min, tmax).toFixed(1);
+    let variable2 = +(avg * 2 - variable1).toFixed(1);
+    if (variable2 < min) {
+      tmax = max - (min - variable2);
+      variable2 = min;
+    } else if (variable2 > max) {
+      tmin = min + (variable2 - max);
+      variable2 = max;
+    } else {
+      tmax = max;
+      tmin = min;
+    }
+    arr = arr.concat([variable1, variable2]);
+  }
+  let sumErr = arr.reduce((a, b) => a + b, 0) - avg * size;
+  if (sumErr > 0) {
+    arr = arr.map((x) => {
+      if (x > min && sumErr > 0.001) {
+        let maxReduce = x - min;
+        if (maxReduce > sumErr) {
+          const toReturn = +(x - sumErr).toFixed(1);
+          sumErr = 0;
+          return toReturn;
+        } else {
+          sumErr -= maxReduce;
+          return min;
+        }
+      }
+      return x;
+    });
+  } else {
+    arr = arr.map((x) => {
+      if (x < max && sumErr < -0.001) {
+        let maxAdd = max - x;
+        if (maxAdd > Math.abs(sumErr)) {
+          const toReturn = +(x + Math.abs(sumErr)).toFixed(1);
+          sumErr = 0;
+          return toReturn;
+        } else {
+          sumErr += maxAdd;
+          return max;
+        }
+      }
+      return x;
+    });
+  }
+
+  return arr.sort(() => Math.random() - 0.5);
+}
+
 export function generateData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
   myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
+  let growRates = getArr(dates.length, absoluteMonthlyGrowth*12*100, -47.07, 46.59);
+  let slowGrowRates = getArr(dates.length, 4.45, -47.07/2.0, 46.59/2.0);
   let data = dates.map((date, i) => {
     let eventDesc = "";
     let accntUsed = "";
@@ -69,8 +130,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     // for each account, compute their currentDay balance, then return the entry to put it in the table
     for (const account of myaccounts) {
       let dateToSlowGroth = new Date(2061,5,15); // todo get this from Inputs when I'm 65
-      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? ((7.2-2.75)/12/100) : absoluteMonthlyGrowth; // todo, get growth and inflation from Inputs
-
+      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i]/100.0/12.0 : growRates[i]/100.0/12.0;
       if (i > 0) {
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
