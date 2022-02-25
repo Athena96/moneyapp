@@ -100,6 +100,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                                     <TableCell align="center">Brokerage</TableCell>
                                     <TableCell align="center">Tax</TableCell>
                                     <TableCell align="center">Sum</TableCell>
+                                    <TableCell align="center">Return</TableCell>
                                     <TableCell align="left">Note</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -116,6 +117,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                                         <TableCell align="center">{row.brokerageBal}</TableCell>
                                         <TableCell align="center">{row.taxBal}</TableCell>
                                         <TableCell align="center">{row.sum}</TableCell>
+                                        <TableCell align="center">{row.return}%</TableCell>
                                         <TableCell align="left">{row.note}</TableCell>
                                     </TableRow>
                                 ))}

@@ -10,6 +10,7 @@ export interface RowData {
   taxBal: string;
   sum: string;
   note: string;
+  return: string;
   accountUsed: string;
 }
 
@@ -128,9 +129,11 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     let accntUsed = "";
 
     // for each account, compute their currentDay balance, then return the entry to put it in the table
+    let finalG = "";
     for (const account of myaccounts) {
       let dateToSlowGroth = new Date(2061,5,15); // todo get this from Inputs when I'm 65
       let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i]/100.0/12.0 : growRates[i]/100.0/12.0;
+      finalG = (growth*100*12).toFixed(2).toString();
       if (i > 0) {
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
@@ -182,7 +185,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
       brokerageBal: `$${balances['brokerage'][i].toFixed(2)}`,
       taxBal: `$${balances['tax'][i].toFixed(2)}`,
       sum: `$${(balances['brokerage'][i]+balances['tax'][i]).toFixed(2)}`,
-
+      return: `${finalG}`,
       note: eventDesc,
       accountUsed: accntUsed
     };
