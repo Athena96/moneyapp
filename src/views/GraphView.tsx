@@ -5,7 +5,8 @@ import { Budget } from '../model/Base/Budget';
 import { Account } from '../model/Base/Account';
 
 import {
-  generateGraphData
+  generateData,
+  generateGraphData, RowData
 } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
@@ -19,6 +20,7 @@ import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface GraphsViewProps {
 }
@@ -38,6 +40,8 @@ interface IState {
   accounts: Account[];
   balances: any;
   chartData: any | null;
+  successPercent: string;
+  simulationButtonLoading: boolean;
 }
 
 class GraphsView extends React.Component<GraphsViewProps, IState> {
@@ -60,12 +64,15 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       budgets: [],
       accounts: [],
       balances: {},
-      chartData: null
+      chartData: null,
+      successPercent: "0.0",
+      simulationButtonLoading: false
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
+    this.runSimulations = this.runSimulations.bind(this);
   }
 
   componentDidMount() {
@@ -90,6 +97,34 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     this.setState({ selectedTab: newValue });
   }
 
+  async simulate(balances: any, events: any,
+    budgets: any, absoluteMonthlyGrowth: any, accounts: any,
+    startDate: any, endDate: any, dateIm59: any, retireDate: any,
+    minEnd: any) {
+    let numSuccess = 0;
+    const STEPS = 200;
+    for (let i = 0; i < STEPS; i += 1) {
+      const results: RowData[] = generateData(balances, events,
+        budgets, absoluteMonthlyGrowth, accounts,
+        startDate, endDate, dateIm59, retireDate,
+        minEnd);
+      const end = parseInt(results[results.length - 1].brokerageBal.replace('$', ''));
+      if (end > 0) {
+        numSuccess += 1;
+      }
+    }
+    const successP = ((numSuccess / STEPS) * 100.0).toFixed(2);
+    return successP;
+  }
+
+  async runSimulations() {
+    this.setState({ simulationButtonLoading: true });
+    const res = await this.simulate(this.state.balances, this.state.events,
+      this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
+      this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
+      this.state.minEnd!);
+    this.setState({ successPercent: res, simulationButtonLoading: false });
+  }
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
   render() {
@@ -105,6 +140,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       return (
         <Container >
           <Line data={this.state.chartData} options={options} />
+          <h2>{this.state.successPercent}%</h2>
+          <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton>
         </Container >
       );
     } else {
