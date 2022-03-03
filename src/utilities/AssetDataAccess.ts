@@ -26,14 +26,52 @@ export class AssetDataAccess {
 
     }
 
-    static async fetchStartingBalances(componentState: any) {
-        const finnhub = require('finnhub');
+    static async getCrypto(entry: Asset, finnhubClient: any): Promise<number> {
+        return new Promise((resolve, reject) => {
+            // const finnhub = require('finnhub');
+            // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+            // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+    
+            // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+            // const finnhubClient = new finnhub.DefaultApi()
+            finnhubClient.cryptoCandles(`BINANCE:${entry.ticker}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
+                if (data && data.c && data.c.length >= 2) {
+                    const value: number = data.c[1];
+                    resolve(value);
+                } else {
+                    reject('err getCrypto')
+                }
+            });
+        })
+    }
 
-        const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-        delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+    static async getQuotes(entry: Asset, finnhubClient: any): Promise<number> {
+        return new Promise((resolve, reject) => {
+            // const finnhub = require('finnhub');
+            // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+            // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+            // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+            // const finnhubClient = new finnhub.DefaultApi()
+            finnhubClient.quote(entry.ticker, (error: any, data: any, response: any) => {
+                if (data && data.c) {
+                    const value: number = data.c;
+                    resolve(value);
+                } else {
+                    reject('err getQuotes')
 
-        api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-        const finnhubClient = new finnhub.DefaultApi()
+                }
+            });
+        })
+    }
+
+    static async fetchStartingBalances(componentState: any, finnhubClient: any) {
+        // const finnhub = require('finnhub');
+
+        // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+        // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+
+        // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+        // const finnhubClient = new finnhub.DefaultApi()
 
         const assets: Asset[] = await AssetDataAccess.fetchAssets(null);
 
@@ -57,13 +95,9 @@ export class AssetDataAccess {
                     if (cookie) {
                         this.computeCurrentyStartingBalances(componentState, cookie.getValue(), entry);
                     } else {
-                        finnhubClient.cryptoCandles(`BINANCE:${entry.ticker}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
-                            if (data && data.c && data.c.length >= 2) {
-                                const value: number = data.c[1];
-                                setCookie(entry.ticker, value.toString());
-                                this.computeCurrentyStartingBalances(componentState, value, entry);
-                            }
-                        });
+                        const value = await this.getCrypto(entry,finnhubClient)
+                        setCookie(entry.ticker, value.toString());
+                        this.computeCurrentyStartingBalances(componentState, value, entry);
                     }
 
                 } else {
@@ -71,13 +105,9 @@ export class AssetDataAccess {
                     if (stockCookie && stockCookie != null) {
                         this.computeSecuritiesStartingBalances(componentState, stockCookie.getValue(), entry);
                     } else {
-                        finnhubClient.quote(entry.ticker, (error: any, data: any, response: any) => {
-                            if (data && data.c) {
-                                const value: number = data.c;
-                                setCookie(entry.ticker, value.toString());
-                                this.computeSecuritiesStartingBalances(componentState, value, entry);
-                            }
-                        });
+                        const value = await this.getQuotes(entry,finnhubClient)
+                        setCookie(entry.ticker, value.toString());
+                        this.computeCurrentyStartingBalances(componentState, value, entry);
                     }
                 }
             } else {

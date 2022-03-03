@@ -19,7 +19,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import TextField from '@mui/material/TextField';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import LoadingButton from "@mui/lab/LoadingButton";
-import { cleanNumberDataInput } from '../utilities/helpers';
+import { cleanNumberDataInput, getFinnhubClient } from '../utilities/helpers';
 
 import { Link } from "react-router-dom";
 import { CategoryTypes } from '../API';
@@ -46,13 +46,15 @@ interface IState {
   bulkAddStartDate: Date,
   bulkAddEndDate: Date,
   selectedSimulation: Simulation | null,
-  isBulkAddingEvents: boolean
+  isBulkAddingEvents: boolean,
+  finnhubClient: any
 }
 
 class EventsView extends React.Component<EventsViewProps, IState> {
 
   constructor(props: EventsViewProps) {
     super(props);
+    const finnhubClient = getFinnhubClient();
     this.state = {
       name: 'EventsView',
       events: [],
@@ -63,7 +65,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       bulkAddStartDate: new Date(),
       bulkAddEndDate: new Date(),
       selectedSimulation: null,
-      isBulkAddingEvents: false
+      isBulkAddingEvents: false,
+      finnhubClient: finnhubClient
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleDeleteEvents = this.handleDeleteEvents.bind(this);
@@ -77,7 +80,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   componentDidMount() {
     SimulationDataAccess.fetchSimulations(this).then((simulations) => {
-      EventDataAccess.fetchEvents(this, simulations);
+      EventDataAccess.fetchEvents(this, simulations, this.state.finnhubClient);
     })
   }
 

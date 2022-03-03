@@ -23,6 +23,7 @@ import '../App.css';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
+import { getFinnhubClient } from '../utilities/helpers';
 
 interface DataViewProps {
     value: number;
@@ -43,6 +44,7 @@ interface IState {
     accounts: Account[];
     balances: any;
     balanceData: any | null;
+    finnhubClient: any;
 }
 
 class DataView extends React.Component<DataViewProps, IState> {
@@ -51,6 +53,12 @@ class DataView extends React.Component<DataViewProps, IState> {
 
         super(props);
 
+        // const finnhub = require('finnhub');
+        // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+        // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+        // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+        const finnhubClient = getFinnhubClient();
+    
         this.state = {
             growth: null,
             inflation: null,
@@ -64,7 +72,8 @@ class DataView extends React.Component<DataViewProps, IState> {
             budgets: [],
             accounts: [],
             balances: {},
-            balanceData: null
+            balanceData: null,
+            finnhubClient: finnhubClient
         }
         this.componentDidMount = this.componentDidMount.bind(this);
         this.render = this.render.bind(this);
@@ -77,10 +86,10 @@ class DataView extends React.Component<DataViewProps, IState> {
     async getData() {
         const simulations = await SimulationDataAccess.fetchSimulations(this);
         await BudgetDataAccess.fetchBudgets(this, simulations);
-        await EventDataAccess.fetchEvents(this, simulations);
+        await EventDataAccess.fetchEvents(this, simulations,this.state.finnhubClient);
         await InputDataAccess.fetchInputs(this, simulations);
         await AccountDataAccess.fetchAccounts(this);
-        await AssetDataAccess.fetchStartingBalances(this);
+        await AssetDataAccess.fetchStartingBalances(this,this.state.finnhubClient);
         const balanceData = generateData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
             this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
 

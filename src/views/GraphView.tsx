@@ -21,6 +21,7 @@ import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import LoadingButton from "@mui/lab/LoadingButton";
+import { getFinnhubClient } from '../utilities/helpers';
 
 interface GraphsViewProps {
 }
@@ -42,6 +43,7 @@ interface IState {
   chartData: any | null;
   successPercent: string;
   simulationButtonLoading: boolean;
+  finnhubClient: any;
 }
 
 class GraphsView extends React.Component<GraphsViewProps, IState> {
@@ -49,6 +51,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   constructor(props: GraphsViewProps) {
 
     super(props);
+
+    // const finnhub = require('finnhub');
+    // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
+    // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
+    // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
+    const finnhubClient = getFinnhubClient();
 
     this.state = {
       growth: null,
@@ -66,13 +74,16 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       balances: {},
       chartData: null,
       successPercent: "0.0",
-      simulationButtonLoading: false
+      simulationButtonLoading: false,
+      finnhubClient: finnhubClient
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
     this.runSimulations = this.runSimulations.bind(this);
+
+
   }
 
   componentDidMount() {
@@ -82,10 +93,10 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   async getData() {
     const simulations = await SimulationDataAccess.fetchSimulations(this);
     await BudgetDataAccess.fetchBudgets(this, simulations);
-    await EventDataAccess.fetchEvents(this, simulations);
+    await EventDataAccess.fetchEvents(this, simulations, this.state.finnhubClient);
     await InputDataAccess.fetchInputs(this, simulations);
     await AccountDataAccess.fetchAccounts(this);
-    await AssetDataAccess.fetchStartingBalances(this);
+    await AssetDataAccess.fetchStartingBalances(this,this.state.finnhubClient);
     const chartData = generateGraphData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
       this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
 
