@@ -97,7 +97,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     this.setState({ selectedTab: newValue });
   }
 
-  async simulate(balances: any, events: any,
+  simulate(balances: any, events: any,
     budgets: any, absoluteMonthlyGrowth: any, accounts: any,
     startDate: any, endDate: any, dateIm59: any, retireDate: any,
     minEnd: any) {
@@ -117,9 +117,27 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     return successP;
   }
 
-  async runSimulations() {
-    this.setState({ simulationButtonLoading: true });
-    const res = await this.simulate(this.state.balances, this.state.events,
+  runSimulations() {
+    this.setState({
+      growth: null,
+      inflation: null,
+      absoluteMonthlyGrowth: null,
+      startDate: null,
+      endDate: null,
+      dateIm59: null,
+      retireDate: null,
+      minEnd: null,
+      selectedTab: 1,
+      events: [],
+      budgets: [],
+      accounts: [],
+      balances: {},
+      chartData: null,
+      successPercent: "0.0",
+      simulationButtonLoading: true
+    });
+    this.getData();
+    const res = this.simulate(this.state.balances, this.state.events,
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
