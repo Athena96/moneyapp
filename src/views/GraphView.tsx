@@ -10,6 +10,7 @@ import {
 } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress';
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
 import '../App.css';
@@ -52,10 +53,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     super(props);
 
-    // const finnhub = require('finnhub');
-    // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-    // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
-    // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
     const finnhubClient = getFinnhubClient();
 
     this.state = {
@@ -82,8 +79,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
     this.runSimulations = this.runSimulations.bind(this);
-
-
   }
 
   componentDidMount() {
@@ -96,12 +91,10 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     await EventDataAccess.fetchEvents(this, simulations, this.state.finnhubClient);
     await InputDataAccess.fetchInputs(this, simulations);
     await AccountDataAccess.fetchAccounts(this);
-    await AssetDataAccess.fetchStartingBalances(this,this.state.finnhubClient);
+    await AssetDataAccess.fetchStartingBalances(this, this.state.finnhubClient);
     const chartData = generateGraphData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
       this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
-
     this.setState({ chartData: chartData });
-
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -157,25 +150,25 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
   render() {
-    if (this.state.chartData) {
-      const options = {
-        scales: {
-          y: {
-            beginAtZero: true,
-            min: 0
-          }
+    const options = {
+      scales: {
+        y: {
+          beginAtZero: true,
+          min: 0
         }
-      };
-      return (
-        <Container >
+      }
+    };
+    return (
+      <Container >
+        {this.state.chartData ? <>
           <Line data={this.state.chartData} options={options} />
           <h2>{this.state.successPercent}%</h2>
           <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton>
-        </Container >
-      );
-    } else {
-      return (<></>);
-    }
+        </> : < >
+          <CircularProgress />
+        </>}
+      </Container >
+    );
   }
 }
 

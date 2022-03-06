@@ -34,13 +34,7 @@ export class EventDataAccess {
   }
 
   static async fetchEvents(componentState: any, simulations: Simulation[], finnhubClient: any) {
-
     const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
-    // const finnhub = require('finnhub');
-    // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-    // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-    // const finnhubClient = new finnhub.DefaultApi()
-    
     const stockCookie = getCookie("AMZN");
     if (stockCookie) {
       await this.computeEvents(stockCookie.getValue(), selectedSim!, componentState);

@@ -28,12 +28,6 @@ export class AssetDataAccess {
 
     static async getCrypto(entry: Asset, finnhubClient: any): Promise<number> {
         return new Promise((resolve, reject) => {
-            // const finnhub = require('finnhub');
-            // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-            // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
-    
-            // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-            // const finnhubClient = new finnhub.DefaultApi()
             finnhubClient.cryptoCandles(`BINANCE:${entry.ticker}USDT`, "D", Math.floor(Date.now() / 1000) - 2 * 24 * 60 * 60, Math.floor(Date.now() / 1000), (error: any, data: any, response: any) => {
                 if (data && data.c && data.c.length >= 2) {
                     const value: number = data.c[1];
@@ -47,11 +41,6 @@ export class AssetDataAccess {
 
     static async getQuotes(entry: Asset, finnhubClient: any): Promise<number> {
         return new Promise((resolve, reject) => {
-            // const finnhub = require('finnhub');
-            // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-            // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
-            // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-            // const finnhubClient = new finnhub.DefaultApi()
             finnhubClient.quote(entry.ticker, (error: any, data: any, response: any) => {
                 if (data && data.c) {
                     const value: number = data.c;
@@ -65,14 +54,6 @@ export class AssetDataAccess {
     }
 
     static async fetchStartingBalances(componentState: any, finnhubClient: any) {
-        // const finnhub = require('finnhub');
-
-        // const api_key = finnhub.ApiClient.instance.authentications['api_key'];
-        // delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
-
-        // api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
-        // const finnhubClient = new finnhub.DefaultApi()
-
         const assets: Asset[] = await AssetDataAccess.fetchAssets(null);
 
         if (!componentState.state.balances['brokerage']) {
