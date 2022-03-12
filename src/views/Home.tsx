@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import BudgetsView from '../views/BudgetsView';
 import DataView from '../views/DataView';
-import InputsView from '../views/InputsView';
+// import InputsView from '../views/InputsView';
 import EventsView from '../views/EventsView';
 import GraphView from '../views/GraphView';
 import AssetsView from '../views/AssetsView';
@@ -60,9 +60,9 @@ class Home extends React.Component<IProps, IState> {
                   <Tab label="Data" />
                   <Tab label="Budgets" />
                   <Tab label="Events" />
-                  <Tab label="Inputs" />
+                  {/* <Tab label="Inputs" /> */}
                   <Tab label="Assets" />
-                  <Tab label="Simulations" />
+                  <Tab label="Life Scenarios" />
 
                 </Tabs>
               </Box>
@@ -72,9 +72,9 @@ class Home extends React.Component<IProps, IState> {
               <DataView value={this.state.selectedTab} index={0} />
               <BudgetsView value={this.state.selectedTab} index={1} />
               <EventsView value={this.state.selectedTab} index={2} />
-              <InputsView value={this.state.selectedTab} index={3} />
-              <AssetsView value={this.state.selectedTab} index={4} />
-              <SimulationView value={this.state.selectedTab} index={5} />
+              {/* <InputsView value={this.state.selectedTab} index={3} /> */}
+              <AssetsView value={this.state.selectedTab} index={3} />
+              <SimulationView value={this.state.selectedTab} index={4} />
 
             </Box>
           </div>

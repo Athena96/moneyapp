@@ -6,6 +6,10 @@ import awsExports from "../aws-exports";
 import { Event } from '../model/Base/Event';
 
 import { Simulation } from '../model/Base/Simulation';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Box from '@mui/material/Box';
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -196,75 +200,109 @@ class EventsView extends React.Component<EventsViewProps, IState> {
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
         <br />
         <br />
-        {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
-
-        <br />
-        <br />
-
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            label="start date"
-            value={this.state.bulkAddStartDate}
-            onChange={(newValue) => {
-              this.setState({ bulkAddStartDate: newValue } as any);
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
-        <br />
-        <br />
-
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            label="end date"
-            value={this.state.bulkAddEndDate}
-            onChange={(newValue) => {
-              this.setState({ bulkAddEndDate: newValue } as any);
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
-        <br />
-        <br />
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Account</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={this.state.bulkAddAccount}
-            label="Account"
-            onChange={this.handleDropChange}
+        <Accordion >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-            <MenuItem value={'brokerage'}>Brokerage</MenuItem>
-            <MenuItem value={'tax'}>Tax</MenuItem>
-          </Select>
-        </FormControl>
+            <Typography>Bulk Add Events</Typography>
+          </AccordionSummary>
+          {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
+
+          <br />
+          <br />
+
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="start date"
+              value={this.state.bulkAddStartDate}
+              onChange={(newValue) => {
+                this.setState({ bulkAddStartDate: newValue } as any);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+          <br />
+          <br />
+
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="end date"
+              value={this.state.bulkAddEndDate}
+              onChange={(newValue) => {
+                this.setState({ bulkAddEndDate: newValue } as any);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+          <br />
+          <br />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Account</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={this.state.bulkAddAccount}
+              label="Account"
+              onChange={this.handleDropChange}
+            >
+              <MenuItem value={'brokerage'}>Brokerage</MenuItem>
+              <MenuItem value={'tax'}>Tax</MenuItem>
+            </Select>
+          </FormControl>
+          <br />
+          <br />
+
+          <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
+          <br />
+          <br />
+          <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
+          <br />
+          <br />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={this.state.bulkAddEventCatType}
+              label="Category Type"
+              onChange={this.handleCategoryTypeChange}
+            >
+              <MenuItem value={'Expense'}>Expense</MenuItem>
+              <MenuItem value={'Income'}>Income</MenuItem>
+            </Select>
+          </FormControl>
+        </Accordion >
+
+
         <br />
         <br />
 
-        <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
+        <Stack
+          direction='row' spacing={2}
+
+        >
+          <Box
+            sx={{
+              width: 25,
+              height: 25,
+              bgcolor: '#ffcdd2',
+            }}
+          />
+          <p>Expense</p>
+          <Box
+            sx={{
+              width: 25,
+              height: 25,
+              bgcolor: '#b2dfdb',
+            }}
+          /><p>Income</p>
+        </Stack>
+
         <br />
-        <br />
-        <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
-        <br />
-        <br />
-        <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={this.state.bulkAddEventCatType}
-            label="Category Type"
-            onChange={this.handleCategoryTypeChange}
-          >
-            <MenuItem value={'Expense'}>Expense</MenuItem>
-            <MenuItem value={'Income'}>Income</MenuItem>
-          </Select>
-        </FormControl>
 
 
-        <br />
-        <br />
         {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
           // if (event.account !== 'brokerage') return (<></>)
           return (

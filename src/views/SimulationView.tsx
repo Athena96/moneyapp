@@ -53,7 +53,6 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.render = this.render.bind(this);
-
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -65,7 +64,6 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         const key = name.split('-')[1];
 
         for (const sim of sims) {
-
             if (sim.getKey() === key) {
                 if (tp === 'name') {
                     sim.name = value;
@@ -73,7 +71,6 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 if (tp === 'selected') {
                     sim.selected = Number(cleanNumberDataInput(value));
                 }
-
             }
         }
         this.setState({ simulations: sims });
@@ -253,7 +250,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     <br />
                 </Box></> : <></>}
 
-                {this.state.isLoading ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation + </LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Add Simulation + </LoadingButton></>}
+                {this.state.isLoading ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Create New Life Scenario + </LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleAddSimulation} variant="outlined">Create New Life Scenario + </LoadingButton></>}
 
                 {this.state.simulations.map((simulation: Simulation) => {
                     return (

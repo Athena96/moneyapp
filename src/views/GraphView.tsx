@@ -11,6 +11,9 @@ import {
 
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
+
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
 import '../App.css';
@@ -162,7 +165,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       <Container >
         {this.state.chartData ? <>
           <Line data={this.state.chartData} options={options} />
-          <h2>{this.state.successPercent}%</h2>
+          <h2 style={{ width: 'min-width' }}>{this.state.successPercent}% <Tooltip title="Probability of portfolio success (using Monte Carlo Simulations)"><InfoIcon /></Tooltip></h2>
+
           <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton>
         </> : < >
           <CircularProgress />

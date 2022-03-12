@@ -26,7 +26,7 @@ export function dateRange(startDate: Date, endDate: Date, steps = 31) {
     var year = month === 0 ? currentDate.getFullYear() + 1 : currentDate.getFullYear(); // if it incremented to January, then increment the year.
     currentDate = new Date(year, month, 1);
   }
-  
+
   return dateArray;
 }
 
@@ -58,12 +58,12 @@ export function use(account: Account, currentDate: Date, currentDateIndex: numbe
   return account.name === accntToUse;
 }
 
-function getRandom(min:any, max:any) {
+function getRandom(min: any, max: any) {
   return Math.random() * (max - min) + min;
 }
 
-function getArr(size:any, avg:any, min:any, max:any) {
-  let arr:any[] = [];
+function getArr(size: any, avg: any, min: any, max: any) {
+  let arr: any[] = [];
   let tmax = max;
   let tmin = min;
   while (arr.length < size) {
@@ -122,8 +122,8 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
-  let growRates = getArr(dates.length, absoluteMonthlyGrowth*12*100, -47.07, 46.59);
-  let slowGrowRates = getArr(dates.length, 4.45, -47.07/2.0, 46.59/2.0);
+  let growRates = getArr(dates.length, absoluteMonthlyGrowth * 12 * 100, -47.07, 46.59);
+  let slowGrowRates = getArr(dates.length, 4.45, -47.07 / 2.0, 46.59 / 2.0);
   let data = dates.map((date, i) => {
     let eventDesc = "";
     let accntUsed = "";
@@ -131,9 +131,9 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     // for each account, compute their currentDay balance, then return the entry to put it in the table
     let finalG = "";
     for (const account of myaccounts) {
-      let dateToSlowGroth = new Date(2061,5,15); // todo get this from Inputs when I'm 65
-      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i]/100.0/12.0 : growRates[i]/100.0/12.0;
-      finalG = (growth*100*12).toFixed(2).toString();
+      let dateToSlowGroth = new Date(2061, 5, 15); // todo get this from Inputs when I'm 65
+      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i] / 100.0 / 12.0 : growRates[i] / 100.0 / 12.0;
+      finalG = (growth * 100 * 12).toFixed(2).toString();
       if (i > 0) {
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
@@ -184,7 +184,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
       date: `${date.getMonth() + 1}/${date.getFullYear()}`,
       brokerageBal: `$${balances['brokerage'][i].toFixed(2)}`,
       taxBal: `$${balances['tax'][i].toFixed(2)}`,
-      sum: `$${(balances['brokerage'][i]+balances['tax'][i]).toFixed(2)}`,
+      sum: `$${(balances['brokerage'][i] + balances['tax'][i]).toFixed(2)}`,
       return: `${finalG}`,
       note: eventDesc,
       accountUsed: accntUsed
@@ -218,13 +218,13 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
         pointRadius: 1,
 
       },
-      {
-        label: "",
-        data: [],
-        borderColor: "rgba(0,0,0,1)",
-        pointBorderWidth: 1,
-        pointRadius: 1,
-      }
+      // {
+      //   label: "",
+      //   data: [],
+      //   borderColor: "rgba(0,0,0,1)",
+      //   pointBorderWidth: 1,
+      //   pointRadius: 1,
+      // }
     ]
   };
   let data = generateData(balances, events, budgets, absoluteMonthlyGrowth!, myaccounts, startDate!, endDate!, dateIm59!, retireDate!, minEnd!)
@@ -232,7 +232,7 @@ export function generateGraphData(balances: any, events: Event[], budgets: Budge
     tmpChartData.labels.push(`${dataRow.date}`);
     tmpChartData.datasets[0].data.push(Number(dataRow.brokerageBal.replace('$', '')));
     tmpChartData.datasets[1].data.push(Number(dataRow.taxBal.replace('$', '')));
-    tmpChartData.datasets[2].data.push(minEnd);
+    // tmpChartData.datasets[2].data.push(minEnd);
   });
   return tmpChartData;
 }

@@ -153,9 +153,9 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                                 <CardContent>
                                     <Stack direction='column' spacing={2}>
-                                        <TextField label="Ticker" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
+                                        <TextField label="Ticker Code" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
                                         <TextField label="Quantity" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
-                                        <TextField label="Has Index Data" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
+                                        <TextField label="Has Data in API" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
                                         <FormControl fullWidth>
                                             <InputLabel id="demo-simple-select-label">Account</InputLabel>
                                             <Select
