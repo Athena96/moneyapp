@@ -5,8 +5,7 @@ import { Budget } from '../model/Base/Budget';
 import { Account } from '../model/Base/Account';
 
 import {
-  generateData,
-  generateGraphData, RowData
+  generateData, RowData
 } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
@@ -49,6 +48,8 @@ interface IState {
   simulationButtonLoading: boolean;
   finnhubClient: any;
 }
+
+const STEPS = 100;
 
 class GraphsView extends React.Component<GraphsViewProps, IState> {
 
@@ -95,9 +96,13 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     await InputDataAccess.fetchInputs(this, simulations);
     await AccountDataAccess.fetchAccounts(this);
     await AssetDataAccess.fetchStartingBalances(this, this.state.finnhubClient);
-    const chartData = generateGraphData(this.state.balances, this.state.events, this.state.budgets, this.state.absoluteMonthlyGrowth!,
-      this.state.accounts, this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!, this.state.minEnd!);
-    this.setState({ chartData: chartData });
+    const sims = this.simulate(this.state.balances, this.state.events,
+      this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
+      this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
+      this.state.minEnd!);
+    const chartData = this.generateGraphData(sims);
+    const successPercent = this.getSuccessPercent(sims);
+    this.setState({ chartData: chartData, successPercent: successPercent });
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -108,20 +113,70 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     budgets: any, absoluteMonthlyGrowth: any, accounts: any,
     startDate: any, endDate: any, dateIm59: any, retireDate: any,
     minEnd: any) {
-    let numSuccess = 0;
-    const STEPS = 200;
+    const setOfSimulations: RowData[][] = [];
     for (let i = 0; i < STEPS; i += 1) {
-      const results: RowData[] = generateData(balances, events,
-        budgets, absoluteMonthlyGrowth, accounts,
-        startDate, endDate, dateIm59, retireDate,
-        minEnd);
-      const end = parseInt(results[results.length - 1].brokerageBal.replace('$', ''));
-      if (end > 0) {
+        setOfSimulations.push(generateData(balances, events,
+          budgets, absoluteMonthlyGrowth, accounts,
+          startDate, endDate, dateIm59, retireDate,
+          minEnd));
+    }
+    return setOfSimulations;
+  }
+
+  endedSuccessFully(results: RowData[], account: string) {
+      return parseInt(account === "taxBal" ? 
+      results[results.length - 1].taxBal.replace('$', '') :
+       results[results.length - 1].brokerageBal.replace('$', '')) > 0;
+  }
+
+  getSuccessPercent(simulations: RowData[][]) {
+    let numSuccess = 0.0;
+    for (const simulation of simulations) {
+      if (this.endedSuccessFully(simulation, 'brokerageBal')) {
         numSuccess += 1;
       }
     }
-    const successP = ((numSuccess / STEPS) * 100.0).toFixed(2);
-    return successP;
+    return ((numSuccess/simulations.length)*100).toFixed(2);
+  }
+
+  generateGraphData(simulations: RowData[][]) {
+   var chartData: any = {
+    labels: [],
+    datasets: []
+   }
+
+    let j = 0
+    let iter = 0;
+    for (const simulation of simulations) {
+      if (iter === 0) {
+        simulation.forEach((dataRow, i) => {
+          chartData.labels.push(`${dataRow.date}`);
+        });
+      }
+      chartData.datasets.push({
+        label: `sim_brok_${iter}`,
+        data: [],
+        borderColor: this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
+        pointBorderWidth: 1,
+        pointRadius: 1,
+      });
+      chartData.datasets.push({
+        label: `sim_tax_${iter}`,
+          data: [],
+          borderColor: this.endedSuccessFully(simulation, 'taxBal') ? "rgba(0,125,76,1)" : "rgba(255,0,0,1)",
+          pointBorderWidth: 1,
+          pointRadius: 1,
+      });
+
+      // eslint-disable-next-line no-loop-func
+      simulation.forEach((dataRow, i) => {
+        chartData.datasets[j].data.push(Number(dataRow.brokerageBal.replace('$', '')));
+        chartData.datasets[j+1].data.push(Number(dataRow.taxBal.replace('$', '')));
+      });
+      j += 2;
+      iter += 1;
+    }
+    return chartData;
   }
 
   runSimulations() {
@@ -144,11 +199,13 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       simulationButtonLoading: true
     });
     this.getData();
-    const res = this.simulate(this.state.balances, this.state.events,
+    const sims = this.simulate(this.state.balances, this.state.events,
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
-    this.setState({ successPercent: res, simulationButtonLoading: false });
+    const charts = this.generateGraphData(sims);
+    const successPercent = this.getSuccessPercent(sims);
+    this.setState({ chartData: charts, successPercent: successPercent, simulationButtonLoading: false });
   }
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
