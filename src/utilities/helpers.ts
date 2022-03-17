@@ -143,9 +143,9 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
           balances[account.name][i] = afterSpending + growth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
         } else {
           balances[account.name][i] = balances[account.name][i - 1] + growth * balances[account.name][i - 1];
-          if (balances[account.name][i - 1] <= 0.0) {
-            balances[account.name][i] = 0.0;
-          }
+          // if (balances[account.name][i - 1] <= 0.0) {
+          //   balances[account.name][i] = 0.0;
+          // }
         }
       }
 
