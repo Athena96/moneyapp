@@ -271,7 +271,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           data: Object.keys(Keys).map((k) => {
             return buckets[Keys[k]];
           }),
-          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+          backgroundColor: 'rgba(55, 117, 203, 0.75)',
         },
       ]
     };
