@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import Stack from '@mui/material/Stack';
 
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
@@ -50,7 +51,7 @@ interface IState {
   finnhubClient: any;
 }
 
-const STEPS = 300;
+const STEPS = 10;
 
 class GraphsView extends React.Component<GraphsViewProps, IState> {
 
@@ -298,13 +299,13 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       account === 'brokerage' ? chartData.datasets.push({
         label: this.isAvg(simulation) ? `avg_brok_${iter}` : `sim_brok_${iter}`,
         data: [],
-        borderColor: this.isAvg(simulation) ? "rgba(30,30,30,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
+        borderColor: this.isAvg(simulation) ? "rgba(255,204,0,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
         pointBorderWidth: 1,
         pointRadius: 1,
       }) : chartData.datasets.push({
         label: this.isAvg(simulation) ? `avg_tax_${iter}` : `sim_tax_${iter}`,
         data: [],
-        borderColor: this.isAvg(simulation) ? "rgba(30,30,30,1)" : this.endedSuccessFully(simulation, 'taxBal') ? "rgba(0,125,76,1)" : "rgba(255,0,0,1)",
+        borderColor: this.isAvg(simulation) ? "rgba(255,204,0,1)" : this.endedSuccessFully(simulation, 'taxBal') ? "rgba(0,125,76,1)" : "rgba(255,0,0,1)",
         pointBorderWidth: 1,
         pointRadius: 1,
       });
@@ -382,8 +383,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     return (
       <Container >
         {this.state.chartData && this.state.barChartData ? <>
-          <Line data={this.state.chartData} options={options} />
-          <Bar options={barOptions} data={this.state.barChartData} />;
+          <Stack direction='column' >
+            <Line data={this.state.chartData} options={options} />
+            <Bar options={barOptions} data={this.state.barChartData} />
+          </Stack>
+
           <h2 style={{ width: 'min-width' }}>{this.state.successPercent}% <Tooltip title="Probability of portfolio success (using Monte Carlo Simulations)"><InfoIcon /></Tooltip></h2>
 
           {/* <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton> */}

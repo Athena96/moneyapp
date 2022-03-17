@@ -46,38 +46,37 @@ class Home extends React.Component<IProps, IState> {
       <div >
 
         <div >
-          <div>
+          <Box sx={{ width: '100%' }}>
             <GraphView />
-          </div>
+          </Box>
 
-          <div>
-            <Box sx={{ width: '100%' }}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs variant="scrollable"
-                  scrollButtons
-                  allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
-                  {/* <Tab label="Accounts" /> */}
-                  <Tab label="Data" />
-                  <Tab label="Budgets" />
-                  <Tab label="Events" />
-                  {/* <Tab label="Inputs" /> */}
-                  <Tab label="Assets" />
-                  <Tab label="Life Scenarios" />
 
-                </Tabs>
-              </Box>
-              <br /><br />
-              {/* <AccountsView value={this.state.selectedTab} index={0} /> */}
+          <Box sx={{ width: '100%' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs variant="scrollable"
+                scrollButtons
+                allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
+                {/* <Tab label="Accounts" /> */}
+                <Tab label="Data" />
+                <Tab label="Budgets" />
+                <Tab label="Events" />
+                {/* <Tab label="Inputs" /> */}
+                <Tab label="Assets" />
+                <Tab label="Life Scenarios" />
 
-              <DataView value={this.state.selectedTab} index={0} />
-              <BudgetsView value={this.state.selectedTab} index={1} />
-              <EventsView value={this.state.selectedTab} index={2} />
-              {/* <InputsView value={this.state.selectedTab} index={3} /> */}
-              <AssetsView value={this.state.selectedTab} index={3} />
-              <SimulationView value={this.state.selectedTab} index={4} />
-
+              </Tabs>
             </Box>
-          </div>
+            <br /><br />
+            {/* <AccountsView value={this.state.selectedTab} index={0} /> */}
+
+            <DataView value={this.state.selectedTab} index={0} />
+            <BudgetsView value={this.state.selectedTab} index={1} />
+            <EventsView value={this.state.selectedTab} index={2} />
+            {/* <InputsView value={this.state.selectedTab} index={3} /> */}
+            <AssetsView value={this.state.selectedTab} index={3} />
+            <SimulationView value={this.state.selectedTab} index={4} />
+
+          </Box>
         </div>
       </div>
 
