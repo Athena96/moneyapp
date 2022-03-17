@@ -17,7 +17,7 @@ import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
 import '../App.css';
 
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
@@ -43,6 +43,8 @@ interface IState {
   accounts: Account[];
   balances: any;
   chartData: any | null;
+  chartDataTax: any | null;
+  barChartData: any | null;
   successPercent: string;
   simulationButtonLoading: boolean;
   finnhubClient: any;
@@ -73,6 +75,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       accounts: [],
       balances: {},
       chartData: null,
+      chartDataTax: null,
+      barChartData: null,
       successPercent: "0.0",
       simulationButtonLoading: false,
       finnhubClient: finnhubClient
@@ -140,7 +144,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         brokerageBal: brokerageAvg.toFixed(2) + "",
         taxBal: taxAvg.toFixed(2) + "",
         sum: sum + "",
-        note: "tax",
+        note: "avg",
         return: "",
         accountUsed: "",
       })
@@ -168,9 +172,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
     const simStats = this.getSimStats(sims);
-    const chartData = this.generateGraphData(simStats);
+    const chartData = this.generateGraphData(simStats, 'brokerage');
+    // const chartDataTax = this.generateGraphData(simStats, 'tax');
+
+    const barChartData = this.generateBarChartData(sims);
     const successPercent = this.getSuccessPercent(sims);
-    this.setState({ chartData: chartData, successPercent: successPercent });
+    this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent });
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -204,13 +211,76 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         numSuccess += 1;
       }
     }
+
     return ((numSuccess / simulations.length) * 100).toFixed(2);
   }
   isAvg(simulations: RowData[]) {
-    return simulations[0].note === 'tax'
+    return simulations[0].note === 'avg'
   }
 
-  generateGraphData(simulations: RowData[][]) {
+
+  generateBarChartData(simulations: RowData[][]) {
+    const Keys: any = {
+      'lose' : 'lose',
+      'six' : '>0-600K',
+      'oneM' : '600K-1M',
+      'fiveM' : '1M-5M',
+      'tenM' : '5M-10M',
+      'twentyM' : '10M-20M',
+      'fortyM' : '20M-40M',
+      'greaterThanFortyM' : '>40m',
+    }
+    const buckets: any = {}
+    for (const simulation of simulations) {
+      const endingBrokVal = parseInt(simulation[simulation.length - 1].brokerageBal.replace('$', ''))
+      if (endingBrokVal <= 0) {
+        Object.keys(buckets).includes(Keys.lose) ? buckets[Keys.lose] += 1 : buckets[Keys.lose] = 1;
+      } else if (endingBrokVal > 0 && endingBrokVal <= 600000) {
+        Object.keys(buckets).includes(Keys.six) ? buckets[Keys.six] += 1 : buckets[Keys.six] = 1;
+
+      } else if (endingBrokVal > 600000 && endingBrokVal <= 1000000) {
+        Object.keys(buckets).includes(Keys.oneM) ? buckets[Keys.oneM] += 1 : buckets[Keys.oneM] = 1;
+
+      } else if (endingBrokVal > 1000000 && endingBrokVal <= 5000000) {
+        Object.keys(buckets).includes(Keys.fiveM) ? buckets[Keys.fiveM] += 1 : buckets[Keys.fiveM] = 1;
+
+      } else if (endingBrokVal > 5000000 && endingBrokVal <= 10000000) {
+        Object.keys(buckets).includes(Keys.tenM) ? buckets[Keys.tenM] += 1 : buckets[Keys.tenM] = 1;
+
+      } else if (endingBrokVal > 10000000 && endingBrokVal <= 20000000) {
+        Object.keys(buckets).includes(Keys.twentyM) ? buckets[Keys.twentyM] += 1 : buckets[Keys.twentyM] = 1;
+
+      } else if (endingBrokVal > 20000000 && endingBrokVal <= 40000000) {
+        Object.keys(buckets).includes(Keys.fortyM) ? buckets[Keys.fortyM] += 1 : buckets[Keys.fortyM] = 1;
+
+      } else if (endingBrokVal > 40000000) {
+        Object.keys(buckets).includes(Keys.greaterThanFortyM) ? buckets[Keys.greaterThanFortyM] += 1 : buckets[Keys.greaterThanFortyM] = 1;
+      }
+    }
+
+
+
+    const ks = Object.keys(Keys).map((k) => {
+      return Keys[k];
+    });
+    const data = {
+      labels: ks,
+      datasets: [
+        {
+          label: 'count of portfolio endings',
+          data: Object.keys(Keys).map((k) => {
+            return buckets[Keys[k]];
+          }),
+          backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+      ]
+    };
+
+    return data;
+  }
+
+
+  generateGraphData(simulations: RowData[][], account: string) {
     var chartData: any = {
       labels: [],
       datasets: []
@@ -224,14 +294,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           chartData.labels.push(`${dataRow.date}`);
         });
       }
-      chartData.datasets.push({
+
+      account === 'brokerage' ? chartData.datasets.push({
         label: this.isAvg(simulation) ? `avg_brok_${iter}` : `sim_brok_${iter}`,
         data: [],
         borderColor: this.isAvg(simulation) ? "rgba(30,30,30,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
         pointBorderWidth: 1,
         pointRadius: 1,
-      });
-      chartData.datasets.push({
+      }) : chartData.datasets.push({
         label: this.isAvg(simulation) ? `avg_tax_${iter}` : `sim_tax_${iter}`,
         data: [],
         borderColor: this.isAvg(simulation) ? "rgba(30,30,30,1)" : this.endedSuccessFully(simulation, 'taxBal') ? "rgba(0,125,76,1)" : "rgba(255,0,0,1)",
@@ -241,10 +311,9 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
       // eslint-disable-next-line no-loop-func
       simulation.forEach((dataRow, i) => {
-        chartData.datasets[j].data.push(Number(dataRow.brokerageBal.replace('$', '')));
-        chartData.datasets[j + 1].data.push(Number(dataRow.taxBal.replace('$', '')));
+        account === 'brokerage' ? chartData.datasets[j].data.push(Number(dataRow.brokerageBal.replace('$', ''))) : chartData.datasets[j].data.push(Number(dataRow.taxBal.replace('$', '')));
       });
-      j += 2;
+      j += 1;
       iter += 1;
     }
     return chartData;
@@ -275,9 +344,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
     const simStats = this.getSimStats(sims);
-    const charts = this.generateGraphData(simStats);
+    const charts = this.generateGraphData(simStats, 'brokerage');
+    const chartDataTax = this.generateGraphData(simStats, 'tax');
+
     const successPercent = this.getSuccessPercent(sims);
-    this.setState({ chartData: charts, successPercent: successPercent, simulationButtonLoading: false });
+    this.setState({ chartData: charts, chartDataTax: chartDataTax, successPercent: successPercent, simulationButtonLoading: false });
   }
   // subscribe to updates to Account/Budget/Event... regenerate chart when they change.
 
@@ -288,12 +359,31 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           // beginAtZero: true,
           // min: 0
         }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'balances',
+        },
       }
+    };
+    const barOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top' as const,
+        },
+        title: {
+          display: true,
+          text: 'ending balance counts',
+        },
+      },
     };
     return (
       <Container >
-        {this.state.chartData ? <>
+        {this.state.chartData && this.state.barChartData ? <>
           <Line data={this.state.chartData} options={options} />
+          <Bar options={barOptions} data={this.state.barChartData} />;
           <h2 style={{ width: 'min-width' }}>{this.state.successPercent}% <Tooltip title="Probability of portfolio success (using Monte Carlo Simulations)"><InfoIcon /></Tooltip></h2>
 
           {/* <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton> */}
