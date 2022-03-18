@@ -4,6 +4,9 @@ import { Account } from '../model/Base/Account';
 import { CategoryTypes } from "../API";
 import { Key } from '../model/Interfaces/KeyInterface';
 
+const SLOW_GROWTH_RATE_ANNUAL = 0.0445; // 4.45% / year
+const SLOW_GROWTH_RATE_MONTHLY = SLOW_GROWTH_RATE_ANNUAL / 12;
+
 export interface RowData {
   date: string;
   brokerageBal: string;
@@ -62,7 +65,17 @@ function getRandom(min: any, max: any) {
   return Math.random() * (max - min) + min;
 }
 
-function getArr(size: any, avg: any, min: any, max: any) {
+function getMonteCarloDistributionOfReturns(size: any, avg: any, min: any, max: any) {
+  function shuffleArray(array: any[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+    }
+    return array;
+  }
+
   let arr: any[] = [];
   let tmax = max;
   let tmin = min;
@@ -114,16 +127,12 @@ function getArr(size: any, avg: any, min: any, max: any) {
     });
   }
 
-  return arr.sort(() => Math.random() - 0.5);
+  return shuffleArray(arr)
 }
 
-export function generateData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
-  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
+function projectWithReturn(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
+  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number, dates: Date[], slowGrowRates:any[],growRates:any[]) {
 
-  // create a list of dates incrementing by 1 month
-  const dates = dateRange(startDate, endDate);
-  let growRates = getArr(dates.length, absoluteMonthlyGrowth * 12 * 100, -47.07, 46.59);
-  let slowGrowRates = getArr(dates.length, 4.45, -47.07 / 2.0, 46.59 / 2.0);
   let data = dates.map((date, i) => {
     let eventDesc = "";
     let accntUsed = "";
@@ -132,7 +141,7 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
     let finalG = "";
     for (const account of myaccounts) {
       let dateToSlowGroth = new Date(2061, 5, 15); // todo get this from Inputs when I'm 65
-      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i] / 100.0 / 12.0 : growRates[i] / 100.0 / 12.0;
+      let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i] : growRates[i];
       finalG = (growth * 100 * 12).toFixed(2).toString();
       if (i > 0) {
         // USE or GROW the account?
@@ -194,6 +203,42 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
 
   });
 
+  return data;
+}
+
+export function generateData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
+  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
+
+  // create a list of dates incrementing by 1 month
+  const dates = dateRange(startDate, endDate);
+  
+  let growRates = getMonteCarloDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, -40.07, 40).map((o) => {
+    return o/12.0/100.0
+  });
+  let slowGrowRates = getMonteCarloDistributionOfReturns(dates.length, 4.45, -40.07 / 2.0, 40.50 / 2.0).map((o) => {
+    return o/12.0/100.0
+  });
+
+  let data = projectWithReturn(balances, events, budgets, absoluteMonthlyGrowth,
+    myaccounts, startDate, endDate, dateIm59, retireDate, minEnd, dates, slowGrowRates, growRates);
+
+
+  return data;
+}
+
+export function generateAssumeAvgData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
+  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
+
+  // create a list of dates incrementing by 1 month
+  const dates = dateRange(startDate, endDate);
+  
+  let growRates = new Array(dates.length).fill(absoluteMonthlyGrowth);
+  let slowGrowRates = new Array(dates.length).fill(SLOW_GROWTH_RATE_MONTHLY); 
+
+  let data = projectWithReturn(balances, events, budgets, absoluteMonthlyGrowth,
+    myaccounts, startDate, endDate, dateIm59, retireDate, minEnd, dates, slowGrowRates, growRates);
+
+    data[0].note = "AVERAGE";
   return data;
 }
 

@@ -5,6 +5,7 @@ import { Budget } from '../model/Base/Budget';
 import { Account } from '../model/Base/Account';
 
 import {
+  generateAssumeAvgData,
   generateData, RowData
 } from '../utilities/helpers';
 
@@ -153,10 +154,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     return newSim;
   }
 
-  getSimStats(simulations: RowData[][]) {
+  getSimStats(simulations: RowData[][], avgSim: RowData[]) {
     let newSimulations = [];
     newSimulations.push(this.getMaxScenario(simulations));
     newSimulations.push(this.getAvgScenario(simulations));
+    newSimulations.push(avgSim);
     newSimulations.push(this.getMinScenario(simulations));
     return newSimulations;
   }
@@ -172,7 +174,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
-    const simStats = this.getSimStats(sims);
+    const avgSim = generateAssumeAvgData(this.state.balances, this.state.events,
+      this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
+      this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
+      this.state.minEnd!)
+    const simStats = this.getSimStats(sims,avgSim);
     const chartData = this.generateGraphData(simStats, 'brokerage');
     // const chartDataTax = this.generateGraphData(simStats, 'tax');
 
@@ -297,7 +303,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
 
       account === 'brokerage' ? chartData.datasets.push({
-        label: this.isAvg(simulation) ? `avg_brok_${iter}` : `sim_brok_${iter}`,
+        label: simulation[0].note === 'AVERAGE' ? `all_avg_brok_${iter}` : this.isAvg(simulation) ? `avg_brok_${iter}` : `sim_brok_${iter}`,
         data: [],
         borderColor: this.isAvg(simulation) ? "rgba(255,204,0,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
         pointBorderWidth: 1,
@@ -344,7 +350,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
-    const simStats = this.getSimStats(sims);
+    const avgSim = generateAssumeAvgData(this.state.balances, this.state.events,
+      this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
+      this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
+      this.state.minEnd!)
+    const simStats = this.getSimStats(sims, avgSim);
     const charts = this.generateGraphData(simStats, 'brokerage');
     const chartDataTax = this.generateGraphData(simStats, 'tax');
 
