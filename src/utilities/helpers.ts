@@ -3,6 +3,7 @@ import { Budget } from '../model/Base/Budget';
 import { Account } from '../model/Base/Account';
 import { CategoryTypes } from "../API";
 import { Key } from '../model/Interfaces/KeyInterface';
+import { sp500Data } from './data/sp500Data';
 
 const SLOW_GROWTH_RATE_ANNUAL = 0.0445; // 4.45% / year
 const SLOW_GROWTH_RATE_MONTHLY = SLOW_GROWTH_RATE_ANNUAL / 12;
@@ -65,17 +66,40 @@ function getRandom(min: any, max: any) {
   return Math.random() * (max - min) + min;
 }
 
-function getMonteCarloDistributionOfReturns(size: any, avg: any, min: any, max: any) {
-  function shuffleArray(array: any[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-    }
-    return array;
+function shuffleArray<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+  return array;
+}
+
+function getRandomHistoricalData(size: number, returnType: string) {
+
+  const MONTHLY_GROWTH_IDX = 1;
+  let returnData: number[] = [];
+  for (let i = 0; i < size; i += 1) {
+    let randomIdx = Math.floor(Math.random() * sp500Data.length)
+    const randReturn = sp500Data[randomIdx][MONTHLY_GROWTH_IDX];
+    const finalReturn = returnType === 'safe' ? randReturn * 0.5719794344 : randReturn;
+    returnData.push(finalReturn);
   }
 
+  return returnData;
+
+}
+
+function getNormalDistributionOfReturns(size: number, mean: number, variance: number) {
+  const gaussian = require('gaussian');
+  const distribution = gaussian(mean, variance);
+  let sample = distribution.random(size);
+  // sample.sort(function(a:number, b:number){return a-b});
+  return shuffleArray<number>(sample);
+}
+
+function getMonteCarloDistributionOfReturns(size: any, avg: any, min: any, max: any) {
   let arr: any[] = [];
   let tmax = max;
   let tmin = min;
@@ -127,11 +151,11 @@ function getMonteCarloDistributionOfReturns(size: any, avg: any, min: any, max: 
     });
   }
 
-  return shuffleArray(arr)
+  return shuffleArray<number>(arr)
 }
 
 function projectWithReturn(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
-  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number, dates: Date[], slowGrowRates:any[],growRates:any[]) {
+  myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number, dates: Date[], slowGrowRates: any[], growRates: any[]) {
 
   let data = dates.map((date, i) => {
     let eventDesc = "";
@@ -142,7 +166,7 @@ function projectWithReturn(balances: any, events: Event[], budgets: Budget[], ab
     for (const account of myaccounts) {
       let dateToSlowGroth = new Date(2061, 5, 15); // todo get this from Inputs when I'm 65
       let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i] : growRates[i];
-      finalG = (growth * 100 * 12).toFixed(2).toString();
+      finalG = (growth * 100).toFixed(2).toString(); // historical data is already in monthly returns
       if (i > 0) {
         // USE or GROW the account?
         if (use(account, date, i, dateIm59, balances, retireDate)) {
@@ -211,34 +235,36 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
 
   // create a list of dates incrementing by 1 month
   const dates = dateRange(startDate, endDate);
-  
-  let growRates = getMonteCarloDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, -40.07, 40).map((o) => {
-    return o/12.0/100.0
-  });
-  let slowGrowRates = getMonteCarloDistributionOfReturns(dates.length, 4.45, -40.07 / 2.0, 40.50 / 2.0).map((o) => {
-    return o/12.0/100.0
-  });
 
+  // let growRates = getMonteCarloDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, -40.07, 40).map((o) => {
+  //   return o/12.0/100.0
+  // });
+  // let slowGrowRates = getMonteCarloDistributionOfReturns(dates.length, 4.45, -40.07 / 2.0, 40.50 / 2.0).map((o) => {
+  //   return o/12.0/100.0
+  // });
+  // let growRates = getNormalDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, 100).map((o) => {
+  //   return o/12.0/100.0
+  // });
+  // let slowGrowRates = getNormalDistributionOfReturns(dates.length, 4.45, 100).map((o) => {
+  //   return o/12.0/100.0
+  // });
+  let growRates = getRandomHistoricalData(dates.length, 'aggressive')
+  let slowGrowRates = getRandomHistoricalData(dates.length, 'safe')
   let data = projectWithReturn(balances, events, budgets, absoluteMonthlyGrowth,
     myaccounts, startDate, endDate, dateIm59, retireDate, minEnd, dates, slowGrowRates, growRates);
-
 
   return data;
 }
 
 export function generateAssumeAvgData(balances: any, events: Event[], budgets: Budget[], absoluteMonthlyGrowth: number,
   myaccounts: Account[], startDate: Date, endDate: Date, dateIm59: Date, retireDate: Date, minEnd: number) {
-
-  // create a list of dates incrementing by 1 month
+  // assume the same avg return every year like I used to do.
   const dates = dateRange(startDate, endDate);
-  
   let growRates = new Array(dates.length).fill(absoluteMonthlyGrowth);
-  let slowGrowRates = new Array(dates.length).fill(SLOW_GROWTH_RATE_MONTHLY); 
-
+  let slowGrowRates = new Array(dates.length).fill(SLOW_GROWTH_RATE_MONTHLY);
   let data = projectWithReturn(balances, events, budgets, absoluteMonthlyGrowth,
     myaccounts, startDate, endDate, dateIm59, retireDate, minEnd, dates, slowGrowRates, growRates);
-
-    data[0].note = "AVERAGE";
+  data[0].note = "AVERAGE";
   return data;
 }
 

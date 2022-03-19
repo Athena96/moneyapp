@@ -52,7 +52,7 @@ interface IState {
   finnhubClient: any;
 }
 
-const STEPS = 300;
+const STEPS = 500;
 
 class GraphsView extends React.Component<GraphsViewProps, IState> {
 
