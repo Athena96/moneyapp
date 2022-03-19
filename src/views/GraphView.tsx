@@ -367,8 +367,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     const options = {
       scales: {
         y: {
-          // beginAtZero: true,
-          // min: 0
+          min: -20000000,
+          max: 20000000
         }
       },
       plugins: {
