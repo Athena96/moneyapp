@@ -78,10 +78,22 @@ function shuffleArray<T>(array: T[]): T[] {
 
 function getRandomHistoricalData(size: number, returnType: string) {
 
+  let returnIdxHistory: number[] = []
   const MONTHLY_GROWTH_IDX = 1;
   let returnData: number[] = [];
   for (let i = 0; i < size; i += 1) {
-    let randomIdx = Math.floor(Math.random() * sp500Data.length)
+
+    let randomIdx = 0;
+    while (true) {
+      randomIdx = Math.floor(Math.random() * sp500Data.length);
+      if (returnIdxHistory.includes(randomIdx)) {
+        continue;
+      } else {
+        returnIdxHistory.push(randomIdx);
+        break;
+      }
+    }
+    
     const randReturn = sp500Data[randomIdx][MONTHLY_GROWTH_IDX];
     const finalReturn = returnType === 'safe' ? randReturn * 0.5719794344 : randReturn;
     returnData.push(finalReturn);
