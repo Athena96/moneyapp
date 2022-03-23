@@ -177,13 +177,27 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     const avgSim = generateAssumeAvgData(this.state.balances, this.state.events,
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
-      this.state.minEnd!)
-    const simStats = this.getSimStats(sims,avgSim);
+      this.state.minEnd!);
+
+    // filter out any sims above assumed avg return
+    const avgSimEndingBal = parseInt(avgSim[avgSim.length - 1].brokerageBal.replace('$', ''))
+    let nothingAboveAvg: RowData[][] = [];
+    let countAbove = 0;
+    for (const sim of sims) {
+      if (parseInt(sim[sim.length - 1].brokerageBal.replace('$', '')) > avgSimEndingBal) {
+        countAbove += 1;
+        continue;
+      } else {
+        nothingAboveAvg.push(sim);
+      }
+    }
+
+    const simStats = this.getSimStats(nothingAboveAvg,avgSim);
     const chartData = this.generateGraphData(simStats, 'brokerage');
     // const chartDataTax = this.generateGraphData(simStats, 'tax');
 
-    const barChartData = this.generateBarChartData(sims);
-    const successPercent = this.getSuccessPercent(sims);
+    const barChartData = this.generateBarChartData(nothingAboveAvg);
+    const successPercent = this.getSuccessPercent(nothingAboveAvg);
     this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent });
   }
 
@@ -367,8 +381,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     const options = {
       scales: {
         y: {
-          min: -40000000,
-          max: 40000000
+          min: -20000000,
+          max: 20000000
         }
       },
       plugins: {
