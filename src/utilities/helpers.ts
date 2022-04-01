@@ -23,7 +23,7 @@ export interface RowData {
 export function dateRange(startDate: Date, endDate: Date, steps = 31) {
   const dateArray = [];
   let currentDate = new Date(startDate);
-
+  console.log('currentDate ' + currentDate);
   while (currentDate <= new Date(endDate)) {
     dateArray.push(new Date(currentDate));
     var month = currentDate.getMonth() + 1; // increment the month
@@ -38,6 +38,7 @@ export function getCurrentBudget(date: Date, budgets: Budget[]) {
   date.setHours(0, 0, 0);
   for (const budget of budgets) {
     if (date >= new Date(budget.startDate.setHours(0, 0, 0)) && date <= new Date(budget.endDate.setHours(0, 0, 0))) {
+      console.log('get budget ' + budget.name)
       return budget;
     }
   }
