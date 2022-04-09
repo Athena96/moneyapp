@@ -77,7 +77,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return array;
 }
 
-function getRandomHistoricalData(size: number, returnType: string) {
+export function getRandomHistoricalData(size: number, returnType: string) {
 
   let returnIdxHistory: number[] = []
   const MONTHLY_GROWTH_IDX = 1;
@@ -104,11 +104,10 @@ function getRandomHistoricalData(size: number, returnType: string) {
 
 }
 
-function getNormalDistributionOfReturns(size: number, mean: number, variance: number) {
+export function getNormalDistributionOfReturns(size: number, mean: number, variance: number) {
   const gaussian = require('gaussian');
   const distribution = gaussian(mean, variance);
   let sample = distribution.random(size);
-  // sample.sort(function(a:number, b:number){return a-b});
   return shuffleArray<number>(sample);
 }
 
@@ -255,14 +254,15 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
   // let slowGrowRates = getMonteCarloDistributionOfReturns(dates.length, 4.45, -40.07 / 2.0, 40.50 / 2.0).map((o) => {
   //   return o/12.0/100.0
   // });
-  // let growRates = getNormalDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, 100).map((o) => {
-  //   return o/12.0/100.0
-  // });
-  // let slowGrowRates = getNormalDistributionOfReturns(dates.length, 4.45, 100).map((o) => {
-  //   return o/12.0/100.0
-  // });
-  let growRates = getRandomHistoricalData(dates.length, 'aggressive')
-  let slowGrowRates = getRandomHistoricalData(dates.length, 'safe')
+
+  let growRates = getNormalDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, 400).map((o) => {
+    return o/12.0/100.0
+  });
+  let slowGrowRates = getNormalDistributionOfReturns(dates.length, 4.45, 400).map((o) => {
+    return o/12.0/100.0
+  });
+  // let growRates = getRandomHistoricalData(dates.length, 'aggressive')
+  // let slowGrowRates = getRandomHistoricalData(dates.length, 'safe')
   let data = projectWithReturn(balances, events, budgets, absoluteMonthlyGrowth,
     myaccounts, startDate, endDate, dateIm59, retireDate, minEnd, dates, slowGrowRates, growRates);
 

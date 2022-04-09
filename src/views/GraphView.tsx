@@ -6,7 +6,7 @@ import { Account } from '../model/Base/Account';
 
 import {
   generateAssumeAvgData,
-  generateData, RowData
+  generateData, getNormalDistributionOfReturns, getRandomHistoricalData, RowData
 } from '../utilities/helpers';
 
 import Container from '@mui/material/Container';
@@ -45,6 +45,8 @@ interface IState {
   accounts: Account[];
   balances: any;
   chartData: any | null;
+  returnBarChartData: any | null;
+  histBarChartData: any | null;
   chartDataTax: any | null;
   barChartData: any | null;
   successPercent: string;
@@ -79,6 +81,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       chartData: null,
       chartDataTax: null,
       barChartData: null,
+      returnBarChartData: null,
+      histBarChartData: null,
       successPercent: "0.0",
       simulationButtonLoading: false,
       finnhubClient: finnhubClient
@@ -198,7 +202,9 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     const barChartData = this.generateBarChartData(nothingAboveAvg);
     const successPercent = this.getSuccessPercent(nothingAboveAvg);
-    this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent });
+    const returnBarChartData = this.generateGausianReturnsBarChartData();
+    const histBarChartData = this.generateHistoricalReturnsBarChartData();
+    this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent, returnBarChartData:returnBarChartData, histBarChartData: histBarChartData });
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -239,6 +245,101 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     return simulations[0].note === 'avg'
   }
 
+//    getAvg(data:number[]) {
+//     var sum = 0.0;
+//     for (const datum of data) {
+//         sum += datum;
+//     }
+//     return sum/data.length;
+// }
+//   getMax(data:number[]) {
+//     var max = 0.0;
+//     for (const datum of data) {
+//         if (datum > max) {
+//             max = datum;
+//         }
+//     }
+//     return max;
+// }
+//   getMin(data:number[]) {
+//     var min = data[0];
+//     for (const datum of data) {
+//         if (datum < min) {
+//             min = datum;
+//         }
+//     }
+//     return min;
+// }
+  generateHistoricalReturnsBarChartData() {
+    const returns = getRandomHistoricalData(896,'aggressive').map((v) => {
+      return v*100*12;
+    });
+    // console.log(`generateHistoricalReturnsBarChartData`)
+    // console.log(`AVERAGE: ${this.getAvg(returns)}`);
+    // console.log(`MAX: ${this.getMax(returns)}`);
+    // console.log(`MIN: ${this.getMin(returns)}`);
+
+    let returnsMap:any = {};
+    for (const r of returns) {
+      const roundedValue = Math.floor(r);
+      Object.keys(returnsMap).includes(roundedValue.toString()) ? returnsMap[roundedValue] = returnsMap[roundedValue]+1 : returnsMap[roundedValue] = 1;
+    }
+    const ksNums = Object.keys(returnsMap).map((k) => {
+      return parseInt(k)
+    });
+
+    const orderedNumbs = ksNums.sort((n1,n2) => n1 - n2).map((v) => {
+      return `${v}`
+    });
+    const data = {
+      labels: orderedNumbs,
+      datasets: [
+        {
+          label: 'hist dist returns',
+          data: orderedNumbs.map((k) => {
+            return returnsMap[k];
+          }),
+          backgroundColor: 'rgba(55, 117, 203, 0.75)',
+        },
+      ]
+    };
+
+    return data;
+  }
+
+  generateGausianReturnsBarChartData() {
+    const returns = getNormalDistributionOfReturns(896,7.5,350)
+    // console.log(`generateGausianReturnsBarChartData`)
+    // console.log(`AVERAGE: ${this.getAvg(returns)}`);
+    // console.log(`MAX: ${this.getMax(returns)}`);
+    // console.log(`MIN: ${this.getMin(returns)}`);
+    let returnsMap:any = {};
+    for (const r of returns) {
+      const roundedValue = Math.floor(r);
+      Object.keys(returnsMap).includes(roundedValue.toString()) ? returnsMap[roundedValue] = returnsMap[roundedValue]+1 : returnsMap[roundedValue] = 1;
+    }
+    const ksNums = Object.keys(returnsMap).map((k) => {
+      return parseInt(k)
+    });
+
+    const orderedNumbs = ksNums.sort((n1,n2) => n1 - n2).map((v) => {
+      return `${v}`
+    });
+    const data = {
+      labels: orderedNumbs,
+      datasets: [
+        {
+          label: 'normal dist returns',
+          data: orderedNumbs.map((k) => {
+            return returnsMap[k];
+          }),
+          backgroundColor: 'rgba(55, 117, 203, 0.75)',
+        },
+      ]
+    };
+
+    return data;
+  }
 
   generateBarChartData(simulations: RowData[][]) {
     const Keys: any = {
@@ -410,6 +511,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           <Stack direction='column' >
             <Line data={this.state.chartData} options={options} />
             <Bar options={barOptions} data={this.state.barChartData} />
+            <Bar options={barOptions} data={this.state.returnBarChartData} />
+            <Bar options={barOptions} data={this.state.histBarChartData} />
           </Stack>
 
           <h2 style={{ width: 'min-width' }}>{this.state.successPercent}% <Tooltip title="Probability of portfolio success (using Monte Carlo Simulations)"><InfoIcon /></Tooltip></h2>
