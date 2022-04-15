@@ -186,26 +186,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
-
-    // filter out any sims above assumed avg return
-    const avgSimEndingBal = parseInt(avgSim[avgSim.length - 1].brokerageBal.replace('$', ''))
-    let nothingAboveAvg: RowData[][] = [];
-    let countAbove = 0;
-    for (const sim of sims) {
-      if (parseInt(sim[sim.length - 1].brokerageBal.replace('$', '')) > avgSimEndingBal) {
-        countAbove += 1;
-        continue;
-      } else {
-        nothingAboveAvg.push(sim);
-      }
-    }
-
-    const simStats = this.getSimStats(nothingAboveAvg, avgSim);
+      
+    const simStats = this.getSimStats(sims, avgSim);
     const chartData = this.generateGraphData(simStats, 'brokerage');
-    // const chartDataTax = this.generateGraphData(simStats, 'tax');
-
-    const barChartData = this.generateBarChartData(nothingAboveAvg);
-    const successPercent = this.getSuccessPercent(nothingAboveAvg);
+    const barChartData = this.generateBarChartData(sims);
+    const successPercent = this.getSuccessPercent(sims);
     const returnBarChartData = this.generateGausianReturnsBarChartData();
     const histBarChartData = this.generateHistoricalReturnsBarChartData();
     this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent, returnBarChartData: returnBarChartData, histBarChartData: histBarChartData });
