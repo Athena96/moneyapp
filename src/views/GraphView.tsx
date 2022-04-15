@@ -14,6 +14,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import Stack from '@mui/material/Stack';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
 
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
@@ -196,7 +200,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
     }
 
-    const simStats = this.getSimStats(nothingAboveAvg,avgSim);
+    const simStats = this.getSimStats(nothingAboveAvg, avgSim);
     const chartData = this.generateGraphData(simStats, 'brokerage');
     // const chartDataTax = this.generateGraphData(simStats, 'tax');
 
@@ -204,7 +208,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     const successPercent = this.getSuccessPercent(nothingAboveAvg);
     const returnBarChartData = this.generateGausianReturnsBarChartData();
     const histBarChartData = this.generateHistoricalReturnsBarChartData();
-    this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent, returnBarChartData:returnBarChartData, histBarChartData: histBarChartData });
+    this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent, returnBarChartData: returnBarChartData, histBarChartData: histBarChartData });
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -245,50 +249,50 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     return simulations[0].note === 'avg'
   }
 
-//    getAvg(data:number[]) {
-//     var sum = 0.0;
-//     for (const datum of data) {
-//         sum += datum;
-//     }
-//     return sum/data.length;
-// }
-//   getMax(data:number[]) {
-//     var max = 0.0;
-//     for (const datum of data) {
-//         if (datum > max) {
-//             max = datum;
-//         }
-//     }
-//     return max;
-// }
-//   getMin(data:number[]) {
-//     var min = data[0];
-//     for (const datum of data) {
-//         if (datum < min) {
-//             min = datum;
-//         }
-//     }
-//     return min;
-// }
+  //    getAvg(data:number[]) {
+  //     var sum = 0.0;
+  //     for (const datum of data) {
+  //         sum += datum;
+  //     }
+  //     return sum/data.length;
+  // }
+  //   getMax(data:number[]) {
+  //     var max = 0.0;
+  //     for (const datum of data) {
+  //         if (datum > max) {
+  //             max = datum;
+  //         }
+  //     }
+  //     return max;
+  // }
+  //   getMin(data:number[]) {
+  //     var min = data[0];
+  //     for (const datum of data) {
+  //         if (datum < min) {
+  //             min = datum;
+  //         }
+  //     }
+  //     return min;
+  // }
   generateHistoricalReturnsBarChartData() {
-    const returns = getRandomHistoricalData(896,'aggressive').map((v) => {
-      return v*100*12;
+    const returns = getRandomHistoricalData(896, 'aggressive').map((v) => {
+      return v * 100 * 12;
     });
     // console.log(`generateHistoricalReturnsBarChartData`)
     // console.log(`AVERAGE: ${this.getAvg(returns)}`);
     // console.log(`MAX: ${this.getMax(returns)}`);
     // console.log(`MIN: ${this.getMin(returns)}`);
 
-    let returnsMap:any = {};
+    let returnsMap: any = {};
     for (const r of returns) {
       const roundedValue = Math.floor(r);
-      Object.keys(returnsMap).includes(roundedValue.toString()) ? returnsMap[roundedValue] = returnsMap[roundedValue]+1 : returnsMap[roundedValue] = 1;
+      Object.keys(returnsMap).includes(roundedValue.toString()) ? returnsMap[roundedValue] = returnsMap[roundedValue] + 1 : returnsMap[roundedValue] = 1;
     }
     const ksNums = Object.keys(returnsMap).map((k) => {
       return parseInt(k)
     });
 
-    const orderedNumbs = ksNums.sort((n1,n2) => n1 - n2).map((v) => {
+    const orderedNumbs = ksNums.sort((n1, n2) => n1 - n2).map((v) => {
       return `${v}`
     });
     const data = {
@@ -308,21 +312,21 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   generateGausianReturnsBarChartData() {
-    const returns = getNormalDistributionOfReturns(896,7.5,350)
+    const returns = getNormalDistributionOfReturns(896, 7.5, 350)
     // console.log(`generateGausianReturnsBarChartData`)
     // console.log(`AVERAGE: ${this.getAvg(returns)}`);
     // console.log(`MAX: ${this.getMax(returns)}`);
     // console.log(`MIN: ${this.getMin(returns)}`);
-    let returnsMap:any = {};
+    let returnsMap: any = {};
     for (const r of returns) {
       const roundedValue = Math.floor(r);
-      Object.keys(returnsMap).includes(roundedValue.toString()) ? returnsMap[roundedValue] = returnsMap[roundedValue]+1 : returnsMap[roundedValue] = 1;
+      Object.keys(returnsMap).includes(roundedValue.toString()) ? returnsMap[roundedValue] = returnsMap[roundedValue] + 1 : returnsMap[roundedValue] = 1;
     }
     const ksNums = Object.keys(returnsMap).map((k) => {
       return parseInt(k)
     });
 
-    const orderedNumbs = ksNums.sort((n1,n2) => n1 - n2).map((v) => {
+    const orderedNumbs = ksNums.sort((n1, n2) => n1 - n2).map((v) => {
       return `${v}`
     });
     const data = {
@@ -343,14 +347,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   generateBarChartData(simulations: RowData[][]) {
     const Keys: any = {
-      'lose' : 'lose',
-      'six' : '>0-600K',
-      'oneM' : '600K-1M',
-      'fiveM' : '1M-5M',
-      'tenM' : '5M-10M',
-      'twentyM' : '10M-20M',
-      'fortyM' : '20M-40M',
-      'greaterThanFortyM' : '>40m',
+      'lose': 'lose',
+      'six': '>0-600K',
+      'oneM': '600K-1M',
+      'fiveM': '1M-5M',
+      'tenM': '5M-10M',
+      'twentyM': '10M-20M',
+      'fortyM': '20M-40M',
+      'greaterThanFortyM': '>40m',
     }
     const buckets: any = {}
     for (const simulation of simulations) {
@@ -380,8 +384,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
     }
 
-
-
     const ks = Object.keys(Keys).map((k) => {
       return Keys[k];
     });
@@ -393,7 +395,9 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           data: Object.keys(Keys).map((k) => {
             return buckets[Keys[k]];
           }),
-          backgroundColor: 'rgba(55, 117, 203, 0.75)',
+          backgroundColor: Object.keys(Keys).map((k) => {
+            return k === 'lose' ? 'rgba(255, 0, 0, 0.75)' : k === 'six' ? 'rgba(255,204,0,1)' : 'rgba(55, 117, 203, 0.75)'
+          }),
         },
       ]
     };
@@ -510,12 +514,27 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         {this.state.chartData && this.state.barChartData ? <>
           <Stack direction='column' >
             <Line data={this.state.chartData} options={options} />
+            <div style={{ textAlign: 'center', border: '3px solid black' }}><h2 style={{ width: 'min-width' }}>Probability of success: {this.state.successPercent}% <Tooltip title={`Calculated using Monte Carlo, running ${STEPS} different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h2></div>
             <Bar options={barOptions} data={this.state.barChartData} />
-            <Bar options={barOptions} data={this.state.returnBarChartData} />
-            <Bar options={barOptions} data={this.state.histBarChartData} />
+
+            <br/>
+            <br/>
+            <Accordion >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography>Gaussian distribution of returns</Typography>
+              </AccordionSummary>
+
+              <Bar options={barOptions} data={this.state.returnBarChartData} />
+            </Accordion >
+            <br/>
+
+            {/* <Bar options={barOptions} data={this.state.histBarChartData} /> */}
           </Stack>
 
-          <h2 style={{ width: 'min-width' }}>{this.state.successPercent}% <Tooltip title="Probability of portfolio success (using Monte Carlo Simulations)"><InfoIcon /></Tooltip></h2>
 
           {/* <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton> */}
         </> : < >

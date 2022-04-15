@@ -255,10 +255,12 @@ export function generateData(balances: any, events: Event[], budgets: Budget[], 
   //   return o/12.0/100.0
   // });
 
-  let growRates = getNormalDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, 400).map((o) => {
+  const VTIvariance = 261.0378777778;
+  // https://institutional.vanguard.com/investments/product-details/fund/0970
+  let growRates = getNormalDistributionOfReturns(dates.length, absoluteMonthlyGrowth * 12 * 100, VTIvariance).map((o) => {
     return o/12.0/100.0
   });
-  let slowGrowRates = getNormalDistributionOfReturns(dates.length, 4.45, 400).map((o) => {
+  let slowGrowRates = getNormalDistributionOfReturns(dates.length, 4.45, VTIvariance/2).map((o) => {
     return o/12.0/100.0
   });
   // let growRates = getRandomHistoricalData(dates.length, 'aggressive')
