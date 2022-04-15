@@ -16,6 +16,7 @@ export interface RowData {
   note: string;
   return: string;
   accountUsed: string;
+  events?: Event[]
 }
 
 // actual general helpers
@@ -175,6 +176,8 @@ function projectWithReturn(balances: any, events: Event[], budgets: Budget[], ab
 
     // for each account, compute their currentDay balance, then return the entry to put it in the table
     let finalG = "";
+    let eventsApplied = []
+
     for (const account of myaccounts) {
       let dateToSlowGroth = new Date(2061, 5, 15); // todo get this from Inputs when I'm 65
       let growth = (date > dateToSlowGroth && account.name !== 'tax') ? slowGrowRates[i] : growRates[i];
@@ -200,7 +203,7 @@ function projectWithReturn(balances: any, events: Event[], budgets: Budget[], ab
         if (event.account === account.name) {
           if (event.date.getMonth() === date.getMonth() && event.date.getFullYear() === date.getFullYear()) {
             eventDesc += event.name;
-
+            eventsApplied.push(event);
             if (event.category) {
               switch (event.category.type) {
                 case CategoryTypes.Expense:
@@ -232,7 +235,8 @@ function projectWithReturn(balances: any, events: Event[], budgets: Budget[], ab
       sum: `$${(balances['brokerage'][i] + balances['tax'][i]).toFixed(2)}`,
       return: `${finalG}`,
       note: eventDesc,
-      accountUsed: accntUsed
+      accountUsed: accntUsed,
+      events: eventsApplied
     };
 
     return r;

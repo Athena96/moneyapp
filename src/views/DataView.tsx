@@ -15,6 +15,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Link } from "react-router-dom";
+
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
@@ -122,7 +124,10 @@ class DataView extends React.Component<DataViewProps, IState> {
                                         <TableCell align="center">{row.taxBal}</TableCell>
                                         <TableCell align="center">{row.sum}</TableCell>
                                         <TableCell align="center">{row.return}%</TableCell>
-                                        <TableCell align="left">{row.note}</TableCell>
+                                        <TableCell align="left">{row.events?.map((e) => {
+                                            const pm = e.category?.type!.toString() === 'Expense' ? '-' : '+';
+                                            return  <Link to={`/events/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value}` + ' | ' : `${e.name} ${pm}$${e.category!.value}` + ' | '}</Link>
+                                        })}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
