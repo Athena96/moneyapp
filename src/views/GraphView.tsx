@@ -232,7 +232,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
     }
 
-    return ((numSuccess / simulations.length) * 100).toFixed(2);
+    return ((numSuccess / simulations.length) * 100).toFixed(0);
   }
   isAvg(simulations: RowData[]) {
     return simulations[0].note === 'avg'
