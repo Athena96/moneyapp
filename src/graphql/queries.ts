@@ -193,6 +193,8 @@ export const getSimulation = /* GraphQL */ `
       id
       name
       selected
+      simulationData
+      lastComputed
       createdAt
       updatedAt
     }
@@ -209,6 +211,8 @@ export const listSimulations = /* GraphQL */ `
         id
         name
         selected
+        simulationData
+        lastComputed
         createdAt
         updatedAt
       }

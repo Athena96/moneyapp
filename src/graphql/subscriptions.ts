@@ -233,6 +233,8 @@ export const onCreateSimulation = /* GraphQL */ `
       id
       name
       selected
+      simulationData
+      lastComputed
       createdAt
       updatedAt
     }
@@ -244,6 +246,8 @@ export const onUpdateSimulation = /* GraphQL */ `
       id
       name
       selected
+      simulationData
+      lastComputed
       createdAt
       updatedAt
     }
@@ -255,6 +259,8 @@ export const onDeleteSimulation = /* GraphQL */ `
       id
       name
       selected
+      simulationData
+      lastComputed
       createdAt
       updatedAt
     }

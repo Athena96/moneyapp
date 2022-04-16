@@ -3,6 +3,7 @@ import { Simulation } from '../model/Base/Simulation';
 import { listSimulations } from '../graphql/queries'
 import { ListSimulationsQuery } from "../API";
 import { API } from 'aws-amplify'
+import { RowData } from './helpers';
 
 export class SimulationDataAccess {
 
@@ -13,8 +14,8 @@ export class SimulationDataAccess {
                 query: listSimulations
             })) as { data: ListSimulationsQuery }
             let selSim: any;
-            for (const simulation of response.data.listSimulations!.items!) {
-                fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!));
+            for (const simulation of response.data.listSimulations!.items!) {             
+                fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, new Date(simulation!.lastComputed!)));
                 if (simulation?.selected === 1) {
                     selSim = simulation;
                 }

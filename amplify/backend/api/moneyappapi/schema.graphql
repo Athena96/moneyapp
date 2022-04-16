@@ -59,4 +59,6 @@ type Simulation @model {
   id: ID!
   name: String
   selected: Int
+  simulationData: String
+  lastComputed: AWSDateTime
 }

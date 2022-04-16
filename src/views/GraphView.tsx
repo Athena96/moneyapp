@@ -544,6 +544,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         },
       },
     };
+
     return (
       <Container >
         {this.state.chartData ? <>
