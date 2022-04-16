@@ -6,11 +6,25 @@ import reportWebVitals from './reportWebVitals';
 import Amplify from "aws-amplify";
 import awsExports from "./aws-exports";
 import { BrowserRouter } from 'react-router-dom';
-
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { moneyGreen, moneyGreenLight } from './utilities/constants';
 Amplify.configure(awsExports);
+
+const theme = createTheme({
+  palette: {
+    secondary: {
+      main: moneyGreenLight
+    },
+    primary: {
+      main: moneyGreen
+    }
+  }
+});
 ReactDOM.render(
   <BrowserRouter>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </BrowserRouter>,
   document.getElementById('root')
 );

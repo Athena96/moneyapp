@@ -162,7 +162,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
           }
 
           const monthlySpending = budget.getTypeSum(CategoryTypes.Expense);
-          const annualTaxes = (monthlySpending*12/2.0)*0.15;
+          const annualTaxes = (monthlySpending * 12 / 2.0) * 0.15;
           return (
             <>
               <Accordion key={budget.getKey()} expanded={this.state.dropdowns[budget.getKey()]} onChange={this.handleChange(budget.getKey())}>
@@ -176,14 +176,12 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                   </Typography>
                   <Typography sx={{ color: 'text.secondary' }}>
 
-                    <b>Start</b>: {budget.startDate.getMonth() + 1}/{budget.startDate.getDate()}/{budget.startDate.getFullYear()}  &nbsp; <b>End</b>: {budget.endDate.getMonth() + 1}/{budget.endDate.getDate()}/{budget.endDate.getFullYear()} &nbsp;
-
-                    {budget.endDate.getFullYear() - budget.startDate.getFullYear()} YRs  &nbsp;
-
+                    <b>Start</b>: {budget.startDate.getMonth() + 1}/{budget.startDate.getDate()}/{budget.startDate.getFullYear()} &nbsp; <i>Age</i> &nbsp;{Number(String(budget.startDate.getFullYear()).slice(-2)) + 4}  &nbsp; <b>End</b>: {budget.endDate.getMonth() + 1}/{budget.endDate.getDate()}/{budget.endDate.getFullYear()} &nbsp;<i>Age</i>&nbsp; {Number(String(budget.endDate.getFullYear()).slice(-2)) + 4}&nbsp;
+                    [{budget.endDate.getFullYear() - budget.startDate.getFullYear()} YRs]&nbsp;
 
                     {
-                      invest ?
-                        <><b>invest: </b> (per month) <b>${invest.toFixed(2)}</b>   (per year)<b> ${(invest * 12).toFixed(2)}  (per year taxes) ${annualTaxes.toFixed(2)}</b>
+                      invest && invest! < 0 ?
+                        <> (Annual Spending: <b> ${(-1 * ((invest * 12) / 1000)).toFixed(0)}K</b>)  (Annual taxes: <b>${annualTaxes.toFixed(2)}</b>)
                         </> : <></>
                     }
 

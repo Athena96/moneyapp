@@ -193,11 +193,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     const simStats = this.getSimStats(sims, avgSim);
     const chartData = this.generateGraphData(simStats, 'brokerage');
-    const barChartData = this.generateBarChartData(sims);
+    // const barChartData = this.generateBarChartData(sims);
     const successPercent = this.getSuccessPercent(sims);
-    const returnBarChartData = this.generateGausianReturnsBarChartData();
-    const histBarChartData = this.generateHistoricalReturnsBarChartData();
-    this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent, returnBarChartData: returnBarChartData, histBarChartData: histBarChartData });
+    // const returnBarChartData = this.generateGausianReturnsBarChartData();
+    // const histBarChartData = this.generateHistoricalReturnsBarChartData();
+    // this.setState({ chartData: chartData, barChartData: barChartData, successPercent: successPercent, returnBarChartData: returnBarChartData, histBarChartData: histBarChartData });
+    this.setState({ chartData: chartData, successPercent: successPercent });
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -403,11 +404,29 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     let j = 0
     let iter = 0;
+    const blue = 'rgba(37,113,207,1)';
+    const yellow = 'rgba(255,204,0,1)';
+
+    const moneyGreen = 'rgba(90,209,171,1)'
+    const red = 'rgba(255,0,0,1)'
+
     const names = [
-      'Best Scenario',
-      'Average of all Scenarios',
-      'Linear Growth Assumption',
-      'Worst Scenario'
+      {
+        name: 'Best Scenario',
+        color: blue
+      },
+      {
+        name: 'Average of all Scenarios',
+        color: yellow
+      },
+      {
+        name: 'Linear Growth Assumption',
+        color: moneyGreen
+      },
+      {
+        name: 'Worst Scenario',
+        color: red
+      }
     ]
     for (const simulation of simulations) {
       if (iter === 0) {
@@ -417,9 +436,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
 
       account === 'brokerage' ? chartData.datasets.push({
-        label: simulation[0].note === 'AVERAGE' ? names[2] : this.isAvg(simulation) ? names[1] : names[iter],
+        label: simulation[0].note === 'AVERAGE' ? names[2].name : this.isAvg(simulation) ? names[1].name : iter === 0 ? names[0].name : names[3].name,
         data: [],
-        borderColor: this.isAvg(simulation) ? "rgba(255,204,0,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
+        // borderColor: this.isAvg(simulation) ? "rgba(255,204,0,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
+        borderColor: simulation[0].note === 'AVERAGE' ? names[2].color : this.isAvg(simulation) ? names[1].color : iter === 0 ? names[0].color : names[3].color,
+
         pointBorderWidth: 1,
         pointRadius: 1,
       }) : chartData.datasets.push({
@@ -485,12 +506,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           max: 20000000,
           ticks: {
             callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
-              if ((tickValue as number ) >= 1000000) {
-                return '$' + (tickValue as number )/ 1000000 + ' M'
-              } else if ((tickValue as number ) <= -1000000) {
-                return '$' + (tickValue as number ) / 1000000 + ' M'
+              if ((tickValue as number) >= 1000000) {
+                return '$' + (tickValue as number) / 1000000 + ' M'
+              } else if ((tickValue as number) <= -1000000) {
+                return '$' + (tickValue as number) / 1000000 + ' M'
               } else {
-                return '$' + (tickValue as number );
+                return '$' + (tickValue as number);
               }
             }
           }
@@ -502,8 +523,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       },
       plugins: {
         legend: {
-          position: "left" as const,
-          maxHeight: 10
+          position: "bottom" as const,
+
         },
         title: {
           display: true,
@@ -525,24 +546,21 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     };
     return (
       <Container >
-        {this.state.chartData && this.state.barChartData ? <>
+        {this.state.chartData ? <>
           <Stack direction='column' >
-
-
-            <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 1, backgroundColor: moneyGreenLight }}>
+            <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 1 }}>
               <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running ${STEPS} different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
               <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
-              <Paper variant="outlined" >
+              <Paper elevation={0} >
                 <Line data={this.state.chartData} options={options} />
               </Paper >
             </Paper>
-
-            <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 1, backgroundColor: moneyGreenLight }}>
+            {/* <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 1, backgroundColor: moneyGreenLight }}>
               <h3 style={{ color: black, width: 'min-width' }}>Ending Balances</h3>
               <Paper variant="outlined" >
                 <Bar options={barOptions} data={this.state.barChartData} />
               </Paper >
-            </Paper>
+            </Paper> */}
 
             <br />
             {/* <Accordion >
@@ -563,7 +581,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
           {/* <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton> */}
         </> : < >
-          <CircularProgress />
+          <CircularProgress  />
         </>
         }
       </Container >
