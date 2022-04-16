@@ -5,12 +5,14 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { Link } from "react-router-dom";
 
 import './App.css';
 
 import Main from './views/Main'
+import { moneyGreen } from './utilities/constants';
 
 interface IProps {
 }
@@ -40,9 +42,10 @@ class App extends React.Component<IProps, IState> {
   render() {
 
     return (
-      <div >
+      <div>
+
         <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static">
+          <AppBar sx={{ bgcolor: moneyGreen }} position="static">
             <Toolbar>
 
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -53,7 +56,7 @@ class App extends React.Component<IProps, IState> {
           </AppBar>
         </Box>
         
-        <Container style={{margin: '15px'}}>
+        <Container >
           <Main/>
         </Container>
       </div>

@@ -187,7 +187,9 @@ function projectWithReturn(balances: any, events: Event[], budgets: Budget[], ab
         if (use(account, date, i, dateIm59, balances, retireDate)) {
           accntUsed = account.name;
           const budget = getCurrentBudget(date, budgets)!;
-          const afterSpending = balances[account.name][i - 1] - budget.getTypeSum(CategoryTypes.Expense);
+          const monthlySpending = budget.getTypeSum(CategoryTypes.Expense);
+          const monthlyTaxes = ((monthlySpending*12/2.0)*0.15)/12.0;
+          const afterSpending = balances[account.name][i - 1] - (budget.getTypeSum(CategoryTypes.Expense) + monthlyTaxes);
           balances[account.name][i] = afterSpending + growth * afterSpending + budget.getTypeSum(CategoryTypes.Income)
         } else {
           balances[account.name][i] = balances[account.name][i - 1] + growth * balances[account.name][i - 1];

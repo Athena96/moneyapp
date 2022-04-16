@@ -14,10 +14,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import Stack from '@mui/material/Stack';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Typography from '@mui/material/Typography';
+// import Accordion from '@mui/material/Accordion';
+// import AccordionSummary from '@mui/material/AccordionSummary';
+// import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import Typography from '@mui/material/Typography';
+// import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
@@ -30,6 +32,7 @@ import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { getFinnhubClient } from '../utilities/helpers';
+import { moneyGreen, moneyGreenLight, moneyGreenBoldText, black } from '../utilities/constants';
 
 interface GraphsViewProps {
 }
@@ -186,7 +189,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       this.state.budgets, this.state.absoluteMonthlyGrowth!, this.state.accounts,
       this.state.startDate!, this.state.endDate!, this.state.dateIm59!, this.state.retireDate!,
       this.state.minEnd!);
-      
+
     const simStats = this.getSimStats(sims, avgSim);
     const chartData = this.generateGraphData(simStats, 'brokerage');
     const barChartData = this.generateBarChartData(sims);
@@ -399,6 +402,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     let j = 0
     let iter = 0;
+    const names = [
+      'Best Scenario',
+      'Average of all Scenarios',
+      'Linear Growth Assumption',
+      'Worst Scenario'
+    ]
     for (const simulation of simulations) {
       if (iter === 0) {
         simulation.forEach((dataRow, i) => {
@@ -407,7 +416,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
 
       account === 'brokerage' ? chartData.datasets.push({
-        label: simulation[0].note === 'AVERAGE' ? `all_avg_brok_${iter}` : this.isAvg(simulation) ? `avg_brok_${iter}` : `sim_brok_${iter}`,
+        label: simulation[0].note === 'AVERAGE' ? names[2] : this.isAvg(simulation) ? names[1] : names[iter],
         data: [],
         borderColor: this.isAvg(simulation) ? "rgba(255,204,0,1)" : this.endedSuccessFully(simulation, 'brokerageBal') ? "rgba(37,113,207,1)" : "rgba(255,0,0,1)",
         pointBorderWidth: 1,
@@ -472,13 +481,33 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       scales: {
         y: {
           min: -20000000,
-          max: 20000000
+          max: 20000000,
+          ticks: {
+            // Include a dollar sign in the ticks
+            callback: function (value: number, index: number, ticks: number) {
+              if (value >= 1000000) {
+                return '$' + value / 1000000 + ' M'
+              } else if (value <= -1000000) {
+                return '$' + value / 1000000 + ' M'
+              } else {
+                return '$' + value;
+              }
+            }
+          }
+        },
+        x: {
+          display: false
         }
+
       },
       plugins: {
+        legend: {
+          position: 'left',
+          maxHeight: 10
+        },
         title: {
           display: true,
-          text: 'balances',
+          text: 'Monte Carlo Simulations',
         },
       }
     };
@@ -486,11 +515,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       responsive: true,
       plugins: {
         legend: {
-          position: 'top' as const,
+          display: false
         },
         title: {
           display: true,
-          text: 'ending balance counts',
+          text: 'Portfolio Ending Balances',
         },
       },
     };
@@ -498,33 +527,45 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       <Container >
         {this.state.chartData && this.state.barChartData ? <>
           <Stack direction='column' >
-            <Line data={this.state.chartData} options={options} />
-            <div style={{ textAlign: 'center', border: '3px solid black' }}><h2 style={{ width: 'min-width' }}>Probability of success: {this.state.successPercent}% <Tooltip title={`Calculated using Monte Carlo, running ${STEPS} different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h2></div>
-            <Bar options={barOptions} data={this.state.barChartData} />
 
-            <br/>
-            <br/>
-            <Accordion >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Gaussian distribution of returns</Typography>
-              </AccordionSummary>
 
-              <Bar options={barOptions} data={this.state.returnBarChartData} />
-            </Accordion >
-            <br/>
+            <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 1, backgroundColor: moneyGreenLight }}>
+              <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running ${STEPS} different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
+              <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
+              <Paper variant="outlined" >
+                <Line data={this.state.chartData} options={options} />
+              </Paper >
+            </Paper>
+
+            <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 1, backgroundColor: moneyGreenLight }}>
+              <h3 style={{ color: black, width: 'min-width' }}>Ending Balances</h3>
+              <Paper variant="outlined" >
+                <Bar options={barOptions} data={this.state.barChartData} />
+              </Paper >
+            </Paper>
+
+            <br />
+            {/* <Accordion >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Gaussian distribution of returns</Typography>
+            </AccordionSummary>
+
+            <Bar options={barOptions} data={this.state.returnBarChartData} />
+          </Accordion > */}
+            <br />
 
             {/* <Bar options={barOptions} data={this.state.histBarChartData} /> */}
           </Stack>
 
-
           {/* <LoadingButton loading={this.state.simulationButtonLoading} style={{ width: "100%" }} onClick={this.runSimulations} variant="outlined">Run Simulations</LoadingButton> */}
         </> : < >
           <CircularProgress />
-        </>}
+        </>
+        }
       </Container >
     );
   }

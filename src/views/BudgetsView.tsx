@@ -23,6 +23,7 @@ import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { BudgetFactory } from '../model/FactoryMethods/BudgetFactory';
 import { getObjectWithId } from '../utilities/helpers';
+import { CategoryTypes } from '../API';
 
 Amplify.configure(awsExports);
 
@@ -160,6 +161,8 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
             }
           }
 
+          const monthlySpending = budget.getTypeSum(CategoryTypes.Expense);
+          const annualTaxes = (monthlySpending*12/2.0)*0.15;
           return (
             <>
               <Accordion key={budget.getKey()} expanded={this.state.dropdowns[budget.getKey()]} onChange={this.handleChange(budget.getKey())}>
@@ -180,7 +183,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
 
                     {
                       invest ?
-                        <><b>invest: </b> (per month) <b>${invest.toFixed(2)}</b>   (per year)<b> ${(invest * 12).toFixed(2)}</b>
+                        <><b>invest: </b> (per month) <b>${invest.toFixed(2)}</b>   (per year)<b> ${(invest * 12).toFixed(2)}  (per year taxes) ${annualTaxes.toFixed(2)}</b>
                         </> : <></>
                     }
 
