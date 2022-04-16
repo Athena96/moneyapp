@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { Link } from "react-router-dom";
 
@@ -49,15 +48,15 @@ class App extends React.Component<IProps, IState> {
             <Toolbar>
 
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-               <Link style={{color: 'white', textDecoration: 'none'}} to="/">Money Tomorrow</Link>
+                <Link style={{ color: 'white', textDecoration: 'none' }} to="/">Money Tomorrow</Link>
               </Typography>
 
             </Toolbar>
           </AppBar>
         </Box>
-        
+
         <Container >
-          <Main/>
+          <Main />
         </Container>
       </div>
 
