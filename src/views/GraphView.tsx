@@ -33,6 +33,7 @@ import { EventDataAccess } from '../utilities/EventDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { getFinnhubClient } from '../utilities/helpers';
 import { moneyGreen, moneyGreenLight, moneyGreenBoldText, black } from '../utilities/constants';
+import { Tick } from 'chart.js';
 
 interface GraphsViewProps {
 }
@@ -483,14 +484,13 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           min: -20000000,
           max: 20000000,
           ticks: {
-            // Include a dollar sign in the ticks
-            callback: function (value: number, index: number, ticks: number) {
-              if (value >= 1000000) {
-                return '$' + value / 1000000 + ' M'
-              } else if (value <= -1000000) {
-                return '$' + value / 1000000 + ' M'
+            callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
+              if ((tickValue as number ) >= 1000000) {
+                return '$' + (tickValue as number )/ 1000000 + ' M'
+              } else if ((tickValue as number ) <= -1000000) {
+                return '$' + (tickValue as number ) / 1000000 + ' M'
               } else {
-                return '$' + value;
+                return '$' + (tickValue as number );
               }
             }
           }
@@ -502,7 +502,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       },
       plugins: {
         legend: {
-          position: 'left',
+          position: "left" as const,
           maxHeight: 10
         },
         title: {
