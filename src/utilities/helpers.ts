@@ -19,8 +19,19 @@ export interface RowData {
   events?: Event[]
 }
 
-// actual general helpers
+export interface MonteCarloRowData {
+  date: string;
+  maxBalance: string;
+  avgBalance: string;
+  assumedAvgBalance: string;
+  minBalance: string;
+  return: string;
+  accountUsed: string;
+  note: string;
+  events?: Event[]
+}
 
+// actual general helpers
 export function dateRange(startDate: Date, endDate: Date, steps = 31) {
   const dateArray = [];
   let currentDate = new Date(startDate);

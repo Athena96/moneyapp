@@ -234,6 +234,7 @@ export const onCreateSimulation = /* GraphQL */ `
       name
       selected
       simulationData
+      successPercent
       lastComputed
       createdAt
       updatedAt
@@ -247,6 +248,7 @@ export const onUpdateSimulation = /* GraphQL */ `
       name
       selected
       simulationData
+      successPercent
       lastComputed
       createdAt
       updatedAt
@@ -260,6 +262,7 @@ export const onDeleteSimulation = /* GraphQL */ `
       name
       selected
       simulationData
+      successPercent
       lastComputed
       createdAt
       updatedAt

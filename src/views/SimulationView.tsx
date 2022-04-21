@@ -21,7 +21,7 @@ import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
-import { cleanNumberDataInput, RowData } from '../utilities/helpers';
+import { cleanNumberDataInput } from '../utilities/helpers';
 
 interface SimulationViewProps {
     value: number;
@@ -86,7 +86,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
             this.setState({ isLoading: true });
             try {
                 let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
-                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', new Date());
+                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date());
                 let newSimulations = [...this.state.simulations, newSimulation]
                 await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
 

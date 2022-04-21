@@ -60,5 +60,6 @@ type Simulation @model {
   name: String
   selected: Int
   simulationData: String
+  successPercent: String
   lastComputed: AWSDateTime
 }

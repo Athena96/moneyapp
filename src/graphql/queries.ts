@@ -194,6 +194,7 @@ export const getSimulation = /* GraphQL */ `
       name
       selected
       simulationData
+      successPercent
       lastComputed
       createdAt
       updatedAt
@@ -212,6 +213,7 @@ export const listSimulations = /* GraphQL */ `
         name
         selected
         simulationData
+        successPercent
         lastComputed
         createdAt
         updatedAt
