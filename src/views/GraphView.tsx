@@ -173,7 +173,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
               <Paper elevation={0} >
                 <Line data={this.state.chartData} options={options} />
               </Paper >
-              <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed*60).toFixed(0) : this.state.lastComputed} {this.state.lastComputed < 1 ? `minutes` : `hours`} ago</b></small>
+              <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed*60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minutes` : `hours`} ago</b></small>
             </Paper>
             <br />
             <br />
