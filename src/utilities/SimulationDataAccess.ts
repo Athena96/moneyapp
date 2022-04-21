@@ -3,7 +3,6 @@ import { Simulation } from '../model/Base/Simulation';
 import { listSimulations } from '../graphql/queries'
 import { ListSimulationsQuery } from "../API";
 import { API } from 'aws-amplify'
-import { RowData } from './helpers';
 
 export class SimulationDataAccess {
 
@@ -15,7 +14,7 @@ export class SimulationDataAccess {
             })) as { data: ListSimulationsQuery }
             let selSim: any;
             for (const simulation of response.data.listSimulations!.items!) {             
-                fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, new Date(simulation!.lastComputed!)));
+                fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!)));
                 if (simulation?.selected === 1) {
                     selSim = simulation;
                 }
@@ -25,6 +24,26 @@ export class SimulationDataAccess {
             console.log(error);
         }
         return fetchedSimulations;
+    }
+
+    static async fetchSelectedSimulation(componentState: any): Promise<Simulation> {
+        let selectedSimulation: Simulation | null = null;
+        try {
+            const response = (await API.graphql({
+                query: listSimulations
+            })) as { data: ListSimulationsQuery }
+
+            for (const simulation of response.data.listSimulations!.items!) {            
+                if (simulation?.selected === 1) {
+                    selectedSimulation = new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!))
+                    break;
+                }
+            }
+            componentState.setState({ simulations: [selectedSimulation], selectedSimulation: selectedSimulation })
+        } catch (error) {
+            console.log(error);
+        }
+        return selectedSimulation!;
     }
 
     static getSelectedSimulation(simulations: Simulation[]) {
