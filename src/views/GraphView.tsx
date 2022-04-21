@@ -21,7 +21,7 @@ interface GraphsViewProps {
 interface IState {
   selectedTab: number;
   chartData: any | null;
-  lastComputed: string | null;
+  lastComputed: number | null;
   successPercent: string;
   simulationButtonLoading: boolean;
 }
@@ -53,12 +53,10 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     const simulation = await SimulationDataAccess.fetchSelectedSimulation(this);
     const chartDataRaw = simulation.getSimulationData()!;
     const chartData = this.generateGraphData(chartDataRaw, 'brokerage');
-    const successPercent = String(Number(simulation.successPercent).toFixed(0));//this.getSuccessPercent(sims);    
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const dayName = days[simulation.lastComputed.getDay()];
-    const month = simulation.lastComputed.toLocaleString('default', { month: 'long' });
-    const lastComputedString = `${dayName} ${month} ${simulation.lastComputed.getDate()} ${simulation.lastComputed.getFullYear()} ${simulation.lastComputed.getHours()}:${simulation.lastComputed.getMinutes()}`
-    this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: lastComputedString});
+    const successPercent = String(Number(simulation.successPercent).toFixed(0));
+    const now = new Date();
+    const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
+    this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours});
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -165,10 +163,9 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         },
       }
     };
-
     return (
       <Container >
-        {this.state.chartData ? <>
+        {this.state.chartData && this.state.lastComputed ? <>
           <Stack direction='column' >
             <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 2 }}>
               <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running ${STEPS} different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
@@ -176,7 +173,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
               <Paper elevation={0} >
                 <Line data={this.state.chartData} options={options} />
               </Paper >
-              <small>Last Simulations Generated at: <b>{this.state.lastComputed}</b></small>
+              <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed*60).toFixed(0) : this.state.lastComputed} {this.state.lastComputed < 1 ? `minutes` : `hours`} ago</b></small>
             </Paper>
             <br />
             <br />
