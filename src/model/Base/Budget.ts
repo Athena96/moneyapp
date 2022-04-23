@@ -20,9 +20,11 @@ export class Budget implements Key {
 
     getTypeSum(type: CategoryTypes) {
         let sum = 0.0;
-        for (const category of this.categories!) {
-            if (category.type === type) {
-                sum += category.value;
+        if (this.categories) {
+            for (const category of this.categories!) {
+                if (category.type === type) {
+                    sum += category.value;
+                }
             }
         }
         return sum;

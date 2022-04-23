@@ -128,6 +128,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   render() {
+    const isMobile = window.innerWidth <= 390;
     const options = {
       scales: {
         y: {
@@ -153,7 +154,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       plugins: {
         legend: {
           position: "bottom" as const,
-
+          display: isMobile ? false : true,
         },
         title: {
           display: true,
