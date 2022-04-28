@@ -28,6 +28,7 @@ import Button from '@mui/material/Button';
 import { Link } from "react-router-dom";
 
 import './App.css';
+import { Auth } from 'aws-amplify';
 
 import Main from './views/Main'
 import { moneyGreen } from './utilities/constants';
@@ -76,7 +77,7 @@ class App extends React.Component<IProps, IState> {
                     <Toolbar>
 
                       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                      <Link style={{ color: 'white', textDecoration: 'none' }} to="/">Money Tomorrow {<small>{user && user.attributes && user.attribute.email ? user.attribute.email : ''}</small>}</Link>
+                      <Link style={{ color: 'white', textDecoration: 'none' }} to="/">Money Tomorrow {<small>{user && user.attributes && user.attributes.email ? user.attributes.email : ''}</small>}</Link>
                       </Typography>
                       <Button variant="outlined" style={{ color: 'white'}} onClick={signOut}>
                         Sign Out
