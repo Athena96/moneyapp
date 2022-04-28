@@ -31,8 +31,8 @@ export class InputDataAccess {
     }
 
 
-    static async fetchInputs(componentState: any | null, simulations: Simulation[]): Promise<Input[]> {
-        const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
+    static async fetchInputs(componentState: any | null, userSimulation: string): Promise<Input[]> {
+
 
         let fetchedInputs: Input[] = [];
         let growth = 0.0;
@@ -42,7 +42,7 @@ export class InputDataAccess {
             const response = await InputDataAccess.paginateInputs();
             for (const input of response) {
 
-                if (input?.simulation && input?.simulation! === selectedSim?.id!) {
+                if (input?.simulation && input?.simulation! === userSimulation) {
                     fetchedInputs.push(new Input(
                         input?.id!,
                         input?.key!,

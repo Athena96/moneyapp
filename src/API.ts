@@ -5,10 +5,12 @@
 export type CreateAccountInput = {
   id?: string | null,
   name?: string | null,
+  simulation?: string | null,
 };
 
 export type ModelAccountConditionInput = {
   name?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelAccountConditionInput | null > | null,
   or?: Array< ModelAccountConditionInput | null > | null,
   not?: ModelAccountConditionInput | null,
@@ -58,6 +60,7 @@ export type Account = {
   __typename: "Account",
   id: string,
   name?: string | null,
+  simulation?: string | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -65,6 +68,7 @@ export type Account = {
 export type UpdateAccountInput = {
   id: string,
   name?: string | null,
+  simulation?: string | null,
 };
 
 export type DeleteAccountInput = {
@@ -228,6 +232,7 @@ export type CreateAssetsInput = {
   hasIndexData?: number | null,
   account?: string | null,
   isCurrency?: number | null,
+  simulation?: string | null,
 };
 
 export type ModelAssetsConditionInput = {
@@ -236,6 +241,7 @@ export type ModelAssetsConditionInput = {
   hasIndexData?: ModelIntInput | null,
   account?: ModelStringInput | null,
   isCurrency?: ModelIntInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelAssetsConditionInput | null > | null,
   or?: Array< ModelAssetsConditionInput | null > | null,
   not?: ModelAssetsConditionInput | null,
@@ -273,6 +279,7 @@ export type Assets = {
   hasIndexData?: number | null,
   account?: string | null,
   isCurrency?: number | null,
+  simulation?: string | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -284,6 +291,7 @@ export type UpdateAssetsInput = {
   hasIndexData?: number | null,
   account?: string | null,
   isCurrency?: number | null,
+  simulation?: string | null,
 };
 
 export type DeleteAssetsInput = {
@@ -297,6 +305,7 @@ export type CreateSimulationInput = {
   simulationData?: string | null,
   successPercent?: string | null,
   lastComputed?: string | null,
+  user?: string | null,
 };
 
 export type ModelSimulationConditionInput = {
@@ -305,6 +314,7 @@ export type ModelSimulationConditionInput = {
   simulationData?: ModelStringInput | null,
   successPercent?: ModelStringInput | null,
   lastComputed?: ModelStringInput | null,
+  user?: ModelStringInput | null,
   and?: Array< ModelSimulationConditionInput | null > | null,
   or?: Array< ModelSimulationConditionInput | null > | null,
   not?: ModelSimulationConditionInput | null,
@@ -318,6 +328,7 @@ export type Simulation = {
   simulationData?: string | null,
   successPercent?: string | null,
   lastComputed?: string | null,
+  user?: string | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -329,6 +340,7 @@ export type UpdateSimulationInput = {
   simulationData?: string | null,
   successPercent?: string | null,
   lastComputed?: string | null,
+  user?: string | null,
 };
 
 export type DeleteSimulationInput = {
@@ -338,6 +350,7 @@ export type DeleteSimulationInput = {
 export type ModelAccountFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelAccountFilterInput | null > | null,
   or?: Array< ModelAccountFilterInput | null > | null,
   not?: ModelAccountFilterInput | null,
@@ -423,6 +436,7 @@ export type ModelAssetsFilterInput = {
   hasIndexData?: ModelIntInput | null,
   account?: ModelStringInput | null,
   isCurrency?: ModelIntInput | null,
+  simulation?: ModelStringInput | null,
   and?: Array< ModelAssetsFilterInput | null > | null,
   or?: Array< ModelAssetsFilterInput | null > | null,
   not?: ModelAssetsFilterInput | null,
@@ -441,6 +455,7 @@ export type ModelSimulationFilterInput = {
   simulationData?: ModelStringInput | null,
   successPercent?: ModelStringInput | null,
   lastComputed?: ModelStringInput | null,
+  user?: ModelStringInput | null,
   and?: Array< ModelSimulationFilterInput | null > | null,
   or?: Array< ModelSimulationFilterInput | null > | null,
   not?: ModelSimulationFilterInput | null,
@@ -468,6 +483,7 @@ export type CreateAccountMutation = {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -483,6 +499,7 @@ export type UpdateAccountMutation = {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -498,6 +515,7 @@ export type DeleteAccountMutation = {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -721,6 +739,7 @@ export type CreateAssetsMutation = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -740,6 +759,7 @@ export type UpdateAssetsMutation = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -759,6 +779,7 @@ export type DeleteAssetsMutation = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -778,6 +799,7 @@ export type CreateSimulationMutation = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -797,6 +819,7 @@ export type UpdateSimulationMutation = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -816,6 +839,7 @@ export type DeleteSimulationMutation = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -830,6 +854,7 @@ export type GetAccountQuery = {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -848,6 +873,7 @@ export type ListAccountsQuery = {
       __typename: "Account",
       id: string,
       name?: string | null,
+      simulation?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1016,6 +1042,7 @@ export type GetAssetsQuery = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1038,6 +1065,7 @@ export type ListAssetsQuery = {
       hasIndexData?: number | null,
       account?: string | null,
       isCurrency?: number | null,
+      simulation?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1058,6 +1086,7 @@ export type GetSimulationQuery = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1080,6 +1109,7 @@ export type ListSimulationsQuery = {
       simulationData?: string | null,
       successPercent?: string | null,
       lastComputed?: string | null,
+      user?: string | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1119,11 +1149,39 @@ export type BudgetsBySimulationIdQuery = {
   } | null,
 };
 
+export type SimulationsByUserQueryVariables = {
+  user?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelSimulationFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type SimulationsByUserQuery = {
+  simulationsByUser?:  {
+    __typename: "ModelSimulationConnection",
+    items:  Array< {
+      __typename: "Simulation",
+      id: string,
+      name?: string | null,
+      selected?: number | null,
+      simulationData?: string | null,
+      successPercent?: string | null,
+      lastComputed?: string | null,
+      user?: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreateAccountSubscription = {
   onCreateAccount?:  {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1134,6 +1192,7 @@ export type OnUpdateAccountSubscription = {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1144,6 +1203,7 @@ export type OnDeleteAccountSubscription = {
     __typename: "Account",
     id: string,
     name?: string | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1317,6 +1377,7 @@ export type OnCreateAssetsSubscription = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1331,6 +1392,7 @@ export type OnUpdateAssetsSubscription = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1345,6 +1407,7 @@ export type OnDeleteAssetsSubscription = {
     hasIndexData?: number | null,
     account?: string | null,
     isCurrency?: number | null,
+    simulation?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1359,6 +1422,7 @@ export type OnCreateSimulationSubscription = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1373,6 +1437,7 @@ export type OnUpdateSimulationSubscription = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1387,6 +1452,7 @@ export type OnDeleteSimulationSubscription = {
     simulationData?: string | null,
     successPercent?: string | null,
     lastComputed?: string | null,
+    user?: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,

@@ -16,6 +16,8 @@ import Stack from '@mui/material/Stack';
 
 import { Link } from "react-router-dom";
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { Auth } from 'aws-amplify';
 
 Amplify.configure(awsExports);
 
@@ -46,8 +48,11 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     this.render = this.render.bind(this);
   }
 
-  componentDidMount() {
-    AccountDataAccess.fetchAccounts(this);
+  async componentDidMount() {
+    const user = await Auth.currentAuthenticatedUser();
+    const email: string = user.attributes.email;
+    const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+    AccountDataAccess.fetchAccountsForUserSelectedSim(this, selectedSim.getKey());
   }
 
   async handleAddAccount() {

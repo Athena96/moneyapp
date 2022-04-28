@@ -13,6 +13,7 @@ import Paper from '@mui/material/Paper';
 import { Link } from "react-router-dom";
 
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { Auth } from 'aws-amplify';
 
 
 import '../App.css';
@@ -43,7 +44,9 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     async getData() {
-        const simulation = await SimulationDataAccess.fetchSelectedSimulation(this);
+        const user = await Auth.currentAuthenticatedUser();
+        const email: string = user.attributes.email;
+        const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
         this.setState({ balanceData: simulation.getSimulationData() });
     }
 

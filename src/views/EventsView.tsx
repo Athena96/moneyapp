@@ -32,6 +32,7 @@ import { EventDataAccess } from '../utilities/EventDataAccess';
 import { EventFactory } from '../model/FactoryMethods/EventFactory';
 import { dateRange, getObjectWithId } from '../utilities/helpers';
 import { Category } from '../model/Base/Category';
+import { Auth } from 'aws-amplify';
 
 Amplify.configure(awsExports);
 
@@ -82,10 +83,12 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
   }
 
-  componentDidMount() {
-    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
-      EventDataAccess.fetchEvents(this, simulations, this.state.finnhubClient);
-    })
+  async componentDidMount() {
+
+    const user = await Auth.currentAuthenticatedUser();
+    const email: string = user.attributes.email;
+    const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+    await EventDataAccess.fetchDefaultEvents(this, selectedSim.getKey());
   }
 
   async addEvent(id: string, name: string, date: Date, account: string, category: Category | null) {

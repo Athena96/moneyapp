@@ -24,6 +24,7 @@ import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { BudgetFactory } from '../model/FactoryMethods/BudgetFactory';
 import { getObjectWithId } from '../utilities/helpers';
 import { CategoryTypes } from '../API';
+import { Auth } from 'aws-amplify';
 
 Amplify.configure(awsExports);
 
@@ -62,10 +63,11 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
   }
 
 
-  componentDidMount() {
-    SimulationDataAccess.fetchSimulations(this).then((simulations) => {
-      BudgetDataAccess.fetchBudgets(this, simulations);
-    });
+  async componentDidMount() {
+    const user = await Auth.currentAuthenticatedUser();
+    const email: string = user.attributes.email;
+    const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+    await BudgetDataAccess.fetchBudgetsForSelectedSim(this, selectedSim.getKey());
   }
 
   async handleAddBudget() {

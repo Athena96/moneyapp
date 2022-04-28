@@ -15,18 +15,17 @@ import { InputDataAccess } from './InputDataAccess';
 
 export class BudgetDataAccess {
 
-    static async fetchBudgets(componentState: any, simulations: Simulation[]) {
-        const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
+    static async fetchBudgetsForSelectedSim(componentState: any, userSimulation: string) {
 
         // fetch inputs.
-        let inputs: Input[] = await InputDataAccess.fetchInputs(null, simulations);
+        let inputs: Input[] = await InputDataAccess.fetchInputs(null, userSimulation);
         let fetchedBudgets: Budget[] = [];
         try {
             const response = (await API.graphql({
                 query: listBudgets
             })) as { data: ListBudgetsQuery }
             for (const budget of response.data.listBudgets!.items!) {
-                if (budget?.simulation && budget?.simulation! === selectedSim?.id!) {
+                if (budget?.simulation && budget?.simulation! === userSimulation) {
                     let cats = null;
 
                     if (budget?.categories) {

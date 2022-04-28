@@ -14,6 +14,7 @@ import { Line } from "react-chartjs-2";
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { moneyGreenBoldText, black } from '../utilities/constants';
 import { Tick } from 'chart.js';
+import { Auth } from 'aws-amplify';
 
 interface GraphsViewProps {
 }
@@ -48,7 +49,9 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   async getData() {
-    const simulation = await SimulationDataAccess.fetchSelectedSimulation(this);
+    const user = await Auth.currentAuthenticatedUser();
+    const email: string = user.attributes.email;
+    const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
     const chartDataRaw = simulation.getSimulationData()!;
     const chartData = this.generateGraphData(chartDataRaw, 'brokerage');
     const successPercent = String(Number(simulation.successPercent).toFixed(0));

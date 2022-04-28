@@ -6,14 +6,16 @@ import { listAccounts } from '../graphql/queries'
 
 export class AccountDataAccess {
 
-    static async fetchAccounts(componentState: any) {
+    static async fetchAccountsForUserSelectedSim(componentState: any, userSimulation: string) {
         let fetchedAccounts: Account[] = [];
         try {
             const response = (await API.graphql({
                 query: listAccounts
             })) as { data: ListAccountsQuery }
             for (const account of response.data.listAccounts!.items!) {
-                fetchedAccounts.push(new Account(account!.id!, account!.name!));
+                if (account?.simulation === userSimulation) {
+                    fetchedAccounts.push(new Account(account!.id!, account!.name!));
+                }
             }
             componentState.setState({ accounts: fetchedAccounts })
         } catch (error) {

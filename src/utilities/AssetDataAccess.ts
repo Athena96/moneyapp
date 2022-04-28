@@ -7,14 +7,16 @@ import { getCookie, setCookie } from './CookiesHelper';
 
 export class AssetDataAccess {
 
-    static async fetchAssets(componentState: any | null): Promise<Asset[]> {
+    static async fetchAssetsForSelectedSim(componentState: any | null, userSimulation: string): Promise<Asset[]> {
         let fetchedAssets: Asset[] = [];
         try {
             const response = (await API.graphql({
                 query: listAssets
             })) as { data: ListAssetsQuery }
             for (const asset of response.data.listAssets!.items!) {
-                fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, String(asset!.quantity!), asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
+                if (asset?.simulation === userSimulation) {
+                    fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, String(asset!.quantity!), asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
+                }
             }
             if (componentState !== null) {
                 componentState.setState({ assets: fetchedAssets })
@@ -50,99 +52,6 @@ export class AssetDataAccess {
 
                 }
             });
-        })
-    }
-
-    static async fetchStartingBalances(componentState: any, finnhubClient: any) {
-        const assets: Asset[] = await AssetDataAccess.fetchAssets(null);
-
-        if (!componentState.state.balances['brokerage']) {
-            componentState.state.balances['brokerage'] = {
-                0: 0.0
-            }
-        }
-
-        if (!componentState.state.balances['tax']) {
-            componentState.state.balances['tax'] = {
-                0: 0.0
-            }
-        }
-
-        for (const entry of assets) {
-            if (entry.ticker !== null && entry.hasIndexData === 1) {
-                if (entry.isCurrency === 1) {
-
-                    const cookie = getCookie(entry.ticker);
-                    if (cookie) {
-                        this.computeCurrentyStartingBalances(componentState, cookie.getValue(), entry);
-                    } else {
-                        const value = await this.getCrypto(entry,finnhubClient)
-                        setCookie(entry.ticker, value.toString());
-                        this.computeCurrentyStartingBalances(componentState, value, entry);
-                    }
-
-                } else {
-                    const stockCookie = getCookie(entry.ticker);
-                    if (stockCookie && stockCookie != null) {
-                        this.computeSecuritiesStartingBalances(componentState, stockCookie.getValue(), entry);
-                    } else {
-                        const value = await this.getQuotes(entry,finnhubClient)
-                        setCookie(entry.ticker, value.toString());
-                        this.computeCurrentyStartingBalances(componentState, value, entry);
-                    }
-                }
-            } else {
-                const newBrokNonStock = entry.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + entry.quantity : componentState.state.balances['brokerage'][0];
-                const currTaxNonStock = entry.account === 'tax' ? componentState.state.balances['tax'][0] + entry.quantity : componentState.state.balances['tax'][0];
-                componentState.setState({
-                    balances: {
-                        brokerage: {
-                            0: newBrokNonStock,
-
-                        },
-                        tax: {
-                            0: currTaxNonStock,
-                        }
-                    }
-                })
-            }
-
-        }
-
-    }
-
-    static computeCurrentyStartingBalances(componentState: any, currentCurrencyVal: number, asset: Asset) {
-        const value: number = currentCurrencyVal;
-        const holdingValue = value * asset.quantity;
-        const newBrokCurr = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-        const currTaxCurr = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-        componentState.setState({
-            balances: {
-                brokerage: {
-                    0: newBrokCurr,
-
-                },
-                tax: {
-                    0: currTaxCurr,
-                }
-            }
-        })
-    }
-
-    static computeSecuritiesStartingBalances(componentState: any, currentSecurityVal: number, asset: Asset) {
-        const holdingValue = currentSecurityVal * asset.quantity;
-        const newBrok = asset.account === 'brokerage' ? componentState.state.balances['brokerage'][0] + holdingValue : componentState.state.balances['brokerage'][0];
-        const currTax = asset.account === 'tax' ? componentState.state.balances['tax'][0] + holdingValue : componentState.state.balances['tax'][0];
-        componentState.setState({
-            balances: {
-                brokerage: {
-                    0: newBrok,
-
-                },
-                tax: {
-                    0: currTax,
-                }
-            }
         })
     }
 

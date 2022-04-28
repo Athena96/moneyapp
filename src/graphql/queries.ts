@@ -7,6 +7,7 @@ export const getAccount = /* GraphQL */ `
     getAccount(id: $id) {
       id
       name
+      simulation
       createdAt
       updatedAt
     }
@@ -22,6 +23,7 @@ export const listAccounts = /* GraphQL */ `
       items {
         id
         name
+        simulation
         createdAt
         updatedAt
       }
@@ -161,6 +163,7 @@ export const getAssets = /* GraphQL */ `
       hasIndexData
       account
       isCurrency
+      simulation
       createdAt
       updatedAt
     }
@@ -180,6 +183,7 @@ export const listAssets = /* GraphQL */ `
         hasIndexData
         account
         isCurrency
+        simulation
         createdAt
         updatedAt
       }
@@ -196,6 +200,7 @@ export const getSimulation = /* GraphQL */ `
       simulationData
       successPercent
       lastComputed
+      user
       createdAt
       updatedAt
     }
@@ -215,6 +220,7 @@ export const listSimulations = /* GraphQL */ `
         simulationData
         successPercent
         lastComputed
+        user
         createdAt
         updatedAt
       }
@@ -249,6 +255,36 @@ export const budgetsBySimulationId = /* GraphQL */ `
           type
         }
         simulation
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const simulationsByUser = /* GraphQL */ `
+  query SimulationsByUser(
+    $user: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelSimulationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    simulationsByUser(
+      user: $user
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        name
+        selected
+        simulationData
+        successPercent
+        lastComputed
+        user
         createdAt
         updatedAt
       }

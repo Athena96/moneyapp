@@ -7,6 +7,7 @@ export const onCreateAccount = /* GraphQL */ `
     onCreateAccount {
       id
       name
+      simulation
       createdAt
       updatedAt
     }
@@ -17,6 +18,7 @@ export const onUpdateAccount = /* GraphQL */ `
     onUpdateAccount {
       id
       name
+      simulation
       createdAt
       updatedAt
     }
@@ -27,6 +29,7 @@ export const onDeleteAccount = /* GraphQL */ `
     onDeleteAccount {
       id
       name
+      simulation
       createdAt
       updatedAt
     }
@@ -194,6 +197,7 @@ export const onCreateAssets = /* GraphQL */ `
       hasIndexData
       account
       isCurrency
+      simulation
       createdAt
       updatedAt
     }
@@ -208,6 +212,7 @@ export const onUpdateAssets = /* GraphQL */ `
       hasIndexData
       account
       isCurrency
+      simulation
       createdAt
       updatedAt
     }
@@ -222,6 +227,7 @@ export const onDeleteAssets = /* GraphQL */ `
       hasIndexData
       account
       isCurrency
+      simulation
       createdAt
       updatedAt
     }
@@ -236,6 +242,7 @@ export const onCreateSimulation = /* GraphQL */ `
       simulationData
       successPercent
       lastComputed
+      user
       createdAt
       updatedAt
     }
@@ -250,6 +257,7 @@ export const onUpdateSimulation = /* GraphQL */ `
       simulationData
       successPercent
       lastComputed
+      user
       createdAt
       updatedAt
     }
@@ -264,6 +272,7 @@ export const onDeleteSimulation = /* GraphQL */ `
       simulationData
       successPercent
       lastComputed
+      user
       createdAt
       updatedAt
     }

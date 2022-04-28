@@ -10,6 +10,11 @@
       "StackName": "amplify-moneyapp-dev-132217",
       "StackId": "arn:aws:cloudformation:us-west-2:173916683421:stack/amplify-moneyapp-dev-132217/cec2bb30-1be2-11ec-892e-0af9e19d1971",
       "AmplifyAppId": "duo61fto7pybu"
+    },
+    "categories": {
+      "auth": {
+        "moneyapp4d4136e1": {}
+      }
     }
   }
 }

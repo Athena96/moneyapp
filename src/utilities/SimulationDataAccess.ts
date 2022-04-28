@@ -26,7 +26,7 @@ export class SimulationDataAccess {
         return fetchedSimulations;
     }
 
-    static async fetchSelectedSimulation(componentState: any): Promise<Simulation> {
+    static async fetchSelectedSimulationForUser(componentState: any, user: string): Promise<Simulation> {
         let selectedSimulation: Simulation | null = null;
         try {
             const response = (await API.graphql({
@@ -34,7 +34,7 @@ export class SimulationDataAccess {
             })) as { data: ListSimulationsQuery }
 
             for (const simulation of response.data.listSimulations!.items!) {            
-                if (simulation?.selected === 1) {
+                if (simulation?.selected === 1 && simulation.user && simulation.user === user) {
                     selectedSimulation = new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!))
                     break;
                 }

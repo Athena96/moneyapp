@@ -7,6 +7,7 @@ enum CategoryTypes {
 type Account @model {
   id: ID!
   name: String
+  simulation: String
 }
 
 # no @model directive because we do not want a Category table, i.e. Categories
@@ -53,13 +54,16 @@ type Assets @model {
   hasIndexData: Int
   account: String
   isCurrency: Int
+  simulation: String
 }
 
-type Simulation @model {
+type Simulation @model 
+@key(name: "simulationsByUser", fields: ["user"], queryField: "simulationsByUser") {
   id: ID!
   name: String
   selected: Int
   simulationData: String
   successPercent: String
   lastComputed: AWSDateTime
+  user: String
 }

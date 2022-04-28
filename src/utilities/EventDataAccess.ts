@@ -33,23 +33,22 @@ export class EventDataAccess {
 
   }
 
-  static async fetchEvents(componentState: any, simulations: Simulation[], finnhubClient: any) {
-    const selectedSim = SimulationDataAccess.getSelectedSimulation(simulations);
-    const stockCookie = getCookie("AMZN");
-    if (stockCookie) {
-      await this.computeEvents(stockCookie.getValue(), selectedSim!, componentState);
-    } else {
-      finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
-        if (data && data.c) {
-          const currentAmazonStockPrice: number = data.c;
-          setCookie("AMZN", currentAmazonStockPrice.toString());
-          await this.computeEvents(currentAmazonStockPrice, selectedSim!, componentState);
-        }
-      });
-    }
-  }
+  // static async fetchEventsForSelectedSim(componentState: any, userSimulation: string) {
+  //   const stockCookie = getCookie("AMZN");
+  //   if (stockCookie) {
+  //     await this.computeEvents(stockCookie.getValue(), selectedSim!, componentState);
+  //   } else {
+  //     finnhubClient.quote("AMZN", async (error: any, data: any, response: any) => {
+  //       if (data && data.c) {
+  //         const currentAmazonStockPrice: number = data.c;
+  //         setCookie("AMZN", currentAmazonStockPrice.toString());
+  //         await this.computeEvents(currentAmazonStockPrice, selectedSim!, componentState);
+  //       }
+  //     });
+  //   }
+  // }
 
-  static async fetchDefaultEvents(selectedSimulationId: string): Promise<Event[]> {
+  static async fetchDefaultEvents(componentState: any | null, selectedSimulationId: string): Promise<Event[]> {
     let fetchedEvents: Event[] = [];
     try {
       const response = await EventDataAccess.paginateEvents();
@@ -69,6 +68,13 @@ export class EventDataAccess {
 
         }
       }
+
+      if (componentState) {
+
+        componentState.setState({ events: fetchedEvents })
+      }
+
+
     } catch (error) {
       console.log(error);
     }

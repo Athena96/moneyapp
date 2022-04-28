@@ -22,6 +22,7 @@ import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
+import { Auth } from 'aws-amplify';
 
 interface SimulationViewProps {
     value: number;
@@ -43,7 +44,6 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         this.state = {
             simulations: [],
             isLoading: false
-
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -77,8 +77,10 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
     }
 
-    componentDidMount() {
-        SimulationDataAccess.fetchSimulations(this);
+    async componentDidMount() {
+        const user = await Auth.currentAuthenticatedUser();
+        const email: string = user.attributes.email;
+        await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
     }
 
     async handleAddSimulation() {
@@ -94,7 +96,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
 
                 // pull events  ...
-                const defaultEvents: Event[] = await EventDataAccess.fetchDefaultEvents(selectedSim.getKey());
+                const defaultEvents: Event[] = await EventDataAccess.fetchDefaultEvents(null,selectedSim.getKey());
 
                 // pull inputs  ...
                 const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
