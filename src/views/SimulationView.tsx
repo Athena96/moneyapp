@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { createSimulation, deleteEvent, deleteInputs, deleteSimulation, updateSimulation } from '../graphql/mutations';
+import { createSimulation, deleteAccount, deleteEvent, deleteInputs, deleteSimulation, updateSimulation } from '../graphql/mutations';
 import { deleteBudget } from '../graphql/mutations'
 
 import Card from '@mui/material/Card';
@@ -23,6 +23,10 @@ import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
 import { Auth } from 'aws-amplify';
+import { AccountDataAccess } from '../utilities/AccountDataAccess';
+import { AssetDataAccess } from '../utilities/AssetDataAccess';
+import { Account } from '../model/Base/Account';
+import { Asset } from '../model/Base/Asset';
 
 interface SimulationViewProps {
     value: number;
@@ -80,15 +84,17 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     async componentDidMount() {
         const user = await Auth.currentAuthenticatedUser();
         const email: string = user.attributes.email;
-        await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+        await SimulationDataAccess.fetchSimulationsForUser(this, email);
     }
 
     async handleAddSimulation() {
         if (window.confirm('Are you sure you want to ADD a new Simulation? This will copy all current Budget/Events/Inputs to a new Simulation branch.')) {
             this.setState({ isLoading: true });
             try {
+                const user = await Auth.currentAuthenticatedUser();
+                const email: string = user.attributes.email;
                 let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
-                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date());
+                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date(), email);
                 let newSimulations = [...this.state.simulations, newSimulation]
                 await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
 
@@ -96,10 +102,19 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
 
                 // pull events  ...
-                const defaultEvents: Event[] = await EventDataAccess.fetchDefaultEvents(null,selectedSim.getKey());
+                const defaultEvents: Event[] = await EventDataAccess.fetchEventsForSelectedSim(null,selectedSim.getKey());
 
                 // pull inputs  ...
                 const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
+
+
+                // pull inputs  ...
+                const defaultAccounts: Account[] = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, selectedSim.getKey());
+
+
+                // pull inputs  ...
+                const defaultAssets: Asset[] = await AssetDataAccess.fetchAssetsForSelectedSim(null, selectedSim.getKey());
+
 
                 // for each budget
                 //  make a copy
@@ -132,6 +147,23 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     cpInput['simulation'] = newSimulation.id;
                     cpInput['id'] = new Date().getTime().toString()
                     await InputDataAccess.createInputBranch(cpInput);
+                }
+
+                // same for accounts
+                for (const account of defaultAccounts) {
+                    const cpAccount: any = account;
+                    cpAccount['simulation'] = newSimulation.id;
+                    cpAccount['id'] = new Date().getTime().toString()
+                    await AccountDataAccess.createAccountBranch(cpAccount);
+                }
+
+                // same for assets
+                for (const asset of defaultAssets) {
+                    const cpAsset: any = asset;
+                    cpAsset['simulation'] = newSimulation.id;
+                    cpAsset['id'] = new Date().getTime().toString()
+                    delete cpAsset['strQuantity'];
+                    await AssetDataAccess.createAssetBranch(cpAsset);
                 }
 
                 this.setState({ simulations: newSimulations });
@@ -193,38 +225,59 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 // get all budgets
                 //  if simulation == simtodelte.id
                 //  delete
-                const budgets = await BudgetDataAccess.fetchAllBudgets();
-                const events = await EventDataAccess.fetchAllEvents();
-                const inputs = await InputDataAccess.fetchAllInputs();
+                const budgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(null, simulationToDelete!['id']);
+                const events = await EventDataAccess.fetchEventsForSelectedSim(null, simulationToDelete!['id']);
+                const inputs = await InputDataAccess.fetchInputsForSelectedSim(null, simulationToDelete!['id']);
+                const accounts = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, simulationToDelete!['id']);
+                const assets = await AssetDataAccess.fetchAssetsForSelectedSim(null, simulationToDelete!['id']);
 
                 for (const b of budgets) {
-                    if (Object.keys(b).includes('simulation') && b['simulation'] === simulationToDelete!['id']) {
+
                         try {
-                            await API.graphql({ query: deleteBudget, variables: { input: { 'id': b['id'] } } });
+                            await API.graphql({ query: deleteBudget, variables: { input: { 'id': b.id } } });
                         } catch (err) {
                             console.log('error:', err)
                         }
-                    }
+
                 }
 
                 for (const e of events) {
-                    if (Object.keys(e).includes('simulation') && e['simulation'] === simulationToDelete!['id']) {
+
                         try {
-                            await API.graphql({ query: deleteEvent, variables: { input: { 'id': e['id'] } } });
+                            await API.graphql({ query: deleteEvent, variables: { input: { 'id': e.id } } });
                         } catch (err) {
                             console.log('error:', err)
                         }
-                    }
+
                 }
 
                 for (const i of inputs) {
-                    if (Object.keys(i).includes('simulation') && i['simulation'] === simulationToDelete!['id']) {
+
                         try {
-                            await API.graphql({ query: deleteInputs, variables: { input: { 'id': i['id'] } } });
+                            await API.graphql({ query: deleteInputs, variables: { input: { 'id': i.id } } });
                         } catch (err) {
                             console.log('error:', err)
                         }
-                    }
+
+                }
+
+                for (const ac of accounts) {
+                        try {
+                            await API.graphql({ query: deleteAccount, variables: { input: { 'id': ac.id } } });
+                        } catch (err) {
+                            console.log('error:', err)
+                        }
+
+                }
+
+                for (const as of assets) {
+
+                        try {
+                            await API.graphql({ query: deleteInputs, variables: { input: { 'id': as.id } } });
+                        } catch (err) {
+                            console.log('error:', err)
+                        }
+
                 }
 
                 this.setState({ simulations: newSimulations });

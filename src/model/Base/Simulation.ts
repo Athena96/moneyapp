@@ -12,14 +12,16 @@ export class Simulation implements Key {
     simulationData: string;
     successPercent: string;
     lastComputed: Date;
+    user: string;
 
-    constructor(id: string, name: string, selected: number, simulationData: string, successPercent: string, lastComputed: Date) {
+    constructor(id: string, name: string, selected: number, simulationData: string, successPercent: string, lastComputed: Date, user: string) {
         this.id = id;
         this.name = name;
         this.selected = selected;
         this.simulationData = simulationData;
         this.successPercent = successPercent;
         this.lastComputed = lastComputed;
+        this.user = user;
     }
 
     getSimulationData() {

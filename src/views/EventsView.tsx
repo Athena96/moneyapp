@@ -88,7 +88,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     const user = await Auth.currentAuthenticatedUser();
     const email: string = user.attributes.email;
     const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    await EventDataAccess.fetchDefaultEvents(this, selectedSim.getKey());
+    await EventDataAccess.fetchEventsForSelectedSim(this, selectedSim.getKey());
   }
 
   async addEvent(id: string, name: string, date: Date, account: string, category: Category | null) {

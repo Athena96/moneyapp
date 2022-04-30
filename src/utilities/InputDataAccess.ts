@@ -31,9 +31,7 @@ export class InputDataAccess {
     }
 
 
-    static async fetchInputs(componentState: any | null, userSimulation: string): Promise<Input[]> {
-
-
+    static async fetchInputsForSelectedSim(componentState: any | null, userSimulation: string): Promise<Input[]> {
         let fetchedInputs: Input[] = [];
         let growth = 0.0;
         let inflation = 0.0;

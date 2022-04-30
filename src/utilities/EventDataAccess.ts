@@ -48,7 +48,7 @@ export class EventDataAccess {
   //   }
   // }
 
-  static async fetchDefaultEvents(componentState: any | null, selectedSimulationId: string): Promise<Event[]> {
+  static async fetchEventsForSelectedSim(componentState: any | null, selectedSimulationId: string): Promise<Event[]> {
     let fetchedEvents: Event[] = [];
     try {
       const response = await EventDataAccess.paginateEvents();
@@ -101,6 +101,7 @@ export class EventDataAccess {
       await API.graphql(graphqlOperation(createEvent, { input: event }))
     } catch (err) {
       console.log('error creating event:', err)
+      
     }
   }
 

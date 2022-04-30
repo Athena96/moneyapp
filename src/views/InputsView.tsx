@@ -77,11 +77,12 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   }
 
+  
   async componentDidMount() {
     const user = await Auth.currentAuthenticatedUser();
     const email: string = user.attributes.email;
     const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    await InputDataAccess.fetchInputs(this, selectedSim.getKey());
+    await InputDataAccess.fetchInputsForSelectedSim(this, selectedSim.getKey());
   }
 
   async handleAddInput() {

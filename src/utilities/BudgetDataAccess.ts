@@ -15,10 +15,10 @@ import { InputDataAccess } from './InputDataAccess';
 
 export class BudgetDataAccess {
 
-    static async fetchBudgetsForSelectedSim(componentState: any, userSimulation: string) {
+    static async fetchBudgetsForSelectedSim(componentState: any, userSimulation: string): Promise<Budget[]> {
 
         // fetch inputs.
-        let inputs: Input[] = await InputDataAccess.fetchInputs(null, userSimulation);
+        let inputs: Input[] = await InputDataAccess.fetchInputsForSelectedSim(null, userSimulation);
         let fetchedBudgets: Budget[] = [];
         try {
             const response = (await API.graphql({
@@ -44,10 +44,14 @@ export class BudgetDataAccess {
                 }
             }
 
-            componentState.setState({ budgets: fetchedBudgets })
+            if (componentState) {
+                componentState.setState({ budgets: fetchedBudgets })
+            }
         } catch (error) {
             console.log(error);
         }
+        return fetchedBudgets;
+
     }
 
     static async fetchDefaultBudgets(selectedSimulationId: string): Promise<Budget[]> {

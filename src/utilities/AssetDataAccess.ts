@@ -1,11 +1,23 @@
 
 import { Asset } from '../model/Base/Asset';
-import { API } from 'aws-amplify'
+import { API, graphqlOperation } from 'aws-amplify'
 import { ListAssetsQuery } from "../API";
 import { listAssets } from '../graphql/queries'
-import { getCookie, setCookie } from './CookiesHelper';
+
+import { createAssets } from '../graphql/mutations';
 
 export class AssetDataAccess {
+
+
+    static async createAssetBranch(asset: any) {
+        try {
+   
+          await API.graphql(graphqlOperation(createAssets, { input: asset }))
+        } catch (err) {
+          console.log('error creating asset:', err)
+        }
+      }
+
 
     static async fetchAssetsForSelectedSim(componentState: any | null, userSimulation: string): Promise<Asset[]> {
         let fetchedAssets: Asset[] = [];
