@@ -14,12 +14,13 @@ import { Asset } from '../model/Base/Asset';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { Auth } from 'aws-amplify';
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { Simulation } from '../model/Base/Simulation';
 
 interface AssetsViewProps {
     value: number;
     index: number;
+    user: string;
+    simulation: Simulation;
 }
 
 interface IState {
@@ -74,10 +75,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     }
 
     async componentDidMount() {
-        const user = await Auth.currentAuthenticatedUser();
-        const email: string = user.attributes.email;
-        const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-        AssetDataAccess.fetchAssetsForSelectedSim(this, selectedSim.getKey());
+        AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
     }
 
     async handleAddInput() {

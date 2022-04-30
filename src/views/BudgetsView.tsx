@@ -19,24 +19,23 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Link } from "react-router-dom";
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { BudgetFactory } from '../model/FactoryMethods/BudgetFactory';
 import { getObjectWithId } from '../utilities/helpers';
 import { CategoryTypes } from '../API';
-import { Auth } from 'aws-amplify';
 
 Amplify.configure(awsExports);
 
 interface BudgetsViewProps {
   value: number;
   index: number;
+  user: string;
+  simulation: Simulation;
 }
 
 interface IState {
   name: string,
   budgets: Budget[],
-  selectedSimulation: Simulation | null
   dropdowns: any;
 }
 
@@ -49,7 +48,6 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.state = {
       name: 'BudgetsView',
       budgets: [],
-      selectedSimulation: null,
       dropdowns: {}
     }
 
@@ -59,21 +57,16 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.handleDuplicateBudget = this.handleDuplicateBudget.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
   }
 
-
   async componentDidMount() {
-    const user = await Auth.currentAuthenticatedUser();
-    const email: string = user.attributes.email;
-    const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    await BudgetDataAccess.fetchBudgetsForSelectedSim(this, selectedSim.getKey());
+    await BudgetDataAccess.fetchBudgetsForSelectedSim(this, this.props.simulation.getKey());
   }
 
   async handleAddBudget() {
     try {
       let newBudget: any = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), null);
-      newBudget['simulation'] = this.state.selectedSimulation!.id;
+      newBudget['simulation'] = this.props.simulation.id;
 
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });
@@ -89,7 +82,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     const budgetToDuplicate = getObjectWithId(idToDuplicate, this.state.budgets)! as Budget;
     try {
       let newBudget: any = BudgetFactory.fromBudget(budgetToDuplicate);
-      newBudget['simulation'] = this.state.selectedSimulation!.id;
+      newBudget['simulation'] = this.props.simulation.id;
 
       let newBudgets = [...this.state.budgets, newBudget]
       this.setState({ budgets: newBudgets });

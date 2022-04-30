@@ -27,18 +27,18 @@ import { cleanNumberDataInput, getFinnhubClient } from '../utilities/helpers';
 
 import { Link } from "react-router-dom";
 import { CategoryTypes } from '../API';
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { EventFactory } from '../model/FactoryMethods/EventFactory';
 import { dateRange, getObjectWithId } from '../utilities/helpers';
 import { Category } from '../model/Base/Category';
-import { Auth } from 'aws-amplify';
 
 Amplify.configure(awsExports);
 
 interface EventsViewProps {
   value: number;
   index: number;
+  user: string;
+  simulation: Simulation;
 }
 
 interface IState {
@@ -84,11 +84,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async componentDidMount() {
-
-    const user = await Auth.currentAuthenticatedUser();
-    const email: string = user.attributes.email;
-    const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    await EventDataAccess.fetchEventsForSelectedSim(this, selectedSim.getKey());
+    await EventDataAccess.fetchEventsForSelectedSim(this, this.props.simulation.getKey());
   }
 
   async addEvent(id: string, name: string, date: Date, account: string, category: Category | null) {

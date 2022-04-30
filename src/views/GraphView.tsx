@@ -11,12 +11,13 @@ import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import '../App.css';
 import { Line } from "react-chartjs-2";
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { moneyGreenBoldText, black } from '../utilities/constants';
 import { Tick } from 'chart.js';
-import { Auth } from 'aws-amplify';
+import { Simulation } from '../model/Base/Simulation';
 
 interface GraphsViewProps {
+  user: string;
+  simulation: Simulation;
 }
 
 interface IState {
@@ -49,14 +50,11 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   async getData() {
-    const user = await Auth.currentAuthenticatedUser();
-    const email: string = user.attributes.email;
-    const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    const chartDataRaw = simulation.getSimulationData()!;
+    const chartDataRaw = this.props.simulation.getSimulationData()!;
     const chartData = this.generateGraphData(chartDataRaw, 'brokerage');
-    const successPercent = String(Number(simulation.successPercent).toFixed(0));
+    const successPercent = String(Number(this.props.simulation.successPercent).toFixed(0));
     const now = new Date();
-    const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
+    const hours = Math.abs(now.getTime() - this.props.simulation.lastComputed.getTime()) / 3600000;
     this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours});
   }
 

@@ -12,15 +12,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from "react-router-dom";
 
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
-import { Auth } from 'aws-amplify';
-
 
 import '../App.css';
+import { Simulation } from '../model/Base/Simulation';
 
 interface DataViewProps {
     value: number;
     index: number;
+    user: string;
+    simulation: Simulation;
 }
 
 interface IState {
@@ -44,10 +44,7 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     async getData() {
-        const user = await Auth.currentAuthenticatedUser();
-        const email: string = user.attributes.email;
-        const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-        this.setState({ balanceData: simulation.getSimulationData() });
+        this.setState({ balanceData: this.props.simulation.getSimulationData() });
     }
 
     render() {

@@ -31,6 +31,8 @@ import { Asset } from '../model/Base/Asset';
 interface SimulationViewProps {
     value: number;
     index: number;
+    user: string;
+    simulation: Simulation;
 }
 
 interface IState {
@@ -82,9 +84,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     }
 
     async componentDidMount() {
-        const user = await Auth.currentAuthenticatedUser();
-        const email: string = user.attributes.email;
-        await SimulationDataAccess.fetchSimulationsForUser(this, email);
+        await SimulationDataAccess.fetchSimulationsForUser(this, this.props.user);
     }
 
     async handleAddSimulation() {
@@ -107,14 +107,11 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 // pull inputs  ...
                 const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
 
-
                 // pull inputs  ...
                 const defaultAccounts: Account[] = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, selectedSim.getKey());
 
-
                 // pull inputs  ...
                 const defaultAssets: Asset[] = await AssetDataAccess.fetchAssetsForSelectedSim(null, selectedSim.getKey());
-
 
                 // for each budget
                 //  make a copy
