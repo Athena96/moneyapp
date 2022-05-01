@@ -20,7 +20,9 @@ interface AssetsViewProps {
     value: number;
     index: number;
     user: string;
-    simulation: Simulation;
+    simulation: Simulation | undefined;
+    change: ( newValue: number) => void;
+
 }
 
 interface IState {
@@ -43,6 +45,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.render = this.render.bind(this);
+        this.newTab = this.newTab.bind(this);
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -75,7 +78,9 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     }
 
     async componentDidMount() {
-        AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
+        if (this.props.simulation) {
+            AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
+        }
     }
 
     async handleAddInput() {
@@ -142,52 +147,67 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         const accnt = event.target.value as string;
         this.setState({ 'account': accnt } as any);
     };
+
+    newTab() {
+        if (this.props && this.props.change) {
+    
+          this.props.change(4)
+        }
+    
+      }
+    
     render() {
-
         if (this.props.index === this.props.value) {
+            if (this.props.simulation) {
+                return (
+                    < >
+                        <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add assets +</Button>
+                        {this.state.assets ? this.state.assets.sort((a, b) => (a.id > b.id) ? 1 : -1).map((asset: Asset, i: number) => {
+    
+                            return (
+                                <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+                                    <CardContent>
+                                        <Stack direction='column' spacing={2}>
+                                            <TextField label="Ticker Code" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
+                                            <TextField label="Quantity" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
+                                            <TextField label="Has Data in API" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
+                                            <FormControl fullWidth>
+                                                <InputLabel id="demo-simple-select-label">Account</InputLabel>
+                                                <Select
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={asset.account}
+                                                    label="Account"
+                                                    onChange={this.handleDropChange}
+                                                >
+                                                    <MenuItem value={'brokerage'}>Brokerage</MenuItem>
+                                                    <MenuItem value={'tax'}>Tax</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                            <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
+                                            <Button id={asset.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
+                                            <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
+                                        </Stack>
+    
+                                    </CardContent>
+                                </Card>
+    
+                            );
+    
+    
+                        }) : <></>}
+    
+    
+                    </>
+                )
+            } else {
+                return (
+                    <div style={{textAlign: 'center'}}>
+                      <p>Please create a <b>Simulation</b> first. <br/>Click <Button onClick={this.newTab} >here</Button> to create one!</p>
+                    </div>
+                    )            
+                }
 
-            return (
-                < >
-
-                    <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add assets +</Button>
-                    {this.state.assets ? this.state.assets.sort((a, b) => (a.id > b.id) ? 1 : -1).map((asset: Asset, i: number) => {
-
-                        return (
-                            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-                                <CardContent>
-                                    <Stack direction='column' spacing={2}>
-                                        <TextField label="Ticker Code" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
-                                        <TextField label="Quantity" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
-                                        <TextField label="Has Data in API" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Account</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                value={asset.account}
-                                                label="Account"
-                                                onChange={this.handleDropChange}
-                                            >
-                                                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
-                                                <MenuItem value={'tax'}>Tax</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
-                                        <Button id={asset.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
-                                        <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
-                                    </Stack>
-
-                                </CardContent>
-                            </Card>
-
-                        );
-
-
-                    }) : <></>}
-
-
-                </>
-            )
         } else {
             return (<></>);
         }

@@ -26,8 +26,8 @@ export class SimulationDataAccess {
         return fetchedSimulations;
     }
 
-    static async fetchSelectedSimulationForUser(componentState: any, user: string): Promise<Simulation> {
-        let selectedSimulation: Simulation | null = null;
+    static async fetchSelectedSimulationForUser(componentState: any, user: string): Promise<Simulation | undefined> {
+        let selectedSimulation: Simulation | undefined = undefined;
         try {
             const response = (await API.graphql({
                 query: listSimulations

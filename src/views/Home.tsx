@@ -38,21 +38,27 @@ class Home extends React.Component<IProps, IState> {
 
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.newTab = this.newTab.bind(this);
   }
 
   async componentDidMount() {
     const user = await Auth.currentAuthenticatedUser();
+    console.log('user ' + JSON.stringify(user.attributes))
     const email: string = user.attributes.email;
     const userSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+
     this.setState({ user: email, simulation: userSim});
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
     this.setState({ selectedTab: newValue });
   }
+  newTab(newValue: number) {
+    this.setState({ selectedTab: newValue });
+  }
 
   render() {
-    if (this.state.user && this.state.simulation) {
+    if (this.state.user ) {
       return (
         <div >
           <div >
@@ -75,11 +81,11 @@ class Home extends React.Component<IProps, IState> {
               </Box>
               <br /><br />
               {/* <AccountsView value={this.state.selectedTab} index={0} /> */}
-              <DataView value={this.state.selectedTab} index={0} user={this.state.user} simulation={this.state.simulation} />
-              <BudgetsView value={this.state.selectedTab} index={1} user={this.state.user} simulation={this.state.simulation} />
-              <EventsView value={this.state.selectedTab} index={2} user={this.state.user} simulation={this.state.simulation} />
+              <DataView value={this.state.selectedTab} index={0} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
+              <BudgetsView value={this.state.selectedTab} index={1} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
+              <EventsView value={this.state.selectedTab} index={2} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
               {/* <InputsView value={this.state.selectedTab} index={3} /> */}
-              <AssetsView value={this.state.selectedTab} index={3} user={this.state.user} simulation={this.state.simulation} />
+              <AssetsView value={this.state.selectedTab} index={3} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
               <SimulationView value={this.state.selectedTab} index={4} user={this.state.user} simulation={this.state.simulation} />
             </Box>
           </div>

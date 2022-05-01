@@ -14,14 +14,14 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Simulation } from '../model/Base/Simulation';
 
 import { Input } from '../model/Base/Input';
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
-import { Auth } from 'aws-amplify';
 
 interface InputsViewProps {
   value: number;
   index: number;
+  user: string;
+  simulation: Simulation | undefined;
 }
 
 interface IState {
@@ -79,10 +79,9 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   
   async componentDidMount() {
-    const user = await Auth.currentAuthenticatedUser();
-    const email: string = user.attributes.email;
-    const selectedSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    await InputDataAccess.fetchInputsForSelectedSim(this, selectedSim.getKey());
+    if (this.props.simulation) {
+      await InputDataAccess.fetchInputsForSelectedSim(this, this.props.simulation.getKey());
+    }
   }
 
   async handleAddInput() {

@@ -17,7 +17,7 @@ import { Simulation } from '../model/Base/Simulation';
 
 interface GraphsViewProps {
   user: string;
-  simulation: Simulation;
+  simulation: Simulation | undefined;
 }
 
 interface IState {
@@ -50,12 +50,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 
   async getData() {
-    const chartDataRaw = this.props.simulation.getSimulationData()!;
-    const chartData = this.generateGraphData(chartDataRaw, 'brokerage');
-    const successPercent = String(Number(this.props.simulation.successPercent).toFixed(0));
-    const now = new Date();
-    const hours = Math.abs(now.getTime() - this.props.simulation.lastComputed.getTime()) / 3600000;
-    this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours});
+    if (this.props.simulation) {
+      const chartDataRaw = this.props.simulation.getSimulationData()!;
+      const chartData = this.generateGraphData(chartDataRaw, 'brokerage');
+      const successPercent = String(Number(this.props.simulation.successPercent).toFixed(0));
+      const now = new Date();
+      const hours = Math.abs(now.getTime() - this.props.simulation.lastComputed.getTime()) / 3600000;
+      this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours});
+    }
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -163,6 +165,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         },
       }
     };
+    if (this.props.simulation) {
     return (
       <Container >
         {this.state.chartData && this.state.lastComputed ? <>
@@ -184,6 +187,9 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
         }
       </Container >
     );
+    } else {
+      return (<div style={{textAlign: 'center'}}><p>no data</p></div>);
+    }
   }
 }
 

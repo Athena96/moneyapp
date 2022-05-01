@@ -65,9 +65,17 @@ class App extends React.Component<IProps, IState> {
 
     return (
       <div>
+      
+        <div style={{textAlign: 'left'}}>
+
+          <Typography variant="h2" component="div" gutterBottom>
+            Money<br/>Tomorrow
+          </Typography>
+        </div>
+        <div style={{textAlign: 'left'}}>
 
         <AmplifyProvider theme={theme}>
-          <Authenticator>
+          <Authenticator >
             {({ signOut, user }) => (
               <>
 
@@ -94,6 +102,8 @@ class App extends React.Component<IProps, IState> {
             )}
           </Authenticator>
         </AmplifyProvider>
+        </div>
+
       </div>
     );
   }

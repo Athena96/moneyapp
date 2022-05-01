@@ -32,7 +32,7 @@ interface SimulationViewProps {
     value: number;
     index: number;
     user: string;
-    simulation: Simulation;
+    simulation: Simulation | undefined;
 }
 
 interface IState {
@@ -89,87 +89,99 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
     async handleAddSimulation() {
         if (window.confirm('Are you sure you want to ADD a new Simulation? This will copy all current Budget/Events/Inputs to a new Simulation branch.')) {
+            
             this.setState({ isLoading: true });
-            try {
-                const user = await Auth.currentAuthenticatedUser();
-                const email: string = user.attributes.email;
-                let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
-                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date(), email);
+
+
+            if (this.props.simulation) {
+                try {
+                    let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
+                    let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date(), this.props.user);
+                    let newSimulations = [...this.state.simulations, newSimulation]
+                    await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
+    
+                    // pull budgets from the current selected simulation
+                    const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
+    
+                    // pull events  ...
+                    const defaultEvents: Event[] = await EventDataAccess.fetchEventsForSelectedSim(null,selectedSim.getKey());
+    
+                    // pull inputs  ...
+                    const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
+    
+                    // pull inputs  ...
+                    const defaultAccounts: Account[] = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, selectedSim.getKey());
+    
+                    // pull inputs  ...
+                    const defaultAssets: Asset[] = await AssetDataAccess.fetchAssetsForSelectedSim(null, selectedSim.getKey());
+    
+                    // for each budget
+                    //  make a copy
+                    //  set simulation to the newly created simulation id
+                    //  create budget
+                    for (const budget of defaultBudgets) {
+                        const cpBudget: any = budget;
+                        cpBudget['simulation'] = newSimulation.id;
+                        cpBudget['id'] = new Date().getTime().toString()
+                        let i = 0;
+                        for (const cat of cpBudget['categories']) {
+                            cat['id'] = (new Date().getTime() + i).toString();
+                            i += 1;
+                        }
+                        await BudgetDataAccess.createBudgetBranch(cpBudget);
+                    }
+    
+                    // same for events
+                    for (const event of defaultEvents) {
+                        const cpEvent: any = event;
+                        cpEvent['simulation'] = newSimulation.id;
+                        cpEvent['id'] = new Date().getTime().toString()
+    
+                        await EventDataAccess.createEventBranch(cpEvent);
+                    }
+    
+                    // same for inputs
+                    for (const input of defaultInputs) {
+                        const cpInput: any = input;
+                        cpInput['simulation'] = newSimulation.id;
+                        cpInput['id'] = new Date().getTime().toString()
+                        await InputDataAccess.createInputBranch(cpInput);
+                    }
+    
+                    // same for accounts
+                    for (const account of defaultAccounts) {
+                        const cpAccount: any = account;
+                        cpAccount['simulation'] = newSimulation.id;
+                        cpAccount['id'] = new Date().getTime().toString()
+                        await AccountDataAccess.createAccountBranch(cpAccount);
+                    }
+    
+                    // same for assets
+                    for (const asset of defaultAssets) {
+                        const cpAsset: any = asset;
+                        cpAsset['simulation'] = newSimulation.id;
+                        cpAsset['id'] = new Date().getTime().toString()
+                        delete cpAsset['strQuantity'];
+                        await AssetDataAccess.createAssetBranch(cpAsset);
+                    }
+    
+                    this.setState({ simulations: newSimulations });
+                    this.setState({ isLoading: false });
+    
+                } catch (err) {
+                    console.log('error creating...:', err);
+                    this.setState({ isLoading: false });
+                }
+            } else {
+                // create just 1 sim.
+
+                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 1, '[]', "", new Date(), this.props.user);
                 let newSimulations = [...this.state.simulations, newSimulation]
                 await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
-
-                // pull budgets from the current selected simulation
-                const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
-
-                // pull events  ...
-                const defaultEvents: Event[] = await EventDataAccess.fetchEventsForSelectedSim(null,selectedSim.getKey());
-
-                // pull inputs  ...
-                const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
-
-                // pull inputs  ...
-                const defaultAccounts: Account[] = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, selectedSim.getKey());
-
-                // pull inputs  ...
-                const defaultAssets: Asset[] = await AssetDataAccess.fetchAssetsForSelectedSim(null, selectedSim.getKey());
-
-                // for each budget
-                //  make a copy
-                //  set simulation to the newly created simulation id
-                //  create budget
-                for (const budget of defaultBudgets) {
-                    const cpBudget: any = budget;
-                    cpBudget['simulation'] = newSimulation.id;
-                    cpBudget['id'] = new Date().getTime().toString()
-                    let i = 0;
-                    for (const cat of cpBudget['categories']) {
-                        cat['id'] = (new Date().getTime() + i).toString();
-                        i += 1;
-                    }
-                    await BudgetDataAccess.createBudgetBranch(cpBudget);
-                }
-
-                // same for events
-                for (const event of defaultEvents) {
-                    const cpEvent: any = event;
-                    cpEvent['simulation'] = newSimulation.id;
-                    cpEvent['id'] = new Date().getTime().toString()
-
-                    await EventDataAccess.createEventBranch(cpEvent);
-                }
-
-                // same for inputs
-                for (const input of defaultInputs) {
-                    const cpInput: any = input;
-                    cpInput['simulation'] = newSimulation.id;
-                    cpInput['id'] = new Date().getTime().toString()
-                    await InputDataAccess.createInputBranch(cpInput);
-                }
-
-                // same for accounts
-                for (const account of defaultAccounts) {
-                    const cpAccount: any = account;
-                    cpAccount['simulation'] = newSimulation.id;
-                    cpAccount['id'] = new Date().getTime().toString()
-                    await AccountDataAccess.createAccountBranch(cpAccount);
-                }
-
-                // same for assets
-                for (const asset of defaultAssets) {
-                    const cpAsset: any = asset;
-                    cpAsset['simulation'] = newSimulation.id;
-                    cpAsset['id'] = new Date().getTime().toString()
-                    delete cpAsset['strQuantity'];
-                    await AssetDataAccess.createAssetBranch(cpAsset);
-                }
-
                 this.setState({ simulations: newSimulations });
                 this.setState({ isLoading: false });
-
-            } catch (err) {
-                console.log('error creating...:', err);
-                this.setState({ isLoading: false });
             }
+
 
         } else {
             console.log('did not create new Simulation.');
