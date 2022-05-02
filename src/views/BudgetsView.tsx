@@ -194,7 +194,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                         {
                           invest && invest! < 0 ?
                             <> (Annual Spending: <b> ${(-1 * ((invest * 12) / 1000)).toFixed(0)}K</b>)  (Annual taxes: <b>${annualTaxes.toFixed(2)}</b>)
-                            </> : <></>
+                            </> : <>monthly invest ${invest?.toFixed(2)!}</>
                         }
     
                       </Typography>
