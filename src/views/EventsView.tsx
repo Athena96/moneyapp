@@ -52,7 +52,7 @@ interface IState {
   bulkAddEventCatType: CategoryTypes,
   bulkAddStartDate: Date,
   bulkAddEndDate: Date,
-  selectedSimulation: Simulation | null,
+
   isBulkAddingEvents: boolean,
   finnhubClient: any
 }
@@ -71,7 +71,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       bulkAddEventCatType: CategoryTypes.Expense,
       bulkAddStartDate: new Date(),
       bulkAddEndDate: new Date(),
-      selectedSimulation: null,
+
       isBulkAddingEvents: false,
       finnhubClient: finnhubClient
     }
@@ -102,7 +102,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   async addEvent(id: string, name: string, date: Date, account: string, category: Category | null) {
     try {
       let newEvent: any = new Event(id, name, date, account, category);
-      newEvent['simulation'] = this.state.selectedSimulation!.id;
+      newEvent['simulation'] = this.props.simulation!.getKey();
 
       let newEvents = [...this.state.events, newEvent]
       this.setState({ events: newEvents });
@@ -144,8 +144,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     const eventToDuplicate = getObjectWithId(idToDuplicate, this.state.events)! as Event;
     try {
       let newEvent: any = EventFactory.fromEvent(eventToDuplicate);
-      newEvent['simulation'] = this.state.selectedSimulation!.id;
-
+      newEvent['simulation'] = this.props.simulation!.getKey();
       let newEvents = [...this.state.events, newEvent]
       this.setState({ events: newEvents });
       await API.graphql(graphqlOperation(createEvent, { input: newEvent }))
