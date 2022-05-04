@@ -43,7 +43,6 @@ class Home extends React.Component<IProps, IState> {
 
   async componentDidMount() {
     const user = await Auth.currentAuthenticatedUser();
-    console.log('user ' + JSON.stringify(user.attributes))
     const email: string = user.attributes.email;
     const userSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
 

@@ -1,13 +1,18 @@
 import * as React from 'react';
 
-import { MonteCarloRowData
+import {
+  MonteCarloRowData
 } from '../utilities/helpers';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import { API, Auth } from 'aws-amplify';
+import Amplify from 'aws-amplify';
 import Paper from '@mui/material/Paper';
 import '../App.css';
 import { Line } from "react-chartjs-2";
@@ -28,6 +33,21 @@ interface IState {
   simulationButtonLoading: boolean;
 }
 
+Amplify.configure({
+  API: {
+    endpoints: [
+      {
+        name: 'apiCall',
+        endpoint: 'https://u4k0cv2pw7.execute-api.us-west-2.amazonaws.com/Prod',
+        region: 'us-west-2',
+        custom_header: async () => {
+          return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
+        }
+      }
+    ]
+  }
+});
+
 class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   constructor(props: GraphsViewProps) {
@@ -43,6 +63,7 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
+    this.handleTriggerSimulation = this.handleTriggerSimulation.bind(this);
   }
 
   componentDidMount() {
@@ -56,12 +77,27 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       const successPercent = String(Number(this.props.simulation.successPercent).toFixed(0));
       const now = new Date();
       const hours = Math.abs(now.getTime() - this.props.simulation.lastComputed.getTime()) / 3600000;
-      this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours});
+      this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours });
     }
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
     this.setState({ selectedTab: newValue });
+  }
+
+  async handleTriggerSimulation() {
+    try {
+      const user = await Auth.currentAuthenticatedUser();
+      const email: string = user.attributes.email;
+      const myInit = {
+        queryStringParameters: {
+          email: email,
+        },
+      };
+      API.get('apiCall', '/trigger', myInit);
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   generateGraphData(simulationData: MonteCarloRowData[], account: string) {
@@ -83,13 +119,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       },
       {
         name: 'Average of all Scenarios',
-        color: yellow,
-        key: 'avgBalance'
-      },
-      {
-        name: 'Linear Growth Assumption',
         color: moneyGreen,
-        key: 'assumedAvgBalance'
+        key: 'avgBalance'
       },
       {
         name: 'Worst Scenario',
@@ -118,8 +149,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           chartData.datasets[j].data.push(Number(dataRow.maxBalance.replace('$', '')))
         } else if (name.key === 'avgBalance') {
           chartData.datasets[j].data.push(Number(dataRow.avgBalance.replace('$', '')))
-        } else if (name.key === 'assumedAvgBalance') {
-          chartData.datasets[j].data.push(Number(dataRow.assumedAvgBalance.replace('$', '')))
         } else if (name.key === 'minBalance') {
           chartData.datasets[j].data.push(Number(dataRow.minBalance.replace('$', '')))
         }
@@ -166,29 +195,33 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       }
     };
     if (this.props.simulation) {
-    return (
-      <Container >
-        {this.state.chartData && this.state.lastComputed ? <>
-          <Stack direction='column' >
-            <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 2 }}>
-              <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
-              <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
-              <Paper elevation={0} >
-                <Line data={this.state.chartData} options={options} />
-              </Paper >
-              <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed*60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
-            </Paper>
-            <br />
-            <br />
-          </Stack>
-        </> : < >
-          <CircularProgress  />
-        </>
-        }
-      </Container >
-    );
+      return (
+        <Container >
+          {this.state.chartData && this.state.lastComputed ? <>
+            <Stack direction='column' >
+              <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 2 }}>
+                <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
+                <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
+                <Paper elevation={0} >
+                  <Line data={this.state.chartData} options={options} />
+                </Paper >
+                <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
+
+                <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
+                  <RefreshIcon />
+                </IconButton>
+              </Paper>
+              <br />
+              <br />
+            </Stack>
+          </> : < >
+            <CircularProgress />
+          </>
+          }
+        </Container >
+      );
     } else {
-      return (<div style={{textAlign: 'center'}}><p>no data</p></div>);
+      return (<div style={{ textAlign: 'center' }}><p>no data</p></div>);
     }
   }
 }
