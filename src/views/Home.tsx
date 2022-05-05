@@ -15,6 +15,40 @@ import awsExports from "../aws-exports";
 import { Simulation } from '../model/Base/Simulation';
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`vertical-tabpanel-${index}`}
+      aria-labelledby={`vertical-tab-${index}`}
+      style={{ width: "100%", }}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3, }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `vertical-tab-${index}`,
+    'aria-controls': `vertical-tabpanel-${index}`,
+  };
+}
+
 Amplify.configure(awsExports);
 
 interface IProps {
@@ -46,7 +80,7 @@ class Home extends React.Component<IProps, IState> {
     const email: string = user.attributes.email;
     const userSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
 
-    this.setState({ user: email, simulation: userSim});
+    this.setState({ user: email, simulation: userSim });
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
@@ -56,42 +90,68 @@ class Home extends React.Component<IProps, IState> {
     this.setState({ selectedTab: newValue });
   }
 
+
   render() {
-    if (this.state.user ) {
+
+
+    if (this.state.user) {
       return (
-        <div >
-          <div >
-            <Box sx={{ width: '100%' }}>
-              <GraphView user={this.state.user} simulation={this.state.simulation} />
-            </Box>
-            <Box sx={{ width: '100%' }}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs variant="scrollable"
-                  scrollButtons
-                  allowScrollButtonsMobile value={this.state.selectedTab} onChange={this.handleChange} aria-label="basic tabs example" centered>
-                  {/* <Tab label="Accounts" /> */}
-                  <Tab label="Data" />
-                  <Tab label="Budgets" />
-                  <Tab label="Events" />
-                  {/* <Tab label="Inputs" /> */}
-                  <Tab label="Assets" />
-                  <Tab label="Life Scenarios" />
-                </Tabs>
-              </Box>
-              <br /><br />
-              {/* <AccountsView value={this.state.selectedTab} index={0} /> */}
-              <DataView value={this.state.selectedTab} index={0} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
-              <BudgetsView value={this.state.selectedTab} index={1} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
-              <EventsView value={this.state.selectedTab} index={2} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
-              {/* <InputsView value={this.state.selectedTab} index={3} /> */}
-              <AssetsView value={this.state.selectedTab} index={3} user={this.state.user} simulation={this.state.simulation} change={this.newTab}/>
-              <SimulationView value={this.state.selectedTab} index={4} user={this.state.user} simulation={this.state.simulation} />
-            </Box>
-          </div>
-        </div>
+
+        <Box sx={{ flexGrow: 1, display: 'flex' }}>
+          <Tabs
+            orientation="vertical"
+            variant="scrollable"
+
+            value={this.state.selectedTab}
+            onChange={this.handleChange}
+            aria-label="Vertical tabs example"
+            sx={{ borderRight: `1px`, borderColor: 'divider', overflow: `visible`, }}
+          >
+            {/* <Tab label="Accounts" /> */}
+
+            <Tab label="Graph" {...a11yProps(0)} />
+            <Tab label="Budgets" {...a11yProps(1)} />
+            <Tab label="Events" {...a11yProps(2)} />
+            <Tab label="Assets" {...a11yProps(3)} />
+            <Tab label="Data" {...a11yProps(4)} />
+            <Tab label="Simulations" {...a11yProps(4)} />
+
+
+          </Tabs>
+
+          <TabPanel value={this.state.selectedTab} index={0} >
+            <GraphView user={this.state.user} simulation={this.state.simulation} change={this.newTab} />
+          </TabPanel>
+
+
+          <TabPanel value={this.state.selectedTab} index={1}>
+            <BudgetsView user={this.state.user} simulation={this.state.simulation} change={this.newTab} />
+          </TabPanel>
+
+          <TabPanel value={this.state.selectedTab} index={2}>
+            <EventsView user={this.state.user} simulation={this.state.simulation} change={this.newTab} />
+          </TabPanel>
+
+          <TabPanel value={this.state.selectedTab} index={3}>
+            <AssetsView user={this.state.user} simulation={this.state.simulation} change={this.newTab} />
+          </TabPanel>
+
+          <TabPanel value={this.state.selectedTab} index={4}>
+            <DataView user={this.state.user} simulation={this.state.simulation} change={this.newTab} />
+          </TabPanel>
+       
+          <TabPanel value={this.state.selectedTab} index={5}>
+            <SimulationView user={this.state.user} simulation={this.state.simulation} />
+          </TabPanel>
+
+ 
+
+        </Box>
+
+
       );
     } else {
-      return(<></>)
+      return (<></>)
     }
   }
 }

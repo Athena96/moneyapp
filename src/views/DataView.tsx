@@ -18,12 +18,9 @@ import '../App.css';
 import { Simulation } from '../model/Base/Simulation';
 
 interface DataViewProps {
-    value: number;
-    index: number;
     user: string;
     simulation: Simulation | undefined;
     change: ( newValue: number) => void;
-
 }
 
 interface IState {
@@ -63,8 +60,7 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     render() {
-            if (this.props.index === this.props.value && this.state.balanceData) {
-                if (this.props.simulation) {
+                if (this.state.balanceData && this.props.simulation) {
                     return (<>
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
@@ -110,10 +106,6 @@ class DataView extends React.Component<DataViewProps, IState> {
                     </div>
                     )
             }
-
-        } else {
-            return (<></>);
-        }
     }
 }
 

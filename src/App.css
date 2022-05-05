@@ -2,6 +2,11 @@
     text-align: center;
 }
 
+.tabsclass {
+    flex-grow: 1;
+    display: "flex";
+}
+
 .App-logo {
     height: 40vmin;
     pointer-events: none;

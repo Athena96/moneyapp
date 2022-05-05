@@ -35,11 +35,9 @@ import { Category } from '../model/Base/Category';
 Amplify.configure(awsExports);
 
 interface EventsViewProps {
-  value: number;
-  index: number;
   user: string;
   simulation: Simulation | undefined;
-  change: ( newValue: number) => void;
+  change: (newValue: number) => void;
 
 }
 
@@ -205,167 +203,162 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   };
 
   render() {
-    if (this.props.index === this.props.value) {
 
-      if (this.props.simulation) {
-        return(<>
-          <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
-          <br />
-          <br />
-          <Accordion >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Bulk Add Events</Typography>
-            </AccordionSummary>
-            {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
-  
-            <br />
-            <br />
-  
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="start date"
-                value={this.state.bulkAddStartDate}
-                onChange={(newValue) => {
-                  this.setState({ bulkAddStartDate: newValue } as any);
-                }}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <br />
-            <br />
-  
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="end date"
-                value={this.state.bulkAddEndDate}
-                onChange={(newValue) => {
-                  this.setState({ bulkAddEndDate: newValue } as any);
-                }}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <br />
-            <br />
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Account</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={this.state.bulkAddAccount}
-                label="Account"
-                onChange={this.handleDropChange}
-              >
-                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
-                <MenuItem value={'tax'}>Tax</MenuItem>
-              </Select>
-            </FormControl>
-            <br />
-            <br />
-  
-            <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
-            <br />
-            <br />
-            <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
-            <br />
-            <br />
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={this.state.bulkAddEventCatType}
-                label="Category Type"
-                onChange={this.handleCategoryTypeChange}
-              >
-                <MenuItem value={'Expense'}>Expense</MenuItem>
-                <MenuItem value={'Income'}>Income</MenuItem>
-              </Select>
-            </FormControl>
-          </Accordion >
-  
-  
-          <br />
-          <br />
-  
-          <Stack
-            direction='row' spacing={2}
-  
+    if (this.props.simulation) {
+      return (<>
+        <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
+        <br />
+        <br />
+        <Accordion >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-            <Box
-              sx={{
-                width: 25,
-                height: 25,
-                bgcolor: '#ffcdd2',
-              }}
-            />
-            <p>Expense</p>
-            <Box
-              sx={{
-                width: 25,
-                height: 25,
-                bgcolor: '#b2dfdb',
-              }}
-            /><p>Income</p>
-          </Stack>
-  
-          <br />
-  
-  
-          {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
-            // if (event.account !== 'brokerage') return (<></>)
-            return (
-              <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
-                <CardContent>
-  
-                  <Stack direction='row' spacing={4}>
-                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                      <b>name: </b> {event.name === "" ? '...' : event.name}
-                    </Typography>
-  
-                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                      <b>account: </b> {event.account}
-                    </Typography>
-  
-                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                      <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
-                    </Typography>
-  
-                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                      ${event.category ? event.category!.getValue().toString() : '...'}
-                    </Typography>
-  
-                  </Stack>
-                  <CardActions>
-  
-                    <Stack direction='row' spacing={4}>
-  
-                      <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
-                      <Button id={event.getKey()} onClick={this.handleDuplicateEvent} variant="contained">Duplicate</Button>
-                      <Link style={{ color: 'white', textDecoration: 'none' }} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
-  
-                    </Stack>
-                  </CardActions>
-  
-                </CardContent>
-              </Card>
-            )
-          })}
-        </>)
-      } else {
-        return (
-          <div style={{textAlign: 'center'}}>
-            <p>Please create a <b>Simulation</b> first. <br/>Click <Button onClick={this.newTab} >here</Button> to create one!</p>
-          </div>
-          )
-      }
+            <Typography>Bulk Add Events</Typography>
+          </AccordionSummary>
+          {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
 
-  } else {
-    return(<></>);
-  }
+          <br />
+          <br />
+
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="start date"
+              value={this.state.bulkAddStartDate}
+              onChange={(newValue) => {
+                this.setState({ bulkAddStartDate: newValue } as any);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+          <br />
+          <br />
+
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="end date"
+              value={this.state.bulkAddEndDate}
+              onChange={(newValue) => {
+                this.setState({ bulkAddEndDate: newValue } as any);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+          <br />
+          <br />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Account</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={this.state.bulkAddAccount}
+              label="Account"
+              onChange={this.handleDropChange}
+            >
+              <MenuItem value={'brokerage'}>Brokerage</MenuItem>
+              <MenuItem value={'tax'}>Tax</MenuItem>
+            </Select>
+          </FormControl>
+          <br />
+          <br />
+
+          <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
+          <br />
+          <br />
+          <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
+          <br />
+          <br />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={this.state.bulkAddEventCatType}
+              label="Category Type"
+              onChange={this.handleCategoryTypeChange}
+            >
+              <MenuItem value={'Expense'}>Expense</MenuItem>
+              <MenuItem value={'Income'}>Income</MenuItem>
+            </Select>
+          </FormControl>
+        </Accordion >
+
+
+        <br />
+        <br />
+
+        <Stack
+          direction='row' spacing={2}
+
+        >
+          <Box
+            sx={{
+              width: 25,
+              height: 25,
+              bgcolor: '#ffcdd2',
+            }}
+          />
+          <p>Expense</p>
+          <Box
+            sx={{
+              width: 25,
+              height: 25,
+              bgcolor: '#b2dfdb',
+            }}
+          /><p>Income</p>
+        </Stack>
+
+        <br />
+
+
+        {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
+          // if (event.account !== 'brokerage') return (<></>)
+          return (
+            <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
+              <CardContent>
+
+                <Stack direction='row' spacing={4}>
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    <b>name: </b> {event.name === "" ? '...' : event.name}
+                  </Typography>
+
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    <b>account: </b> {event.account}
+                  </Typography>
+
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
+                  </Typography>
+
+                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                    ${event.category ? event.category!.getValue().toString() : '...'}
+                  </Typography>
+
+                </Stack>
+                <CardActions>
+
+                  <Stack direction='row' spacing={4}>
+
+                    <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
+                    <Button id={event.getKey()} onClick={this.handleDuplicateEvent} variant="contained">Duplicate</Button>
+                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
+
+                  </Stack>
+                </CardActions>
+
+              </CardContent>
+            </Card>
+          )
+        })}
+      </>)
+    } else {
+      return (
+        <div style={{ textAlign: 'center' }}>
+          <p>Please create a <b>Simulation</b> first. <br />Click <Button onClick={this.newTab} >here</Button> to create one!</p>
+        </div>
+      )
+    }
 
   }
 

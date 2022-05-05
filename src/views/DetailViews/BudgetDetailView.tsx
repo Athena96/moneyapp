@@ -71,7 +71,6 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
     const target = e.target;
     const value = target.value;
     const name = target.name;
-    console.log(`${name} = ${value}`)
     if (name.includes('category')) {
       const cats = this.state.categories!
       // ${cat.id}-category-name
@@ -83,8 +82,8 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
           if (name.includes("category-value")) {
             (c as any)[catname] = cleanNumberDataInput(value);
           } else {
-           
-          (c as any)[catname] = value; 
+
+            (c as any)[catname] = value;
           }
         }
       }

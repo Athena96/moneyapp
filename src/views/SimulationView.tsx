@@ -29,8 +29,6 @@ import { Account } from '../model/Base/Account';
 import { Asset } from '../model/Base/Asset';
 
 interface SimulationViewProps {
-    value: number;
-    index: number;
     user: string;
     simulation: Simulation | undefined;
 }
@@ -89,7 +87,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
     async handleAddSimulation() {
         if (window.confirm('Are you sure you want to ADD a new Simulation? This will copy all current Budget/Events/Inputs to a new Simulation branch.')) {
-            
+
             this.setState({ isLoading: true });
 
 
@@ -99,22 +97,22 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date(), this.props.user);
                     let newSimulations = [...this.state.simulations, newSimulation]
                     await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
-    
+
                     // pull budgets from the current selected simulation
                     const defaultBudgets: Budget[] = await BudgetDataAccess.fetchDefaultBudgets(selectedSim.getKey());
-    
+
                     // pull events  ...
-                    const defaultEvents: Event[] = await EventDataAccess.fetchEventsForSelectedSim(null,selectedSim.getKey());
-    
+                    const defaultEvents: Event[] = await EventDataAccess.fetchEventsForSelectedSim(null, selectedSim.getKey());
+
                     // pull inputs  ...
                     const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
-    
+
                     // pull inputs  ...
                     const defaultAccounts: Account[] = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, selectedSim.getKey());
-    
+
                     // pull inputs  ...
                     const defaultAssets: Asset[] = await AssetDataAccess.fetchAssetsForSelectedSim(null, selectedSim.getKey());
-    
+
                     // for each budget
                     //  make a copy
                     //  set simulation to the newly created simulation id
@@ -130,16 +128,16 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                         }
                         await BudgetDataAccess.createBudgetBranch(cpBudget);
                     }
-    
+
                     // same for events
                     for (const event of defaultEvents) {
                         const cpEvent: any = event;
                         cpEvent['simulation'] = newSimulation.id;
                         cpEvent['id'] = new Date().getTime().toString()
-    
+
                         await EventDataAccess.createEventBranch(cpEvent);
                     }
-    
+
                     // same for inputs
                     for (const input of defaultInputs) {
                         const cpInput: any = input;
@@ -147,7 +145,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                         cpInput['id'] = new Date().getTime().toString()
                         await InputDataAccess.createInputBranch(cpInput);
                     }
-    
+
                     // same for accounts
                     for (const account of defaultAccounts) {
                         const cpAccount: any = account;
@@ -155,7 +153,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                         cpAccount['id'] = new Date().getTime().toString()
                         await AccountDataAccess.createAccountBranch(cpAccount);
                     }
-    
+
                     // same for assets
                     for (const asset of defaultAssets) {
                         const cpAsset: any = asset;
@@ -164,10 +162,10 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                         delete cpAsset['strQuantity'];
                         await AssetDataAccess.createAssetBranch(cpAsset);
                     }
-    
+
                     this.setState({ simulations: newSimulations });
                     this.setState({ isLoading: false });
-    
+
                 } catch (err) {
                     console.log('error creating...:', err);
                     this.setState({ isLoading: false });
@@ -242,50 +240,50 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
                 for (const b of budgets) {
 
-                        try {
-                            await API.graphql({ query: deleteBudget, variables: { input: { 'id': b.id } } });
-                        } catch (err) {
-                            console.log('error:', err)
-                        }
+                    try {
+                        await API.graphql({ query: deleteBudget, variables: { input: { 'id': b.id } } });
+                    } catch (err) {
+                        console.log('error:', err)
+                    }
 
                 }
 
                 for (const e of events) {
 
-                        try {
-                            await API.graphql({ query: deleteEvent, variables: { input: { 'id': e.id } } });
-                        } catch (err) {
-                            console.log('error:', err)
-                        }
+                    try {
+                        await API.graphql({ query: deleteEvent, variables: { input: { 'id': e.id } } });
+                    } catch (err) {
+                        console.log('error:', err)
+                    }
 
                 }
 
                 for (const i of inputs) {
 
-                        try {
-                            await API.graphql({ query: deleteInputs, variables: { input: { 'id': i.id } } });
-                        } catch (err) {
-                            console.log('error:', err)
-                        }
+                    try {
+                        await API.graphql({ query: deleteInputs, variables: { input: { 'id': i.id } } });
+                    } catch (err) {
+                        console.log('error:', err)
+                    }
 
                 }
 
                 for (const ac of accounts) {
-                        try {
-                            await API.graphql({ query: deleteAccount, variables: { input: { 'id': ac.id } } });
-                        } catch (err) {
-                            console.log('error:', err)
-                        }
+                    try {
+                        await API.graphql({ query: deleteAccount, variables: { input: { 'id': ac.id } } });
+                    } catch (err) {
+                        console.log('error:', err)
+                    }
 
                 }
 
                 for (const as of assets) {
 
-                        try {
-                            await API.graphql({ query: deleteInputs, variables: { input: { 'id': as.id } } });
-                        } catch (err) {
-                            console.log('error:', err)
-                        }
+                    try {
+                        await API.graphql({ query: deleteInputs, variables: { input: { 'id': as.id } } });
+                    } catch (err) {
+                        console.log('error:', err)
+                    }
 
                 }
 
@@ -306,7 +304,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     }
 
     render() {
-        return this.props.index === this.props.value ? (
+        return (
             <>
 
                 {this.state.isLoading ? <><Box style={{ textAlign: 'center' }}>
@@ -326,7 +324,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                                     <TextField label="Is Selected?" id="outlined-basic" variant="outlined" name={`selected-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.selected} />
 
                                     <LoadingButton id={simulation.getKey()} onClick={this.handleDelete} variant="outlined">Delete</LoadingButton>
-                                    <LoadingButton id={simulation.getKey()} onClick={this.handleSave} variant="contained">Save</LoadingButton>
+                                    <LoadingButton id={simulation.getKey()} onClick={this.handleSave} variant="contained" >Save</LoadingButton>
                                 </Stack>
 
 
@@ -336,7 +334,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     )
                 })}
             </>
-        ) : (<></>);
+        );
     }
 
 }
