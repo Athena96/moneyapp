@@ -11,8 +11,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Link } from "react-router-dom";
-import Button from '@mui/material/Button';
 
+import Box from '@mui/material/Box';
 
 import '../App.css';
 import { Simulation } from '../model/Base/Simulation';
@@ -20,7 +20,6 @@ import { Simulation } from '../model/Base/Simulation';
 interface DataViewProps {
     user: string;
     simulation: Simulation | undefined;
-    change: ( newValue: number) => void;
 }
 
 interface IState {
@@ -37,21 +36,11 @@ class DataView extends React.Component<DataViewProps, IState> {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.render = this.render.bind(this);
         this.getData = this.getData.bind(this);
-        this.newTab = this.newTab.bind(this);
-
     }
 
     componentDidMount() {
         this.getData();
     }
-
-    newTab() {
-        if (this.props && this.props.change) {
-
-          this.props.change(4)
-        }
-    
-      }
 
     async getData() {
         if (this.props.simulation) {
@@ -61,7 +50,9 @@ class DataView extends React.Component<DataViewProps, IState> {
 
     render() {
                 if (this.state.balanceData && this.props.simulation) {
-                    return (<>
+                    return (<Box>
+                                <h1 >Data</h1>
+
                         <TableContainer component={Paper}>
                             <Table aria-label="simple table">
                                 <TableHead>
@@ -97,12 +88,12 @@ class DataView extends React.Component<DataViewProps, IState> {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                    </>
+                    </Box>
                 )
             } else {
                 return (
                     <div style={{textAlign: 'center'}}>
-                      <p>Please create a <b>Simulation</b> first. <br/>Click <Button onClick={this.newTab} >here</Button> to create one!</p>
+                      <p>Please create a <b>Simulation</b> first. <br/>Click <Link to="/simulations">here</Link> to create one!</p>
                     </div>
                     )
             }

@@ -9,8 +9,8 @@ import {
 import "@aws-amplify/ui-react/styles.css";
 import theme from "./theme";
 import Container from '@mui/material/Container';
-import Main from './views/Main'
 import aws_exports from "./aws-exports";
+import Home from './views/Home';
 
 Amplify.configure(aws_exports);
 
@@ -19,7 +19,6 @@ interface IProps {
 
 interface IState {
   selectedTab: number;
-
 }
 
 class App extends React.Component<IProps, IState> {
@@ -44,20 +43,18 @@ class App extends React.Component<IProps, IState> {
     return (
       <div>
         <div style={{ textAlign: 'left' }}>
-
           <AmplifyProvider theme={theme}>
             <Authenticator >
               {({ signOut, user }) => (
                 <>
                   <Container >
-                    <Main />
+                    <Home />
                   </Container>
                 </>
               )}
             </Authenticator>
           </AmplifyProvider>
         </div>
-
       </div>
     );
   }
