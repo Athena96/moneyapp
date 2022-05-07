@@ -5,6 +5,7 @@ import { createEvent, deleteEvent } from '../graphql/mutations'
 import awsExports from "../aws-exports";
 import { Event } from '../model/Base/Event';
 
+
 import { Simulation } from '../model/Base/Simulation';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -37,8 +38,6 @@ Amplify.configure(awsExports);
 interface EventsViewProps {
   user: string;
   simulation: Simulation | undefined;
-  change: (newValue: number) => void;
-
 }
 
 interface IState {
@@ -80,21 +79,12 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     this.handleBulkAddEvents = this.handleBulkAddEvents.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.newTab = this.newTab.bind(this);
-
   }
 
   async componentDidMount() {
     if (this.props.simulation) {
       await EventDataAccess.fetchEventsForSelectedSim(this, this.props.simulation.getKey());
     }
-  }
-  newTab() {
-    if (this.props && this.props.change) {
-
-      this.props.change(4)
-    }
-
   }
 
   async addEvent(id: string, name: string, date: Date, account: string, category: Category | null) {
@@ -205,7 +195,9 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   render() {
 
     if (this.props.simulation) {
-      return (<>
+      return (
+      <Box>
+        <h1 >Events</h1>
         <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
         <br />
         <br />
@@ -342,7 +334,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
                     <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
                     <Button id={event.getKey()} onClick={this.handleDuplicateEvent} variant="contained">Duplicate</Button>
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/events/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
+                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/event/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
 
                   </Stack>
                 </CardActions>
@@ -351,11 +343,11 @@ class EventsView extends React.Component<EventsViewProps, IState> {
             </Card>
           )
         })}
-      </>)
+      </Box>)
     } else {
       return (
         <div style={{ textAlign: 'center' }}>
-          <p>Please create a <b>Simulation</b> first. <br />Click <Button onClick={this.newTab} >here</Button> to create one!</p>
+          <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/simulations">here</Link> to create one!</p>
         </div>
       )
     }

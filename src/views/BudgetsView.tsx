@@ -4,8 +4,10 @@ import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createBudget, deleteBudget } from '../graphql/mutations'
 import awsExports from "../aws-exports";
 import { Simulation } from '../model/Base/Simulation';
+import Box from '@mui/material/Box';
 
 import { Budget } from '../model/Base/Budget';
+import { Link } from "react-router-dom";
 
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -17,8 +19,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-import { Link } from "react-router-dom";
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { BudgetFactory } from '../model/FactoryMethods/BudgetFactory';
 import { getObjectWithId } from '../utilities/helpers';
@@ -27,11 +27,8 @@ import { CategoryTypes } from '../API';
 Amplify.configure(awsExports);
 
 interface BudgetsViewProps {
-
   user: string;
   simulation: Simulation | undefined;
-  change: (newValue: number) => void;
-
 }
 
 interface IState {
@@ -58,7 +55,6 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.handleDuplicateBudget = this.handleDuplicateBudget.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.newTab = this.newTab.bind(this);
   }
 
   async componentDidMount() {
@@ -140,18 +136,12 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     this.setState({ dropdowns: mp });
   }
 
-  newTab() {
-    if (this.props && this.props.change) {
-
-      this.props.change(4)
-    }
-
-  }
-
   render() {
     if (this.props.simulation) {
       return (
-        <>
+        <Box>
+          <h1 >Budgets</h1>
+
           <Button style={{ width: "100%" }} onClick={this.handleAddBudget} variant="outlined">Add Budget</Button>
           <br />   <br />
           {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget) => {
@@ -230,7 +220,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                           <Stack direction='row' spacing={1}>
                             <Button id={budget.getKey()} onClick={this.handleDeleteBudget} variant="outlined">Delete</Button>
                             <Button id={budget.getKey()} onClick={this.handleDuplicateBudget} variant="contained">Duplicate</Button>
-                            <Link style={{ color: 'white', textDecoration: 'none' }} to={`/budgets/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="contained">Edit</Button></Link>
+                            <Link style={{ color: 'white', textDecoration: 'none' }} to={`/budget/${budget.getKey()}`}><Button id={budget.getKey()} onClick={this.handleEditBudget} variant="contained">Edit</Button></Link>
 
                           </Stack>
 
@@ -243,11 +233,11 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
                 <br />
               </>)
           })}
-        </>)
+        </Box>)
     } else {
       return (
         <div style={{ textAlign: 'center' }}>
-          <p>Please create a <b>Simulation</b> first. <br />Click <Button onClick={this.newTab} >here</Button> to create one!</p>
+          <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/simulations">here</Link> to create one!</p>
         </div>
       )
     }

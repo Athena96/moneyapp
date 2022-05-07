@@ -1,27 +1,23 @@
 import * as React from 'react';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import Container from '@mui/material/Container';
-
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-
-
+import Box from '@mui/material/Box';
 import { createAssets, deleteAssets, updateAssets } from '../graphql/mutations';
 import { Asset } from '../model/Base/Asset';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Simulation } from '../model/Base/Simulation';
+import { Link } from "react-router-dom";
 
 interface AssetsViewProps {
     user: string;
     simulation: Simulation | undefined;
-    change: (newValue: number) => void;
-
 }
 
 interface IState {
@@ -44,7 +40,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.render = this.render.bind(this);
-        this.newTab = this.newTab.bind(this);
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -85,7 +80,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     async handleAddInput() {
         try {
             let newDBAsset = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: "brokerage", isCurrency: 0 };
-
             let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, 'brokerage', 0);
             let newAssets = [...this.state.assets, newAsset]
             this.setState({ assets: newAssets });
@@ -93,7 +87,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         } catch (err) {
             console.log('error creating todo:', err)
         }
-
     }
 
     getAssetToSave(id: string) {
@@ -147,21 +140,13 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         this.setState({ 'account': accnt } as any);
     };
 
-    newTab() {
-        if (this.props && this.props.change) {
-
-            this.props.change(4)
-        }
-
-    }
-
     render() {
         if (this.props.simulation) {
             return (
-                <Container >
+                <Box >
+                    <h1 >Assets</h1>
                     <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add assets +</Button>
                     {this.state.assets ? this.state.assets.sort((a, b) => (a.id > b.id) ? 1 : -1).map((asset: Asset, i: number) => {
-
                         return (
                             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                                 <CardContent>
@@ -189,19 +174,14 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
                                 </CardContent>
                             </Card>
-
                         );
-
-
                     }) : <></>}
-
-
-                </Container>
+                </Box>
             )
         } else {
             return (
                 <div style={{ textAlign: 'center' }}>
-                    <p>Please create a <b>Simulation</b> first. <br />Click <Button onClick={this.newTab} >here</Button> to create one!</p>
+                    <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/simulations">here</Link> to create one!</p>
                 </div>
             )
         }

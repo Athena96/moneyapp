@@ -22,7 +22,6 @@ import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
-import { Auth } from 'aws-amplify';
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { Account } from '../model/Base/Account';
@@ -36,7 +35,6 @@ interface SimulationViewProps {
 interface IState {
     simulations: Simulation[];
     isLoading: boolean;
-
 }
 
 class SimulationView extends React.Component<SimulationViewProps, IState> {
@@ -305,7 +303,10 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
     render() {
         return (
-            <>
+            <Box >
+
+                <h1 >Simulations</h1>
+
 
                 {this.state.isLoading ? <><Box style={{ textAlign: 'center' }}>
                     <LinearProgress />
@@ -333,7 +334,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
                     )
                 })}
-            </>
+            </Box>
         );
     }
 

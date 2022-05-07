@@ -19,11 +19,11 @@ import { Line } from "react-chartjs-2";
 import { moneyGreenBoldText, black } from '../utilities/constants';
 import { Tick } from 'chart.js';
 import { Simulation } from '../model/Base/Simulation';
+import Box from '@mui/material/Box';
 
 interface GraphsViewProps {
   user: string;
   simulation: Simulation | undefined;
-  change: (newValue: number) => void;
 }
 
 interface IState {
@@ -198,30 +198,30 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     if (this.props.simulation) {
       return (
-        <Container >
-          {this.state.chartData && this.state.lastComputed ? <>
-            <Stack direction='column' >
-              <Paper component="span" sx={{ maxWidth: '95%', marginTop: 2, p: 2 }}>
+        <Box >
+        {this.state.chartData && this.state.lastComputed ? <>
+          <h1 >Dashboard</h1>
+
+              <Paper variant="outlined" sx={{ p: 2,}} >
                 <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
                 <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
-                <Paper elevation={0} >
+                <Paper  >
                   {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
                   <Line data={this.state.chartData} options={options} />
-                </Paper >
                 <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
 
                 <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
                   <RefreshIcon />
                 </IconButton>
+                </Paper >
+
               </Paper>
-              <br />
-              <br />
-            </Stack>
+
           </> : < >
             <CircularProgress />
           </>
           }
-        </Container >
+        </Box >
       );
     } else {
       return (<div style={{ textAlign: 'center' }}><p>no data</p></div>);
