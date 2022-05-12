@@ -237,7 +237,7 @@ class BudgetsView extends React.Component<BudgetsViewProps, IState> {
     } else {
       return (
         <div style={{ textAlign: 'center' }}>
-          <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/simulations">here</Link> to create one!</p>
+          <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/scenarios">here</Link> to create one!</p>
         </div>
       )
     }

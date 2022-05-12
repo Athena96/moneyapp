@@ -49,54 +49,54 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     render() {
-                if (this.state.balanceData && this.props.simulation) {
-                    return (<Box>
-                                <h1 >Data</h1>
+        if (this.state.balanceData && this.props.simulation) {
+            return (<Box>
+                <h1 >Data</h1>
 
-                        <TableContainer component={Paper}>
-                            <Table aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell align="center">Total Balance</TableCell>
-                                        {/* <TableCell align="center">Tax</TableCell>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Date</TableCell>
+                                <TableCell align="center">Total Balance</TableCell>
+                                {/* <TableCell align="center">Tax</TableCell>
                                         <TableCell align="center">Sum</TableCell> */}
-                                        <TableCell align="center">Return</TableCell>
-                                        <TableCell align="left">Note</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {this.state.balanceData.map((row: MonteCarloRowData) => (
-                                        <TableRow
-                                            style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
-                                            key={row.date}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell component="th" scope="row">
-                                                {row.date}
-                                            </TableCell>
-                                            <TableCell align="center">{row.avgBalance}</TableCell>
-                                            {/* <TableCell align="center">{row.taxBal}</TableCell>
+                                <TableCell align="center">Return</TableCell>
+                                <TableCell align="left">Note</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {this.state.balanceData.map((row: MonteCarloRowData) => (
+                                <TableRow
+                                    style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
+                                    key={row.date}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        {row.date}
+                                    </TableCell>
+                                    <TableCell align="center">{row.avgBalance}</TableCell>
+                                    {/* <TableCell align="center">{row.taxBal}</TableCell>
                                             <TableCell align="center">{row.sum}</TableCell> */}
-                                            <TableCell align="center">{row.return}%</TableCell>
-                                            <TableCell align="left">{row.events?.map((e) => {
-                                                const pm = e.category?.type!.toString() === 'Expense' ? '-' : '+';
-                                                return  <Link to={`/events/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value}` + ' | ' : `${e.name} ${pm}$${e.category!.value}` + ' | '}</Link>
-                                            })}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                )
-            } else {
-                return (
-                    <div style={{textAlign: 'center'}}>
-                      <p>Please create a <b>Simulation</b> first. <br/>Click <Link to="/simulations">here</Link> to create one!</p>
-                    </div>
-                    )
-            }
+                                    <TableCell align="center">{row.return}%</TableCell>
+                                    <TableCell align="left">{row.events?.map((e) => {
+                                        const pm = e.category?.type!.toString() === 'Expense' ? '-' : '+';
+                                        return <Link to={`/event/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value}` + ' | ' : `${e.name} ${pm}$${e.category!.value}` + ' | '}</Link>
+                                    })}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
+            )
+        } else {
+            return (
+                <div style={{ textAlign: 'center' }}>
+                    <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/scenarios">here</Link> to create one!</p>
+                </div>
+            )
+        }
     }
 }
 

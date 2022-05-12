@@ -35,11 +35,68 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         }
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleAddInput = this.handleAddInput.bind(this);
+        this.handleAddAsset = this.handleAddAsset.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.handleSave = this.handleSave.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
+        this.handleDeleteAsset = this.handleDeleteAsset.bind(this);
         this.render = this.render.bind(this);
+    }
+
+    async componentDidMount() {
+        if (this.props.simulation) {
+            await AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
+        }
+    }
+
+    async handleAddAsset() {
+        try {
+            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: "brokerage", isCurrency: 0 };
+            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, 'brokerage', 0);
+            newDBAsset['simulation'] = this.props.simulation!.id;
+
+            let newAssets = [...this.state.assets, newAsset]
+            this.setState({ assets: newAssets });
+            await API.graphql(graphqlOperation(createAssets, { input: newDBAsset }))
+        } catch (err) {
+            console.log('error creating todo:', err)
+        }
+    }
+
+    async handleDeleteAsset(event: any) {
+        const idToDelete = (event.target as Element).id;
+        if (window.confirm('Are you sure you want to DELETE this Asset?')) {
+            let newAssets = [];
+            let assetToDelete = null;
+
+            for (const asset of this.state.assets) {
+                if (asset.getKey() === idToDelete) {
+                    assetToDelete = {
+                        'id': asset.getKey()
+                    }
+                    continue;
+                }
+                newAssets.push(asset);
+            }
+            this.setState({ assets: newAssets });
+            try {
+                await API.graphql({ query: deleteAssets, variables: { input: assetToDelete } });
+            } catch (err) {
+                console.log('error:', err)
+            }
+        }
+    }
+
+    async handleSave(e: any) {
+        const id = e.target.id;
+
+        try {
+            const ipt = this.getAssetToSave(id);
+            let d = ipt;
+            delete d?.strQuantity;
+            await API.graphql(graphqlOperation(updateAssets, { input: d! }));
+        } catch (err) {
+            console.log('error creating account:', err)
+        }
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -71,66 +128,10 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
     }
 
-    async componentDidMount() {
-        if (this.props.simulation) {
-            AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
-        }
-    }
-
-    async handleAddInput() {
-        try {
-            let newDBAsset = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: "brokerage", isCurrency: 0 };
-            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, 'brokerage', 0);
-            let newAssets = [...this.state.assets, newAsset]
-            this.setState({ assets: newAssets });
-            await API.graphql(graphqlOperation(createAssets, { input: newDBAsset }))
-        } catch (err) {
-            console.log('error creating todo:', err)
-        }
-    }
-
     getAssetToSave(id: string) {
         for (const i of this.state.assets) {
             if (i.getKey() === id) {
                 return i;
-            }
-        }
-    }
-
-    async handleSave(e: any) {
-        const id = e.target.id;
-
-        try {
-            const ipt = this.getAssetToSave(id);
-            let d = ipt;
-            delete d?.strQuantity;
-            await API.graphql(graphqlOperation(updateAssets, { input: d! }));
-        } catch (err) {
-            console.log('error creating account:', err)
-        }
-    }
-
-    async handleDelete(event: any) {
-        const idToDelete = (event.target as Element).id;
-        if (window.confirm('Are you sure you want to DELETE this Asset?')) {
-            let newAssets = [];
-            let assetToDelete = null;
-
-            for (const asset of this.state.assets) {
-                if (asset.getKey() === idToDelete) {
-                    assetToDelete = {
-                        'id': asset.getKey()
-                    }
-                    continue;
-                }
-                newAssets.push(asset);
-
-            }
-            this.setState({ assets: newAssets });
-            try {
-                await API.graphql({ query: deleteAssets, variables: { input: assetToDelete } });
-            } catch (err) {
-                console.log('error:', err)
             }
         }
     }
@@ -145,7 +146,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             return (
                 <Box >
                     <h1 >Assets</h1>
-                    <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add assets +</Button>
+                    <Button style={{ width: "100%" }} onClick={this.handleAddAsset} variant="outlined">add assets +</Button>
                     {this.state.assets ? this.state.assets.sort((a, b) => (a.id > b.id) ? 1 : -1).map((asset: Asset, i: number) => {
                         return (
                             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
@@ -168,7 +169,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                                             </Select>
                                         </FormControl>
                                         <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
-                                        <Button id={asset.getKey()} onClick={this.handleDelete} variant="outlined">Delete</Button>
+                                        <Button id={asset.getKey()} onClick={this.handleDeleteAsset} variant="outlined">Delete</Button>
                                         <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
                                     </Stack>
 
@@ -181,7 +182,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         } else {
             return (
                 <div style={{ textAlign: 'center' }}>
-                    <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/simulations">here</Link> to create one!</p>
+                    <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/scenarios">here</Link> to create one!</p>
                 </div>
             )
         }

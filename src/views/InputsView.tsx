@@ -16,17 +16,15 @@ import { Simulation } from '../model/Base/Simulation';
 import { Input } from '../model/Base/Input';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { cleanNumberDataInput } from '../utilities/helpers';
+import Box from '@mui/material/Box';
 
 interface InputsViewProps {
-  value: number;
-  index: number;
   user: string;
   simulation: Simulation | undefined;
 }
 
 interface IState {
   inputs: Input[],
-  selectedSimulation: Simulation | null
 }
 
 class InputsView extends React.Component<InputsViewProps, IState> {
@@ -36,21 +34,16 @@ class InputsView extends React.Component<InputsViewProps, IState> {
     super(props);
 
     this.state = {
-      inputs: [],
-      selectedSimulation: null
+      inputs: []
 
     }
+
     this.handleChange = this.handleChange.bind(this);
-
     this.handleAddInput = this.handleAddInput.bind(this);
-
     this.getInputToSave = this.getInputToSave.bind(this);
-
     this.componentDidMount = this.componentDidMount.bind(this);
-
     this.handleSave = this.handleSave.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-
     this.render = this.render.bind(this);
   }
 
@@ -77,7 +70,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   }
 
-  
+
   async componentDidMount() {
     if (this.props.simulation) {
       await InputDataAccess.fetchInputsForSelectedSim(this, this.props.simulation.getKey());
@@ -98,7 +91,7 @@ class InputsView extends React.Component<InputsViewProps, IState> {
         value: 'value',
         type: 'number',
       };
-      newInput['simulation'] = this.state.selectedSimulation!.id;
+      newInput['simulation'] = this.props.simulation!.id;
       currInputs.push(newInput);
 
       this.setState({
@@ -157,66 +150,50 @@ class InputsView extends React.Component<InputsViewProps, IState> {
 
   render() {
 
-    if (this.props.index === this.props.value) {
 
-      return (
-        < >
+    return (
+      <Box>
+        <h1 >Settings</h1>
 
-          <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add input +</Button>
-          {this.state.inputs ? this.state.inputs.map((input: any, i: number) => {
+        <Button style={{ width: "100%" }} onClick={this.handleAddInput} variant="outlined">add input +</Button>
+        {this.state.inputs ? this.state.inputs.map((input: any, i: number) => {
 
-            return !input.type.includes('computed') ? (
-              <>
-                <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-                  <CardContent>
-
-                    <Stack direction='column' spacing={2}>
-                      <TextField label="Key" id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
-                      {
-                        (input.type === "date") ?
-                          <>
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                              <DatePicker
-                                label="Date"
-                                value={input.value}
-                                onChange={(newValue) => {
-                                  const ipts = this.state.inputs;
-                                  for (const i of ipts) {
-                                    if (i.id === input.id) {
-                                      i.value = newValue;
-                                    }
-                                  }
-                                  this.setState({ inputs: ipts } as any);
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                              />
-                            </LocalizationProvider>
-                          </>
-                          :
-                          <><TextField label="Value" id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
-                      }
-                      <TextField label="Data Type" id="outlined-basic" variant="outlined" name={`type-${input.key}`} onChange={this.handleChange} value={input.type} />
-
-
-                      <Button id={input.id} onClick={this.handleDelete} variant="outlined">Delete</Button>
-                      <Button id={input.id} onClick={this.handleSave} variant="contained">Save</Button>
-
-
-                    </Stack>
-
-                  </CardContent>
-                </Card>
-
-
-              </>
-            ) : <>
-
+          return !input.type.includes('computed') ? (
+            <>
               <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                 <CardContent>
 
-                  <Stack direction='row' spacing={4}>
-                    <TextField disabled id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
-                    <TextField disabled id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} />
+                  <Stack direction='column' spacing={2}>
+                    <TextField label="Key" id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
+                    {
+                      (input.type === "date") ?
+                        <>
+                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                              label="Date"
+                              value={input.value}
+                              onChange={(newValue) => {
+                                const ipts = this.state.inputs;
+                                for (const i of ipts) {
+                                  if (i.id === input.id) {
+                                    i.value = newValue;
+                                  }
+                                }
+                                this.setState({ inputs: ipts } as any);
+                              }}
+                              renderInput={(params) => <TextField {...params} />}
+                            />
+                          </LocalizationProvider>
+                        </>
+                        :
+                        <><TextField label="Value" id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} /></>
+                    }
+                    <TextField label="Data Type" id="outlined-basic" variant="outlined" name={`type-${input.key}`} onChange={this.handleChange} value={input.type} />
+
+
+                    <Button id={input.id} onClick={this.handleDelete} variant="outlined">Delete</Button>
+                    <Button id={input.id} onClick={this.handleSave} variant="contained">Save</Button>
+
 
                   </Stack>
 
@@ -224,21 +201,27 @@ class InputsView extends React.Component<InputsViewProps, IState> {
               </Card>
 
 
-
             </>
+          ) : <>
 
+            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+              <CardContent>
 
-          }) : <></>}
+                <Stack direction='row' spacing={4}>
+                  <TextField disabled id="outlined-basic" variant="outlined" name={`key-${input.key}`} onChange={this.handleChange} value={input.key} />
+                  <TextField disabled id="outlined-basic" variant="outlined" name={`value-${input.key}`} onChange={this.handleChange} value={input.value} />
 
+                </Stack>
 
-        </>
-      )
-    } else {
-      return (<></>);
-    }
+              </CardContent>
+            </Card>
 
+          </>
+
+        }) : <></>}
+      </Box>
+    )
   }
-
 }
 
 export default InputsView;

@@ -304,10 +304,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
     render() {
         return (
             <Box >
-
-                <h1 >Simulations</h1>
-
-
+                <h1 >Scenarios</h1>
                 {this.state.isLoading ? <><Box style={{ textAlign: 'center' }}>
                     <LinearProgress />
                     <br />

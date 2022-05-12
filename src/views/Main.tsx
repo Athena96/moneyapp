@@ -11,6 +11,9 @@ import { Simulation } from '../model/Base/Simulation';
 import EventsView from './EventsView';
 import BudgetsView from './BudgetsView';
 import DataView from './DataView';
+import SetupView from './SetupView';
+import AccountsView from './AccountsView';
+import AccountDetailView from './DetailViews/AccountDetailView';
 
 interface InputsViewProps {
   user: string;
@@ -39,10 +42,14 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/events" render={(props) => <EventsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/budgets" render={(props) => <BudgetsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/assets" render={(props) => <AssetsView user={this.props.user} simulation={this.props.simulation} />} />
-        <Route path="/simulations" render={(props) => <SimulationView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/accounts" render={(props) => <AccountsView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/scenarios" render={(props) => <SimulationView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/data" render={(props) => <DataView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/account" component={AccountDetailView} />
         <Route path="/event" component={EventDetailView} />
         <Route path="/budget" component={BudgetDetailView} />
+        <Route path="/setup" render={(props) => <SetupView user={this.props.user} simulation={this.props.simulation} />} />
+
       </Switch>
     );
   }

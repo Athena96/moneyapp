@@ -5,7 +5,6 @@ import { createEvent, deleteEvent } from '../graphql/mutations'
 import awsExports from "../aws-exports";
 import { Event } from '../model/Base/Event';
 
-
 import { Simulation } from '../model/Base/Simulation';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -196,158 +195,155 @@ class EventsView extends React.Component<EventsViewProps, IState> {
 
     if (this.props.simulation) {
       return (
-      <Box>
-        <h1 >Events</h1>
-        <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
-        <br />
-        <br />
-        <Accordion >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+        <Box>
+          <h1 >Events</h1>
+          <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
+          <br />
+          <br />
+          <Accordion >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Bulk Add Events</Typography>
+            </AccordionSummary>
+            {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
+
+            <br />
+            <br />
+
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="start date"
+                value={this.state.bulkAddStartDate}
+                onChange={(newValue) => {
+                  this.setState({ bulkAddStartDate: newValue } as any);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+            <br />
+            <br />
+
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="end date"
+                value={this.state.bulkAddEndDate}
+                onChange={(newValue) => {
+                  this.setState({ bulkAddEndDate: newValue } as any);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+            <br />
+            <br />
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Account</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={this.state.bulkAddAccount}
+                label="Account"
+                onChange={this.handleDropChange}
+              >
+                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
+                <MenuItem value={'tax'}>Tax</MenuItem>
+              </Select>
+            </FormControl>
+            <br />
+            <br />
+
+            <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
+            <br />
+            <br />
+            <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
+            <br />
+            <br />
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={this.state.bulkAddEventCatType}
+                label="Category Type"
+                onChange={this.handleCategoryTypeChange}
+              >
+                <MenuItem value={'Expense'}>Expense</MenuItem>
+                <MenuItem value={'Income'}>Income</MenuItem>
+              </Select>
+            </FormControl>
+          </Accordion >
+
+          <br />
+          <br />
+
+          <Stack
+            direction='row' spacing={2}
+
           >
-            <Typography>Bulk Add Events</Typography>
-          </AccordionSummary>
-          {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
-
-          <br />
-          <br />
-
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="start date"
-              value={this.state.bulkAddStartDate}
-              onChange={(newValue) => {
-                this.setState({ bulkAddStartDate: newValue } as any);
+            <Box
+              sx={{
+                width: 25,
+                height: 25,
+                bgcolor: '#ffcdd2',
               }}
-              renderInput={(params) => <TextField {...params} />}
             />
-          </LocalizationProvider>
-          <br />
-          <br />
-
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="end date"
-              value={this.state.bulkAddEndDate}
-              onChange={(newValue) => {
-                this.setState({ bulkAddEndDate: newValue } as any);
+            <p>Expense</p>
+            <Box
+              sx={{
+                width: 25,
+                height: 25,
+                bgcolor: '#b2dfdb',
               }}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
+            /><p>Income</p>
+          </Stack>
+
           <br />
-          <br />
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Account</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={this.state.bulkAddAccount}
-              label="Account"
-              onChange={this.handleDropChange}
-            >
-              <MenuItem value={'brokerage'}>Brokerage</MenuItem>
-              <MenuItem value={'tax'}>Tax</MenuItem>
-            </Select>
-          </FormControl>
-          <br />
-          <br />
-
-          <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
-          <br />
-          <br />
-          <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
-          <br />
-          <br />
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={this.state.bulkAddEventCatType}
-              label="Category Type"
-              onChange={this.handleCategoryTypeChange}
-            >
-              <MenuItem value={'Expense'}>Expense</MenuItem>
-              <MenuItem value={'Income'}>Income</MenuItem>
-            </Select>
-          </FormControl>
-        </Accordion >
-
-
-        <br />
-        <br />
-
-        <Stack
-          direction='row' spacing={2}
-
-        >
-          <Box
-            sx={{
-              width: 25,
-              height: 25,
-              bgcolor: '#ffcdd2',
-            }}
-          />
-          <p>Expense</p>
-          <Box
-            sx={{
-              width: 25,
-              height: 25,
-              bgcolor: '#b2dfdb',
-            }}
-          /><p>Income</p>
-        </Stack>
-
-        <br />
-
-
-        {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
-          // if (event.account !== 'brokerage') return (<></>)
-          return (
-            <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
-              <CardContent>
-
-                <Stack direction='row' spacing={4}>
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>name: </b> {event.name === "" ? '...' : event.name}
-                  </Typography>
-
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>account: </b> {event.account}
-                  </Typography>
-
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
-                  </Typography>
-
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    ${event.category ? event.category!.getValue().toString() : '...'}
-                  </Typography>
-
-                </Stack>
-                <CardActions>
+          {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
+            // if (event.account !== 'brokerage') return (<></>)
+            return (
+              <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
+                <CardContent>
 
                   <Stack direction='row' spacing={4}>
+                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                      <b>name: </b> {event.name === "" ? '...' : event.name}
+                    </Typography>
 
-                    <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
-                    <Button id={event.getKey()} onClick={this.handleDuplicateEvent} variant="contained">Duplicate</Button>
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/event/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
+                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                      <b>account: </b> {event.account}
+                    </Typography>
+
+                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                      <b>date: </b>{(event.date.getMonth() + 1).toString()}/{event.date.getFullYear().toString()}
+                    </Typography>
+
+                    <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                      ${event.category ? event.category!.getValue().toString() : '...'}
+                    </Typography>
 
                   </Stack>
-                </CardActions>
+                  <CardActions>
 
-              </CardContent>
-            </Card>
-          )
-        })}
-      </Box>)
+                    <Stack direction='row' spacing={4}>
+
+                      <Button id={event.getKey()} onClick={this.handleDeleteEvents} variant="outlined">Delete</Button>
+                      <Button id={event.getKey()} onClick={this.handleDuplicateEvent} variant="contained">Duplicate</Button>
+                      <Link style={{ color: 'white', textDecoration: 'none' }} to={`/event/${event.getKey()}`}><Button id={event.getKey()} onClick={this.handleEditEvents} variant="contained">Edit</Button></Link>
+
+                    </Stack>
+                  </CardActions>
+
+                </CardContent>
+              </Card>
+            )
+          })}
+        </Box>)
     } else {
       return (
         <div style={{ textAlign: 'center' }}>
-          <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/simulations">here</Link> to create one!</p>
+          <p>Please create a <b>Simulation</b> first. <br />Click <Link to="/scenarios">here</Link> to create one!</p>
         </div>
       )
     }

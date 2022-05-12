@@ -4,6 +4,8 @@ import { styled, Theme, CSSObject } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify'
+import { API, graphqlOperation } from 'aws-amplify'
+
 import awsExports from "../aws-exports";
 import { Simulation } from '../model/Base/Simulation';
 import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
@@ -29,6 +31,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SignpostIcon from '@mui/icons-material/Signpost';
 import PaidIcon from '@mui/icons-material/Paid';
+import { createSimulation } from '../graphql/mutations';
 const drawerWidth = 175;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -132,11 +135,16 @@ class Home extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
+    let simulation = undefined;
     const user = await Auth.currentAuthenticatedUser();
     const email: string = user.attributes.email;
-    const userSim = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-
-    this.setState({ user: email, simulation: userSim });
+    simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+    if (!simulation) {
+      console.log('creating new sim, user did not have one')
+      simulation = new Simulation(new Date().getTime().toString(), 'Default Scenario', 1, '[]', "", new Date(), email);
+      await API.graphql(graphqlOperation(createSimulation, { input: simulation }));
+    }
+    this.setState({ user: email, simulation: simulation });
   }
 
   handleDrawerOpen() {
@@ -286,7 +294,7 @@ class Home extends React.Component<IProps, IState> {
               </Link>
 
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/simulations`}>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/scenarios`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -303,7 +311,7 @@ class Home extends React.Component<IProps, IState> {
                   >
                     <SignpostIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Simulation'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Scenarios'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
               </Link>
 

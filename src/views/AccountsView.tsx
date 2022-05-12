@@ -1,34 +1,23 @@
 import * as React from 'react';
 
-import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createAccount, deleteAccount } from '../graphql/mutations'
-import awsExports from "../aws-exports";
-
+import { API, graphqlOperation } from 'aws-amplify'
+import { createAccount, deleteAccount, updateAccount } from '../graphql/mutations'
 import { Account } from '../model/Base/Account';
-// import { fetchAccounts } from '../utilities/helpers';
-
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-
-import { Link } from "react-router-dom";
+import TextField from '@mui/material/TextField';
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { Simulation } from '../model/Base/Simulation';
-
-Amplify.configure(awsExports);
+import Box from '@mui/material/Box';
 
 interface AccountsViewProps {
-  value: number;
-  index: number;
   user: string;
   simulation: Simulation | undefined;
 }
 
 interface IState {
-  name: string,
   accounts: Account[]
 }
 
@@ -39,96 +28,125 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     super(props);
 
     this.state = {
-      name: 'AccountsView',
       accounts: []
     }
 
     this.componentDidMount = this.componentDidMount.bind(this);
     this.handleAddAccount = this.handleAddAccount.bind(this);
     this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
+    this.handleSaveAccount = this.handleSaveAccount.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.render = this.render.bind(this);
   }
 
   async componentDidMount() {
     if (this.props.simulation) {
-      await AccountDataAccess.fetchAccountsForUserSelectedSim(this,  this.props.simulation.getKey());
+      await AccountDataAccess.fetchAccountsForUserSelectedSim(this, this.props.simulation.getKey());
     }
   }
 
   async handleAddAccount() {
     try {
-      let newAccount = new Account(new Date().getTime().toString(), '...');
+      let newAccount: any = new Account(new Date().getTime().toString(), '...');
+      newAccount['simulation'] = this.props.simulation!.id;
+
       let newAccounts = [...this.state.accounts, newAccount]
       this.setState({ accounts: newAccounts });
       await API.graphql(graphqlOperation(createAccount, { input: newAccount }))
     } catch (err) {
       console.log('error creating todo:', err)
     }
-
   }
 
   async handleDeleteAccount(event: any) {
     const idToDelete = (event.target as Element).id;
-    let newAccounts = [];
-    let accntToDelete = null;
-    for (const account of this.state.accounts) {
-      if (account.getKey() === idToDelete) {
-        accntToDelete = {
-          'id': account.getKey()
-        }
-        continue;
-      }
-      newAccounts.push(account);
+    if (window.confirm('Are you sure you want to DELETE this Account?')) {
 
-    }
-    this.setState({ accounts: newAccounts });
-    try {
-      await API.graphql({ query: deleteAccount, variables: { input: accntToDelete } });
-    } catch (err) {
-      console.log('error:', err)
+      let newAccounts = [];
+      let accntToDelete = null;
+      for (const account of this.state.accounts) {
+        if (account.getKey() === idToDelete) {
+          accntToDelete = {
+            'id': account.getKey()
+          }
+          continue;
+        }
+        newAccounts.push(account);
+      }
+      this.setState({ accounts: newAccounts });
+      try {
+        await API.graphql({ query: deleteAccount, variables: { input: accntToDelete } });
+      } catch (err) {
+        console.log('error:', err)
+      }
     }
   }
 
-  handleEditAccount(event: any) {
-    console.log((event.target as Element).id);
+  async handleSaveAccount(e: any) {
+    const id = e.target.id;
+
+    try {
+      const ipt = this.getAccountToSave(id);
+      await API.graphql(graphqlOperation(updateAccount, { input: ipt! }));
+    } catch (err) {
+      console.log('error creating account:', err)
+    }
+  }
+
+  handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const target = e.target;
+    const value = target.value;
+    const name = target.name;
+    const tp = name.split('-')[0];
+    const key = name.split('-')[1];
+    const acnts = this.state.accounts;
+    for (const account of acnts) {
+      if (account.getKey() === key) {
+        if (tp === 'account') {
+          account.name = value;
+        }
+      }
+    }
+    this.setState({ accounts: acnts });
+
+  }
+
+  getAccountToSave(id: string) {
+    for (const i of this.state.accounts) {
+      if (i.getKey() === id) {
+        return i;
+      }
+    }
   }
 
   render() {
-    return this.props.index === this.props.value ? (
-      <>
-        <Button style={{ width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account</Button>
+    if (this.props.simulation) {
+      return (
+        <Box >
+          <h1 >Accounts</h1>
+          <Button style={{ width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account +</Button>
+          {this.state.accounts ? this.state.accounts.map((account: Account) => {
+            return (
+              <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+                <CardContent>
+                  <Stack direction='column' spacing={2}>
+                    <TextField label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
 
-        {this.state.accounts.map((account: Account) => {
-          return (
-
-            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-              <CardContent>
-
-                <Stack direction='row' spacing={4}>
-                  <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                    {account.name}
-                  </Typography>
-                </Stack>
-
-                <CardActions>
-
-                  <Stack direction='row' spacing={4}>
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="outlined">Delete</Button>
-
-                    <Link style={{ color: 'white', textDecoration: 'none' }} to={`/accounts/${account.getKey()}`}><Button id={account.getKey()} onClick={this.handleEditAccount} variant="contained">Edit</Button></Link>
-
+                    <Button id={account.getKey()} onClick={this.handleSaveAccount} variant="contained">Save</Button>
                   </Stack>
-                </CardActions>
 
-              </CardContent>
-            </Card>
-
-          )
-        })}
-      </>
-    ) : (<></>);
+                </CardContent>
+              </Card>
+            );
+          }) : <></>}
+        </Box>
+      )
+    } else {
+      return (
+        <></>
+      )
+    }
   }
-
 }
-
 export default AccountsView;

@@ -1,16 +1,11 @@
 
 import { Input } from '../model/Base/Input';
-import { Simulation } from '../model/Base/Simulation';
 import { listInputs } from '../graphql/queries';
 import { ListInputsQuery } from '../API';
 import { API, graphqlOperation } from 'aws-amplify'
-
 import { createInputs } from '../graphql/mutations';
-import { SimulationDataAccess } from './SimulationDataAccess';
-
 
 export class InputDataAccess {
-
 
     static async paginateInputs() {
         let nxtTkn: string | null | undefined;
@@ -27,9 +22,7 @@ export class InputDataAccess {
         } while (nxtTkn !== null);
 
         return events;
-
     }
-
 
     static async fetchInputsForSelectedSim(componentState: any | null, userSimulation: string): Promise<Input[]> {
         let fetchedInputs: Input[] = [];
@@ -57,21 +50,6 @@ export class InputDataAccess {
                 }
 
             }
-
-            // add computed inputs
-            fetchedInputs.push(new Input(
-                new Date().getTime().toString(),
-                "absoluteMonthlyGrowth",
-                String((growth - inflation) / 12 / 100),
-                "computed-number"
-            ));
-
-            fetchedInputs.push(new Input(
-                new Date().getTime().toString(),
-                "startDate",
-                new Date().toString(),
-                "computed-date",
-            ));
 
             if (componentState != null) {
                 componentState.setState({ inputs: fetchedInputs } as any);
@@ -144,6 +122,5 @@ export class InputDataAccess {
             console.log('error creating input:', err)
         }
     }
-
 
 }
