@@ -39,7 +39,7 @@ Amplify.configure({
     endpoints: [
       {
         name: 'apiCall',
-        endpoint: 'https://u4k0cv2pw7.execute-api.us-west-2.amazonaws.com/Prod',
+        endpoint: 'https://rpq15azwcf.execute-api.us-west-2.amazonaws.com/Stage',
         region: 'us-west-2',
         custom_header: async () => {
           return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
