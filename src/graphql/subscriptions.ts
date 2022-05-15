@@ -8,6 +8,7 @@ export const onCreateAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -19,6 +20,7 @@ export const onUpdateAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -30,6 +32,7 @@ export const onDeleteAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -153,9 +156,7 @@ export const onCreateInputs = /* GraphQL */ `
   subscription OnCreateInputs {
     onCreateInputs {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt
@@ -166,9 +167,7 @@ export const onUpdateInputs = /* GraphQL */ `
   subscription OnUpdateInputs {
     onUpdateInputs {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt
@@ -179,9 +178,7 @@ export const onDeleteInputs = /* GraphQL */ `
   subscription OnDeleteInputs {
     onDeleteInputs {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt

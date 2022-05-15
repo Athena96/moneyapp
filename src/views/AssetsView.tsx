@@ -14,6 +14,8 @@ import { cleanNumberDataInput } from '../utilities/helpers';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Simulation } from '../model/Base/Simulation';
 import { Link } from "react-router-dom";
+import { AccountDataAccess } from '../utilities/AccountDataAccess';
+import { Account } from '../model/Base/Account';
 
 interface AssetsViewProps {
     user: string;
@@ -22,6 +24,7 @@ interface AssetsViewProps {
 
 interface IState {
     assets: Asset[]
+    accounts: Account[]
 }
 
 class AssetsView extends React.Component<AssetsViewProps, IState> {
@@ -31,7 +34,8 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         super(props);
 
         this.state = {
-            assets: []
+            assets: [],
+            accounts: []
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -45,13 +49,14 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     async componentDidMount() {
         if (this.props.simulation) {
             await AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
+            await AccountDataAccess.fetchAccountsForUserSelectedSim(this, this.props.simulation.getKey());
         }
     }
 
     async handleAddAsset() {
         try {
-            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: "brokerage", isCurrency: 0 };
-            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, 'brokerage', 0);
+            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: this.state.accounts[0].id, isCurrency: 0 };
+            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, this.state.accounts[0].id, 0);
             newDBAsset['simulation'] = this.props.simulation!.id;
 
             let newAssets = [...this.state.assets, newAsset]
@@ -137,8 +142,16 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     }
 
     handleDropChange = (event: SelectChangeEvent) => {
-        const accnt = event.target.value as string;
-        this.setState({ 'account': accnt } as any);
+        const newAccountId = event.target.value as string;
+        const assetId = event.target.name;
+        let currAssets = this.state.assets;
+        for (const asset of currAssets) {
+            if (asset.id === assetId) {
+                asset.account = newAccountId;
+                break;
+            }
+        }
+        this.setState({assets: currAssets});
     };
 
     render() {
@@ -160,12 +173,16 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
+                                                name={asset.id}
                                                 value={asset.account}
                                                 label="Account"
                                                 onChange={this.handleDropChange}
                                             >
-                                                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
-                                                <MenuItem value={'tax'}>Tax</MenuItem>
+                                                {this.state.accounts.map((account: Account) => {
+                                                    return (
+                                                        <MenuItem  value={account.id}>{account.name}</MenuItem>
+                                                    )
+                                                })}
                                             </Select>
                                         </FormControl>
                                         <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />

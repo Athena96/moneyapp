@@ -6,11 +6,13 @@ export type CreateAccountInput = {
   id?: string | null,
   name?: string | null,
   simulation?: string | null,
+  taxAdvantaged?: number | null,
 };
 
 export type ModelAccountConditionInput = {
   name?: ModelStringInput | null,
   simulation?: ModelStringInput | null,
+  taxAdvantaged?: ModelIntInput | null,
   and?: Array< ModelAccountConditionInput | null > | null,
   or?: Array< ModelAccountConditionInput | null > | null,
   not?: ModelAccountConditionInput | null,
@@ -56,11 +58,24 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
+export type ModelIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
 export type Account = {
   __typename: "Account",
   id: string,
   name?: string | null,
   simulation?: string | null,
+  taxAdvantaged?: number | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -69,6 +84,7 @@ export type UpdateAccountInput = {
   id: string,
   name?: string | null,
   simulation?: string | null,
+  taxAdvantaged?: number | null,
 };
 
 export type DeleteAccountInput = {
@@ -186,16 +202,12 @@ export type DeleteEventInput = {
 
 export type CreateInputsInput = {
   id?: string | null,
-  key?: string | null,
-  value?: string | null,
-  type?: string | null,
+  settings?: string | null,
   simulation?: string | null,
 };
 
 export type ModelInputsConditionInput = {
-  key?: ModelStringInput | null,
-  value?: ModelStringInput | null,
-  type?: ModelStringInput | null,
+  settings?: ModelStringInput | null,
   simulation?: ModelStringInput | null,
   and?: Array< ModelInputsConditionInput | null > | null,
   or?: Array< ModelInputsConditionInput | null > | null,
@@ -205,9 +217,7 @@ export type ModelInputsConditionInput = {
 export type Inputs = {
   __typename: "Inputs",
   id: string,
-  key?: string | null,
-  value?: string | null,
-  type?: string | null,
+  settings?: string | null,
   simulation?: string | null,
   createdAt: string,
   updatedAt: string,
@@ -215,9 +225,7 @@ export type Inputs = {
 
 export type UpdateInputsInput = {
   id: string,
-  key?: string | null,
-  value?: string | null,
-  type?: string | null,
+  settings?: string | null,
   simulation?: string | null,
 };
 
@@ -248,18 +256,6 @@ export type ModelAssetsConditionInput = {
 };
 
 export type ModelFloatInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
-export type ModelIntInput = {
   ne?: number | null,
   eq?: number | null,
   le?: number | null,
@@ -351,6 +347,7 @@ export type ModelAccountFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
   simulation?: ModelStringInput | null,
+  taxAdvantaged?: ModelIntInput | null,
   and?: Array< ModelAccountFilterInput | null > | null,
   or?: Array< ModelAccountFilterInput | null > | null,
   not?: ModelAccountFilterInput | null,
@@ -414,9 +411,7 @@ export type ModelEventConnection = {
 
 export type ModelInputsFilterInput = {
   id?: ModelIDInput | null,
-  key?: ModelStringInput | null,
-  value?: ModelStringInput | null,
-  type?: ModelStringInput | null,
+  settings?: ModelStringInput | null,
   simulation?: ModelStringInput | null,
   and?: Array< ModelInputsFilterInput | null > | null,
   or?: Array< ModelInputsFilterInput | null > | null,
@@ -484,6 +479,7 @@ export type CreateAccountMutation = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -500,6 +496,7 @@ export type UpdateAccountMutation = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -516,6 +513,7 @@ export type DeleteAccountMutation = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -680,9 +678,7 @@ export type CreateInputsMutation = {
   createInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -698,9 +694,7 @@ export type UpdateInputsMutation = {
   updateInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -716,9 +710,7 @@ export type DeleteInputsMutation = {
   deleteInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -855,6 +847,7 @@ export type GetAccountQuery = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -874,6 +867,7 @@ export type ListAccountsQuery = {
       id: string,
       name?: string | null,
       simulation?: string | null,
+      taxAdvantaged?: number | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -997,9 +991,7 @@ export type GetInputsQuery = {
   getInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -1018,9 +1010,7 @@ export type ListInputsQuery = {
     items:  Array< {
       __typename: "Inputs",
       id: string,
-      key?: string | null,
-      value?: string | null,
-      type?: string | null,
+      settings?: string | null,
       simulation?: string | null,
       createdAt: string,
       updatedAt: string,
@@ -1182,6 +1172,7 @@ export type OnCreateAccountSubscription = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1193,6 +1184,7 @@ export type OnUpdateAccountSubscription = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1204,6 +1196,7 @@ export type OnDeleteAccountSubscription = {
     id: string,
     name?: string | null,
     simulation?: string | null,
+    taxAdvantaged?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1333,9 +1326,7 @@ export type OnCreateInputsSubscription = {
   onCreateInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -1346,9 +1337,7 @@ export type OnUpdateInputsSubscription = {
   onUpdateInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,
@@ -1359,9 +1348,7 @@ export type OnDeleteInputsSubscription = {
   onDeleteInputs?:  {
     __typename: "Inputs",
     id: string,
-    key?: string | null,
-    value?: string | null,
-    type?: string | null,
+    settings?: string | null,
     simulation?: string | null,
     createdAt: string,
     updatedAt: string,

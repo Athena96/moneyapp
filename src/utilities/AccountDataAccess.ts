@@ -15,12 +15,11 @@ export class AccountDataAccess {
             })) as { data: ListAccountsQuery }
             for (const account of response.data.listAccounts!.items!) {
                 if (account?.simulation === userSimulation) {
-                    fetchedAccounts.push(new Account(account!.id!, account!.name!));
+                    fetchedAccounts.push(new Account(account!.id!, account!.name!, account.taxAdvantaged || 0));
                 }
             }
 
             if (componentState) {
-
                 componentState.setState({ accounts: fetchedAccounts })
             }
         } catch (error) {

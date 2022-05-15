@@ -6,12 +6,13 @@ import { Account } from '../model/Base/Account';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { Simulation } from '../model/Base/Simulation';
 import Box from '@mui/material/Box';
-
+import FormControlLabel from '@mui/material/FormControlLabel';
 interface AccountsViewProps {
   user: string;
   simulation: Simulation | undefined;
@@ -36,6 +37,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
     this.handleSaveAccount = this.handleSaveAccount.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheckBox = this.handleCheckBox.bind(this);
     this.render = this.render.bind(this);
   }
 
@@ -47,7 +49,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   async handleAddAccount() {
     try {
-      let newAccount: any = new Account(new Date().getTime().toString(), '...');
+      let newAccount: any = new Account(new Date().getTime().toString(), '...', 0);
       newAccount['simulation'] = this.props.simulation!.id;
 
       let newAccounts = [...this.state.accounts, newAccount]
@@ -111,6 +113,23 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
 
   }
 
+  handleCheckBox(e: React.ChangeEvent<HTMLInputElement>) {
+    const target = e.target;
+    const name = target.name;
+    const tp = name.split('-')[0];
+    const key = name.split('-')[1];
+    const acnts = this.state.accounts;
+    for (const account of acnts) {
+      if (account.getKey() === key) {
+        if (tp === 'account') {
+          const old = account.taxAdvantaged;
+          account.taxAdvantaged = old === 1 ? 0 : 1;
+        }
+      }
+    }
+    this.setState({ accounts: acnts });
+  }
+
   getAccountToSave(id: string) {
     for (const i of this.state.accounts) {
       if (i.getKey() === id) {
@@ -131,7 +150,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                 <CardContent>
                   <Stack direction='column' spacing={2}>
                     <TextField label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
-
+                    <FormControlLabel control={<Checkbox name={`account-${account.getKey()}`} onChange={this.handleCheckBox} checked={account.taxAdvantaged === 1 ? true : false} />} label="Is this a tax advantaged account? (e.g. 401K, IRA)" />
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="outlined">Delete</Button>
                     <Button id={account.getKey()} onClick={this.handleSaveAccount} variant="contained">Save</Button>
                   </Stack>

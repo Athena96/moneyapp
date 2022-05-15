@@ -8,6 +8,7 @@ export const getAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -24,6 +25,7 @@ export const listAccounts = /* GraphQL */ `
         id
         name
         simulation
+        taxAdvantaged
         createdAt
         updatedAt
       }
@@ -125,9 +127,7 @@ export const getInputs = /* GraphQL */ `
   query GetInputs($id: ID!) {
     getInputs(id: $id) {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt
@@ -143,9 +143,7 @@ export const listInputs = /* GraphQL */ `
     listInputs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        key
-        value
-        type
+        settings
         simulation
         createdAt
         updatedAt

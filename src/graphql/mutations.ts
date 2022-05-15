@@ -11,6 +11,7 @@ export const createAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -25,6 +26,7 @@ export const updateAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -39,6 +41,7 @@ export const deleteAccount = /* GraphQL */ `
       id
       name
       simulation
+      taxAdvantaged
       createdAt
       updatedAt
     }
@@ -183,9 +186,7 @@ export const createInputs = /* GraphQL */ `
   ) {
     createInputs(input: $input, condition: $condition) {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt
@@ -199,9 +200,7 @@ export const updateInputs = /* GraphQL */ `
   ) {
     updateInputs(input: $input, condition: $condition) {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt
@@ -215,9 +214,7 @@ export const deleteInputs = /* GraphQL */ `
   ) {
     deleteInputs(input: $input, condition: $condition) {
       id
-      key
-      value
-      type
+      settings
       simulation
       createdAt
       updatedAt
