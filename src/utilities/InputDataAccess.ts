@@ -1,126 +1,39 @@
 
 import { Input } from '../model/Base/Input';
-import { listInputs } from '../graphql/queries';
-import { ListInputsQuery } from '../API';
-import { API, graphqlOperation } from 'aws-amplify'
+import { listInputs } from '../graphql/queries'
 import { createInputs } from '../graphql/mutations';
+import { ListInputsQuery } from "../API";
+import { API, graphqlOperation } from 'aws-amplify'
 
 export class InputDataAccess {
 
-    static async paginateInputs() {
-        let nxtTkn: string | null | undefined;
-        let events: any = []
-        do {
+    static async fetchInputsForSelectedSim(componentState: any | null, selectedSimulationId: string): Promise<Input> {
+        let selectedInput: Input | undefined = undefined;
+        try {
             const response = (await API.graphql({
-                query: listInputs, variables: { nextToken: nxtTkn }
+                query: listInputs
             })) as { data: ListInputsQuery }
 
-            for (const event of response.data.listInputs!.items!) {
-                events.push(event);
-            }
-            nxtTkn = response.data.listInputs?.nextToken;
-        } while (nxtTkn !== null);
-
-        return events;
-    }
-
-    static async fetchInputsForSelectedSim(componentState: any | null, userSimulation: string): Promise<Input[]> {
-        let fetchedInputs: Input[] = [];
-        let growth = 0.0;
-        let inflation = 0.0;
-        try {
-            // #todo: waistful im getting ALL inputs, but should query by simulation ID.
-            const response = await InputDataAccess.paginateInputs();
-            for (const input of response) {
-
-                if (input?.simulation && input?.simulation! === userSimulation) {
-                    fetchedInputs.push(new Input(
-                        input?.id!,
-                        input?.key!,
-                        input?.value!,
-                        input?.type!
-                    ));
-
-                    if (input?.key === 'growth') {
-                        growth = Number(input?.value!);
-                    }
-                    if (input?.key === 'inflation') {
-                        inflation = Number(input?.value!);
-                    }
-                }
-
-            }
-
-            if (componentState != null) {
-                componentState.setState({ inputs: fetchedInputs } as any);
-                for (const i of fetchedInputs) {
-                    if (i?.type === 'date' || i?.type === "computed-date") {
-                        componentState.setState({ [i.key]: new Date(i.value) } as any);
-
-                    } else if (i?.type === "number" || i?.type === "computed-number") {
-                        componentState.setState({ [i.key]: Number(i.value) } as any);
-
-                    }
-                }
-            }
-        } catch (error) {
-            console.log(error);
-        }
-
-        return fetchedInputs;
-    }
-
-    static getInputForKeyFromList(key: string, inputs: Input[]): Input | null {
-        for (const input of inputs) {
-            if (input.key === key) {
-                return input;
-            }
-        }
-        return null;
-    }
-
-    static async fetchDefaultInputs(selectedSimulationId: string): Promise<Input[]> {
-        let fetchedInputs: Input[] = [];
-        try {
-            const response = await InputDataAccess.fetchAllInputs();
-            for (const input of response) {
+            for (const input of response.data.listInputs!.items!) {            
                 if (input?.simulation && input?.simulation! === selectedSimulationId) {
-                    fetchedInputs.push(new Input(
-                        input?.id!,
-                        input?.key!,
-                        input?.value!,
-                        input?.type!
-                    ));
+                    selectedInput = new Input(input!.id!, input!.settings!, input!.simulation!)
+                    break;
                 }
             }
+            componentState.setState({  selectedInput: selectedInput })
         } catch (error) {
             console.log(error);
         }
-
-        return fetchedInputs;
+        return selectedInput!;
     }
 
-    static async fetchAllInputs() {
-        let fetchedInputs: any = [];
+    static async createInputBranch(input: any) {
         try {
-            const response = await InputDataAccess.paginateInputs();
-
-            for (const input of response) {
-                fetchedInputs.push(input);
-            }
-
-        } catch (error) {
-            console.log(error);
-        }
-        return fetchedInputs;
-    }
-
-    static async createInputBranch(ipt: any) {
-        try {
-            await API.graphql(graphqlOperation(createInputs, { input: ipt }))
+          await API.graphql(graphqlOperation(createInputs, { input: input }))
         } catch (err) {
-            console.log('error creating input:', err)
+          console.log('error creating event:', err)
         }
-    }
+      }
+    
 
 }

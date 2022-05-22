@@ -4,15 +4,13 @@ import { Key } from "../Interfaces/KeyInterface";
 export class Input implements Key {
 
     id: string;
-    key: string;
-    value: string;
-    type: string; // data type: date, string, number...
+    settings: string;
+    simulation: string;
 
-    constructor(id: string, key: string, value: string, type: string) {
+    constructor(id: string, settings: string, simulation: string) {
         this.id = id;
-        this.key = key;
-        this.value = value;
-        this.type = type; 
+        this.settings = settings;
+        this.simulation = simulation;
     }
 
     getKey() {

@@ -18,7 +18,6 @@ export class BudgetDataAccess {
     static async fetchBudgetsForSelectedSim(componentState: any, userSimulation: string): Promise<Budget[]> {
 
         // fetch inputs.
-        let inputs: Input[] = await InputDataAccess.fetchInputsForSelectedSim(null, userSimulation);
         let fetchedBudgets: Budget[] = [];
         try {
             const response = (await API.graphql({
@@ -32,15 +31,12 @@ export class BudgetDataAccess {
                         cats = [];
                         for (const category of budget!.categories!) {
                             // if category.name === input.name... use input.value.
-                            const matchingInput = InputDataAccess.getInputForKeyFromList(category!.name!, inputs);
-                            if (matchingInput != null) {
-                                cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-                            } else {
-                                cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-                            }
+
+                            cats.push(new Category('', category!.name!, category!.value!));
+                            
                         }
                     }
-                    fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
+                    fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));
                 }
             }
 
@@ -57,7 +53,6 @@ export class BudgetDataAccess {
     static async fetchDefaultBudgets(selectedSimulationId: string): Promise<Budget[]> {
 
         // fetch inputs.
-        let inputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSimulationId);
         let fetchedBudgets: Budget[] = [];
         try {
             const response = (await API.graphql({
@@ -73,15 +68,12 @@ export class BudgetDataAccess {
                         cats = [];
                         for (const category of budget!.categories!) {
                             // if category.name === input.name... use input.value.
-                            const matchingInput = InputDataAccess.getInputForKeyFromList(category!.name!, inputs);
-                            if (matchingInput != null) {
-                                cats.push(new Category('', category!.name!, Number(matchingInput.value), (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-                            } else {
-                                cats.push(new Category('', category!.name!, category!.value!, (category!.type!.toString() === "Expense" ? CategoryTypes.Expense : CategoryTypes.Income)));
-                            }
+
+                            cats.push(new Category('', category!.name!, category!.value!));
+                            
                         }
                     }
-                    fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats));
+                    fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));
                 }
             }
 

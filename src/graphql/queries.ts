@@ -44,9 +44,9 @@ export const getBudget = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -68,9 +68,9 @@ export const listBudgets = /* GraphQL */ `
           id
           name
           value
-          type
         }
         simulation
+        type
         createdAt
         updatedAt
       }
@@ -89,9 +89,9 @@ export const getEvent = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -113,9 +113,9 @@ export const listEvents = /* GraphQL */ `
           id
           name
           value
-          type
         }
         simulation
+        type
         createdAt
         updatedAt
       }
@@ -250,9 +250,9 @@ export const budgetsBySimulationId = /* GraphQL */ `
           id
           name
           value
-          type
         }
         simulation
+        type
         createdAt
         updatedAt
       }

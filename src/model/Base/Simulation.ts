@@ -43,7 +43,7 @@ export class Simulation implements Key {
             if (item.events) {
                 d.events = [];
                 for (const event of item.events!) {
-                    d.events.push(new Event(event.id, event.name, event.date, event.account, new Category(event.category.id, event.category.name, event.category.value, event.category.type)))
+                    d.events.push(new Event(event.id, event.name, event.date, event.account, new Category(event.category.id, event.category.name, event.category.value), event.type))
                 }
             }
 

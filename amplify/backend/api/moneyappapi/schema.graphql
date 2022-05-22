@@ -17,7 +17,6 @@ type Category {
   id: ID
   name: String
   value: Float
-  type: CategoryTypes
 }
 
 
@@ -29,6 +28,7 @@ type Budget @model
   endDate: AWSDateTime
   categories: [Category]
   simulation: String
+  type: CategoryTypes
 }
 
 type Event @model {
@@ -38,6 +38,7 @@ type Event @model {
   account: String
   category: Category
   simulation: String
+  type: CategoryTypes
 }
 
 type Inputs @model {

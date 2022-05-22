@@ -12,10 +12,11 @@ export class BudgetFactory {
         if (budget.categories && budget.categories.length > 0) {
             newCategories = [];
             for (let i = 0; i < budget.categories!.length; i += 1) {
-                newCategories.push(new Category(String(i), budget.categories![i].name, budget.categories![i].value,budget.categories![i].type));
+                newCategories.push(new Category(String(i), budget.categories![i].name, budget.categories![i].value))
             }
         }
-        return new Budget(new Date().getTime().toString(), copyName, budget.startDate, budget.endDate, newCategories);
+        return new Budget(new Date().getTime().toString(), copyName, budget.startDate, budget.endDate, newCategories, budget.type);
+
     }
 
 }

@@ -5,13 +5,11 @@ export class Category implements Key {
     id: string;
     name: string;
     value: number;
-    type: CategoryTypes;
 
-    constructor(id: string, name: string, value: number, type: CategoryTypes) {
+    constructor(id: string, name: string, value: number) {
         this.id = id;
         this.name = name;
         this.value = value;
-        this.type = type;
     }
 
      getValue() {
@@ -19,11 +17,11 @@ export class Category implements Key {
     }
 
     printCategory() {
-        console.log(`[Category] name: ${this.name} value: ${this.value} type: ${this.type}`)
+        console.log(`[Category] name: ${this.name} value: ${this.value} `)
     }
 
     getCategoryDescription() {
-        return `[Category] name: ${this.name} value: ${this.value} type: ${this.type}`;
+        return `[Category] name: ${this.name} value: ${this.value}`;
     }
 
     getKey() {

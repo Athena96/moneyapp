@@ -1,6 +1,6 @@
 
 import { listEvents } from '../graphql/queries'
-import { ListEventsQuery } from "../API";
+import { CategoryTypes, ListEventsQuery } from "../API";
 import { createEvent } from '../graphql/mutations';
 import { Event } from '../model/Base/Event';
 
@@ -61,8 +61,8 @@ export class EventDataAccess {
             value = event?.category!.value!;
           }
 
-          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
-          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value) : null;
+          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc, event!.type!);
 
           fetchedEvents.push(e);
 
@@ -126,8 +126,8 @@ export class EventDataAccess {
             name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
             value = Number((quantity * currentAmazonStockPrice - (0.299 * quantity * currentAmazonStockPrice)).toFixed(2));
           }
-          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value, event!.category!.type!) : null;
-          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc);
+          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value) : null;
+          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc, event!.type!);
 
           fetchedEvents.push(e);
         }

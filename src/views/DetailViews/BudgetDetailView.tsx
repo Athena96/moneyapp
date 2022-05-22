@@ -31,6 +31,7 @@ interface IState {
   startDate: Date;
   endDate: Date;
   categories: Category[] | null;
+  type: CategoryTypes;
 }
 
 class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
@@ -41,7 +42,8 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
       name: "",
       startDate: new Date(),
       endDate: new Date(),
-      categories: []
+      categories: [],
+      type: CategoryTypes.Expense
 
     }
 
@@ -59,7 +61,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
 
   async handleSave() {
     try {
-      let newBudget = new Budget(this.state.id, this.state.name, this.state.startDate, this.state.endDate, this.state.categories!);
+      let newBudget = new Budget(this.state.id, this.state.name, this.state.startDate, this.state.endDate, this.state.categories!, this.state.type);
 
       await API.graphql(graphqlOperation(updateBudget, { input: newBudget }))
     } catch (err) {
@@ -104,7 +106,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
       currCategories = this.state.categories!;
     }
 
-    currCategories.push(new Category(new Date().getTime().toString(), '', 0, CategoryTypes.Expense));
+    currCategories.push(new Category(new Date().getTime().toString(), '', 0));
 
     this.setState({
       categories: currCategories
@@ -120,7 +122,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
       if (e.categories) {
         cats = []
         for (const c of e.categories!) {
-          cats.push(new Category(c?.id!, c?.name!, c?.value!, c?.type!));
+          cats.push(new Category(c?.id!, c?.name!, c?.value!));
         }
       }
 
@@ -129,7 +131,8 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
         name: e!.name!,
         startDate: new Date(e!.startDate!),
         endDate: new Date(e!.endDate!),
-        categories: cats
+        categories: cats,
+        type: e!.type!
       });
     } catch (err) {
       console.log('error:', err)
@@ -153,6 +156,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
   }
 
   render() {
+    // todo add type input
     return (
       <div>
         <Container sx={{ marginTop: '55px' }} maxWidth="sm">
@@ -179,6 +183,8 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
+
+
             <br />
             <Divider />
 
@@ -190,7 +196,6 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
                   <>
                     <TextField label="Category Name" id="outlined-basic" name={`${cat.id}-category-name`} variant="outlined" onChange={this.handleChange} value={cat.name} />
                     <TextField label="Category Value" id="outlined-basic" name={`${cat.id}-category-value`} variant="outlined" onChange={this.handleChange} value={cat.value} />
-                    <TextField label="Category Type" id="outlined-basic" name={`${cat.id}-category-type`} variant="outlined" onChange={this.handleChange} value={cat.type} />
 
 
                     <Button id={cat.id} onClick={this.handleDeleteCategory} variant="contained">delete category</Button>

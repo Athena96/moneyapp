@@ -12,9 +12,10 @@ import Typography from '@mui/material/Typography';
 import AccountsView from './AccountsView';
 import { Simulation } from '../model/Base/Simulation';
 import AssetsView from './AssetsView';
-import InputsView from './InputsView';
-import BudgetsView from './BudgetsView';
+import ExpensesView from './ExpensesView';
 import EventsView from './EventsView';
+import SettingsView from './SettingsView';
+import { CategoryTypes } from '../API';
 
 interface SetupViewProps {
     user: string;
@@ -45,12 +46,17 @@ class SetupView extends React.Component<SetupViewProps, IState> {
                 },
                 {
                     label: 'Define Model Inputs',
-                    description: <><InputsView user={this.props.user} simulation={this.props.simulation} /></>,
+                    description: <><SettingsView user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },
                 {
-                    label: 'Add Budget(s)',
-                    description: <><BudgetsView user={this.props.user} simulation={this.props.simulation} /></>,
+                    label: 'Add Expenses',
+                    description: <><ExpensesView type={CategoryTypes.Expense} user={this.props.user} simulation={this.props.simulation} /></>,
+
+                },
+                {
+                    label: 'Add Incomes',
+                    description: <><ExpensesView type={CategoryTypes.Income} user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },
                 {

@@ -70,7 +70,7 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
 
   async handleSave() {
     try {
-      let newEvent = new Event(this.state.id, this.state.name, this.state.date, this.state.account, new Category(this.state.id, this.state.categoryName, this.state.categoryValue, this.state.categoryType));
+      let newEvent = new Event(this.state.id, this.state.name, this.state.date, this.state.account, new Category(this.state.id, this.state.categoryName, this.state.categoryValue), this.state.categoryType);
       await API.graphql(graphqlOperation(updateEvent, { input: newEvent }))
     } catch (err) {
       console.log('error creating todo:', err)
@@ -88,7 +88,7 @@ class EventDetailView extends React.Component<EventDetailProps, IState> {
         account: e!.account!,
         categoryName: e!.category?.name || "",
         categoryValue: e!.category?.value || 0.0,
-        categoryType: e!.category?.type || CategoryTypes.Expense
+        categoryType: e?.type || CategoryTypes.Expense
       });
     } catch (err) {
       console.log('error:', err)

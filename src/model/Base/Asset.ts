@@ -17,9 +17,7 @@ export class Asset implements Key {
         this.hasIndexData = hasIndexData;
         this.account = account;
         this.isCurrency = isCurrency;
-
         this.strQuantity = strQuantity
-
     }
 
     setQuantity(quantity: string) {

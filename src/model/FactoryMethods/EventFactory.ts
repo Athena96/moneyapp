@@ -10,9 +10,9 @@ export class EventFactory {
         // deep copy categories
         let newCategory = null
         if (event.category) {
-            newCategory = new Category('1', event.category.name, event.category.value, event.category.type);
+            newCategory = new Category('1', event.category.name, event.category.value);
         }
-        return new Event(new Date().getTime().toString(), copyName, event.date, event.account, newCategory);
+        return new Event(new Date().getTime().toString(), copyName, event.date, event.account, newCategory, event.type);
     }
 
 }

@@ -31,7 +31,9 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SignpostIcon from '@mui/icons-material/Signpost';
 import PaidIcon from '@mui/icons-material/Paid';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { createSimulation } from '../graphql/mutations';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 const drawerWidth = 175;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -228,7 +230,7 @@ class Home extends React.Component<IProps, IState> {
                 </ListItemButton>
               </Link>
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/budgets`}>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/expenses`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -245,12 +247,12 @@ class Home extends React.Component<IProps, IState> {
                   >
                     <ViewListIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Budgets'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Expenses'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
               </Link>
 
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/events`}>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/incomes`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -265,12 +267,13 @@ class Home extends React.Component<IProps, IState> {
                       justifyContent: 'center',
                     }}
                   >
-                    <CalendarMonthIcon />
+
+                  <LocalAtmIcon />
+
                   </ListItemIcon>
-                  <ListItemText primary={'Events'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Incomes'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
               </Link>
-
 
               <Link style={{ color: 'black', textDecoration: 'none' }} to={`/assets`}>
                 <ListItemButton
@@ -293,6 +296,27 @@ class Home extends React.Component<IProps, IState> {
                 </ListItemButton>
               </Link>
 
+
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/accounts`}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: this.state.open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <AccountBalanceIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={'Accounts'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                </ListItemButton>
+              </Link>
 
               <Link style={{ color: 'black', textDecoration: 'none' }} to={`/scenarios`}>
                 <ListItemButton

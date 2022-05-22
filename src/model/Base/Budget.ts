@@ -9,22 +9,22 @@ export class Budget implements Key {
     startDate: Date;
     endDate: Date;
     categories: Category[] | null;
+    type: CategoryTypes;
 
-    constructor(id: string, name: string, startDate: Date, endDate: Date, categories: Category[] | null) {
+    constructor(id: string, name: string, startDate: Date, endDate: Date, categories: Category[] | null,  type: CategoryTypes) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
         this.categories = categories;
+        this.type = type;
     }
 
-    getTypeSum(type: CategoryTypes) {
+    getSum() {
         let sum = 0.0;
         if (this.categories) {
             for (const category of this.categories!) {
-                if (category.type === type) {
-                    sum += category.value;
-                }
+                sum += category.value;
             }
         }
         return sum;

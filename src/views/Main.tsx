@@ -9,11 +9,13 @@ import SimulationView from './SimulationView';
 import GraphsView from './GraphView';
 import { Simulation } from '../model/Base/Simulation';
 import EventsView from './EventsView';
-import BudgetsView from './BudgetsView';
+import ExpensesView from './ExpensesView';
 import DataView from './DataView';
 import SetupView from './SetupView';
 import AccountsView from './AccountsView';
 import AccountDetailView from './DetailViews/AccountDetailView';
+import SettingsView from './SettingsView';
+import { CategoryTypes } from '../API';
 
 interface InputsViewProps {
   user: string;
@@ -39,8 +41,8 @@ class Main extends React.Component<InputsViewProps, IState> {
     return (
       <Switch>
         <Route exact path="/" render={(props) => <GraphsView user={this.props.user} simulation={this.props.simulation} />} />
-        <Route path="/events" render={(props) => <EventsView user={this.props.user} simulation={this.props.simulation} />} />
-        <Route path="/budgets" render={(props) => <BudgetsView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/expenses" render={(props) => <ExpensesView type={CategoryTypes.Expense} user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/incomes" render={(props) => <ExpensesView type={CategoryTypes.Income}  user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/assets" render={(props) => <AssetsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/accounts" render={(props) => <AccountsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/scenarios" render={(props) => <SimulationView user={this.props.user} simulation={this.props.simulation} />} />
@@ -49,6 +51,7 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/event" component={EventDetailView} />
         <Route path="/budget" component={BudgetDetailView} />
         <Route path="/setup" render={(props) => <SetupView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/settings" render={(props) => <SettingsView user={this.props.user} simulation={this.props.simulation} />} />
 
       </Switch>
     );

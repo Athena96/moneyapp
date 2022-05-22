@@ -1,5 +1,6 @@
 import { Category } from "./Category";
 import { Key } from "../Interfaces/KeyInterface";
+import { CategoryTypes } from "../../API";
 
 export class Event implements Key {
     id: string;
@@ -8,12 +9,16 @@ export class Event implements Key {
     account: string;
     category: Category | null;
 
-    constructor(id: string, name: string, date: Date, account: string, category: Category | null) {
+    type: CategoryTypes;
+
+    constructor(id: string, name: string, date: Date, account: string, category: Category | null,  type: CategoryTypes) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.account = account;
         this.category = category;
+        this.type = type;
+        
     }
 
     getKey() {

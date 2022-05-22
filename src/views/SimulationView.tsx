@@ -103,7 +103,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     const defaultEvents: Event[] = await EventDataAccess.fetchEventsForSelectedSim(null, selectedSim.getKey());
 
                     // pull inputs  ...
-                    const defaultInputs: Input[] = await InputDataAccess.fetchDefaultInputs(selectedSim.getKey());
+                    const defaultInputs: Input = await InputDataAccess.fetchInputsForSelectedSim(null, selectedSim.getKey());
 
                     // pull inputs  ...
                     const defaultAccounts: Account[] = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, selectedSim.getKey());
@@ -137,12 +137,12 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     }
 
                     // same for inputs
-                    for (const input of defaultInputs) {
-                        const cpInput: any = input;
+                    // for (const input of defaultInputs) {
+                        const cpInput: any = defaultInputs;
                         cpInput['simulation'] = newSimulation.id;
                         cpInput['id'] = new Date().getTime().toString()
                         await InputDataAccess.createInputBranch(cpInput);
-                    }
+                    // }
 
                     // same for accounts
                     for (const account of defaultAccounts) {
@@ -232,7 +232,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 //  delete
                 const budgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(null, simulationToDelete!['id']);
                 const events = await EventDataAccess.fetchEventsForSelectedSim(null, simulationToDelete!['id']);
-                const inputs = await InputDataAccess.fetchInputsForSelectedSim(null, simulationToDelete!['id']);
+                const input = await InputDataAccess.fetchInputsForSelectedSim(null, simulationToDelete!['id']);
                 const accounts = await AccountDataAccess.fetchAccountsForUserSelectedSim(null, simulationToDelete!['id']);
                 const assets = await AssetDataAccess.fetchAssetsForSelectedSim(null, simulationToDelete!['id']);
 
@@ -256,15 +256,15 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
                 }
 
-                for (const i of inputs) {
+                // for (const i of inputs) {
 
-                    try {
-                        await API.graphql({ query: deleteInputs, variables: { input: { 'id': i.id } } });
-                    } catch (err) {
-                        console.log('error:', err)
-                    }
-
+                try {
+                    await API.graphql({ query: deleteInputs, variables: { input: { 'id': input.id } } });
+                } catch (err) {
+                    console.log('error:', err)
                 }
+
+                // }
 
                 for (const ac of accounts) {
                     try {

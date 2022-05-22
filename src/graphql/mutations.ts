@@ -61,9 +61,9 @@ export const createBudget = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -83,9 +83,9 @@ export const updateBudget = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -105,9 +105,9 @@ export const deleteBudget = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -127,9 +127,9 @@ export const createEvent = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -149,9 +149,9 @@ export const updateEvent = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }
@@ -171,9 +171,9 @@ export const deleteEvent = /* GraphQL */ `
         id
         name
         value
-        type
       }
       simulation
+      type
       createdAt
       updatedAt
     }

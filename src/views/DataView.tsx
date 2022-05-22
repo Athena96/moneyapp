@@ -80,7 +80,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                                             <TableCell align="center">{row.sum}</TableCell> */}
                                     <TableCell align="center">{row.return}%</TableCell>
                                     <TableCell align="left">{row.events?.map((e) => {
-                                        const pm = e.category?.type!.toString() === 'Expense' ? '-' : '+';
+                                        const pm = e.type!.toString() === 'Expense' ? '-' : '+';
                                         return <Link to={`/event/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value}` + ' | ' : `${e.name} ${pm}$${e.category!.value}` + ' | '}</Link>
                                     })}</TableCell>
                                 </TableRow>

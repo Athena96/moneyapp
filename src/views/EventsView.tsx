@@ -86,9 +86,9 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     }
   }
 
-  async addEvent(id: string, name: string, date: Date, account: string, category: Category | null) {
+  async addEvent(id: string, name: string, date: Date, account: string, category: Category | null, type: CategoryTypes) {
     try {
-      let newEvent: any = new Event(id, name, date, account, category);
+      let newEvent: any = new Event(id, name, date, account, category, type);
       newEvent['simulation'] = this.props.simulation!.getKey();
 
       let newEvents = [...this.state.events, newEvent]
@@ -102,7 +102,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async handleAddEvents() {
-    await this.addEvent(new Date().getTime().toString(), '...', new Date(), 'brokerage', null);
+    await this.addEvent(new Date().getTime().toString(), '...', new Date(), 'brokerage', null, CategoryTypes.Expense);
   }
 
   async handleBulkAddEvents() {
@@ -116,8 +116,8 @@ class EventsView extends React.Component<EventsViewProps, IState> {
       let i = 0
       for (const eventDate of dates) {
         const key = (Math.floor(eventDate.getTime() + Math.random())).toString();
-        const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue, this.state.bulkAddEventCatType);
-        await this.addEvent(key, this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat);
+        const cat = new Category(String(++i), this.state.bulkAddEventName, this.state.bulkAddEventValue);
+        await this.addEvent(key, this.state.bulkAddEventName, eventDate, this.state.bulkAddAccount, cat, this.state.bulkAddEventCatType);
       }
     } catch (err) {
       console.log(err);
@@ -200,84 +200,6 @@ class EventsView extends React.Component<EventsViewProps, IState> {
           <Button style={{ width: "100%" }} onClick={this.handleAddEvents} variant="outlined">Add Event</Button>
           <br />
           <br />
-          <Accordion >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Bulk Add Events</Typography>
-            </AccordionSummary>
-            {this.state.isBulkAddingEvents ? <><LoadingButton loading style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></> : <><LoadingButton style={{ width: "100%" }} onClick={this.handleBulkAddEvents} variant="outlined">Bulk Add Event</LoadingButton></>}
-
-            <br />
-            <br />
-
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="start date"
-                value={this.state.bulkAddStartDate}
-                onChange={(newValue) => {
-                  this.setState({ bulkAddStartDate: newValue } as any);
-                }}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <br />
-            <br />
-
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker
-                label="end date"
-                value={this.state.bulkAddEndDate}
-                onChange={(newValue) => {
-                  this.setState({ bulkAddEndDate: newValue } as any);
-                }}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <br />
-            <br />
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Account</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={this.state.bulkAddAccount}
-                label="Account"
-                onChange={this.handleDropChange}
-              >
-                <MenuItem value={'brokerage'}>Brokerage</MenuItem>
-                <MenuItem value={'tax'}>Tax</MenuItem>
-              </Select>
-            </FormControl>
-            <br />
-            <br />
-
-            <TextField label="Name" id="outlined-basic" name="bulkAddEventName" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventName ? this.state.bulkAddEventName : '...'} />
-            <br />
-            <br />
-            <TextField label="Category Value" id="outlined-basic" name="bulkAddEventValue" variant="outlined" onChange={this.handleChange} value={this.state.bulkAddEventValue} />
-            <br />
-            <br />
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Category Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={this.state.bulkAddEventCatType}
-                label="Category Type"
-                onChange={this.handleCategoryTypeChange}
-              >
-                <MenuItem value={'Expense'}>Expense</MenuItem>
-                <MenuItem value={'Income'}>Income</MenuItem>
-              </Select>
-            </FormControl>
-          </Accordion >
-
-          <br />
-          <br />
-
           <Stack
             direction='row' spacing={2}
 
@@ -303,7 +225,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
           {this.state.events.length > 0 && this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event) => {
             // if (event.account !== 'brokerage') return (<></>)
             return (
-              <Card variant="outlined" style={{ backgroundColor: ((event.category != null && event.category!.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
+              <Card variant="outlined" style={{ backgroundColor: ((event.type! === CategoryTypes.Expense) ? '#ffcdd2' : '#b2dfdb'), marginTop: '15px', width: '100%' }}>
                 <CardContent>
 
                   <Stack direction='row' spacing={4}>
