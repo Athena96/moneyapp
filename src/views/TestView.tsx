@@ -52,7 +52,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 Amplify.configure(awsExports);
 
-interface ExpensesViewProps {
+interface TestViewProps {
     user: string;
     simulation: Simulation | undefined;
 
@@ -66,9 +66,9 @@ interface IState {
     oneTimeExpenseDialogOpen: boolean
 }
 
-class ExpensesView extends React.Component<ExpensesViewProps, IState> {
+class TestView extends React.Component<TestViewProps, IState> {
 
-    constructor(props: ExpensesViewProps) {
+    constructor(props: TestViewProps) {
 
         super(props);
 
@@ -76,7 +76,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
             budgets: [],
             events: [],
             accounts: [],
-            recurringExpenseDialogOpen: false,
+            recurringExpenseDialogOpen: true,
             oneTimeExpenseDialogOpen: false
         }
 
@@ -256,11 +256,11 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                     </Dialog>
 
                     <Box>
-                        <h1>Expenses</h1>
+                        <h1>Test</h1>
                         <br />
 
 
-                        <Accordion>
+                        <Accordion expanded>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
@@ -300,20 +300,19 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
                                 })}
                                 <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleDeleteCategory(e)} variant="outlined">add recurring expense <AddCircleIcon /></Button>
-                            </AccordionDetails>
+                            </AccordionDetails>AddCircleIcon
                             
                         </Accordion>
 
 
-                        <br/>
-                        <br/>
 
-                        <Accordion>
+                        <Accordion expanded>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel2a-content"
                                 id="panel2a-header"
                             >
+
                                 <Typography><b>One-time Expenses</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
 
                             </AccordionSummary>
@@ -367,4 +366,4 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
 }
 
-export default ExpensesView;
+export default TestView;

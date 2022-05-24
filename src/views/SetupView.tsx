@@ -16,6 +16,7 @@ import ExpensesView from './ExpensesView';
 import EventsView from './EventsView';
 import SettingsView from './SettingsView';
 import { CategoryTypes } from '../API';
+import IncomesView from './IncomesView';
 
 interface SetupViewProps {
     user: string;
@@ -51,12 +52,12 @@ class SetupView extends React.Component<SetupViewProps, IState> {
                 },
                 {
                     label: 'Add Expenses',
-                    description: <><ExpensesView type={CategoryTypes.Expense} user={this.props.user} simulation={this.props.simulation} /></>,
+                    description: <><ExpensesView user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },
                 {
                     label: 'Add Incomes',
-                    description: <><ExpensesView type={CategoryTypes.Income} user={this.props.user} simulation={this.props.simulation} /></>,
+                    description: <><IncomesView user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },
                 {

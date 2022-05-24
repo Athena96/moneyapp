@@ -34,6 +34,9 @@ import PaidIcon from '@mui/icons-material/Paid';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { createSimulation } from '../graphql/mutations';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import SettingsIcon from '@mui/icons-material/Settings';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 const drawerWidth = 175;
 
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -245,7 +248,7 @@ class Home extends React.Component<IProps, IState> {
                       justifyContent: 'center',
                     }}
                   >
-                    <ViewListIcon />
+                    <RemoveCircleOutlineIcon/>
                   </ListItemIcon>
                   <ListItemText primary={'Expenses'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
@@ -268,8 +271,7 @@ class Home extends React.Component<IProps, IState> {
                     }}
                   >
 
-                  <LocalAtmIcon />
-
+                  <AddCircleOutlineIcon />
                   </ListItemIcon>
                   <ListItemText primary={'Incomes'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
@@ -297,28 +299,8 @@ class Home extends React.Component<IProps, IState> {
               </Link>
 
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/accounts`}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: this.state.open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: this.state.open ? 3 : 'auto',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <AccountBalanceIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={'Accounts'} sx={{ opacity: this.state.open ? 1 : 0 }} />
-                </ListItemButton>
-              </Link>
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/scenarios`}>
+              {/* <Link style={{ color: 'black', textDecoration: 'none' }} to={`/scenarios`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -337,10 +319,10 @@ class Home extends React.Component<IProps, IState> {
                   </ListItemIcon>
                   <ListItemText primary={'Scenarios'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
-              </Link>
+              </Link> */}
 
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>
+              {/* <Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -358,6 +340,28 @@ class Home extends React.Component<IProps, IState> {
                     <TableChartIcon />
                   </ListItemIcon>
                   <ListItemText primary={'Data'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                </ListItemButton>
+              </Link> */}
+
+
+<Link style={{ color: 'black', textDecoration: 'none' }} to={`/settings`}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: this.state.open ? 'initial' : 'center',
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={'Settings'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
               </Link>
 

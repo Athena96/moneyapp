@@ -4,6 +4,7 @@ import {
   MonteCarloRowData
 } from '../utilities/helpers';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { Link } from "react-router-dom";
 
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -208,11 +209,14 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
                 <Paper  >
                   {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
                   <Line data={this.state.chartData} options={options} />
-                <small>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
+                <small style={{marginLeft: '10px'}}>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
 
                 <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
                   <RefreshIcon />
                 </IconButton>
+                <br/>
+                <small style={{marginLeft: '10px'}}><u><Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>see data</Link></u></small><br/>
+
                 </Paper >
 
               </Paper>

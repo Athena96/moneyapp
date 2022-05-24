@@ -52,7 +52,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 Amplify.configure(awsExports);
 
-interface ExpensesViewProps {
+interface IncomesViewProps {
     user: string;
     simulation: Simulation | undefined;
 
@@ -66,9 +66,9 @@ interface IState {
     oneTimeExpenseDialogOpen: boolean
 }
 
-class ExpensesView extends React.Component<ExpensesViewProps, IState> {
+class IncomesView extends React.Component<IncomesViewProps, IState> {
 
-    constructor(props: ExpensesViewProps) {
+    constructor(props: IncomesViewProps) {
 
         super(props);
 
@@ -96,7 +96,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
     async handleAddBudget(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, simulationId: string) {
         try {
-            let newBudet: any = new Budget(new Date().getTime().toString(), "...", new Date(), new Date(), null, CategoryTypes.Expense);
+            let newBudet: any = new Budget(new Date().getTime().toString(), "...", new Date(), new Date(), null, CategoryTypes.Income);
             newBudet['simulation'] = this.props.simulation!.getKey();
 
             let newBudgets = [...this.state.budgets, newBudet]
@@ -115,11 +115,11 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
     getAvgMonthlyExpenses(budgets: Budget[]) {
         // not weighted avg
         let count = budgets.map((budget: Budget) => {
-            return budget.type === CategoryTypes.Expense ? 1 : 0
+            return budget.type === CategoryTypes.Income ? 1 : 0
         }).reduce((p: number, c: number) => p + c, 0);
 
         let sum = budgets.map((budget: Budget) => {
-            return budget.type === CategoryTypes.Expense ? budget.getSum() : 0.0
+            return budget.type === CategoryTypes.Income ? budget.getSum() : 0.0
         }).reduce((p: number, c: number) => p + c, 0);
         return (sum / count).toFixed(2);
     }
@@ -128,7 +128,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
     getEventsTotal(events: Event[]) {
 
         let sum = events.map((event: Event) => {
-            return event.type === CategoryTypes.Expense ? event.category?.value || 0 : 0.0
+            return event.type === CategoryTypes.Income ? event.category?.value || 0 : 0.0
         }).reduce((p: number, c: number) => p + c, 0);
         return (sum).toFixed(2);
     }
@@ -256,7 +256,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                     </Dialog>
 
                     <Box>
-                        <h1>Expenses</h1>
+                        <h1>Test</h1>
                         <br />
 
 
@@ -273,7 +273,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
                             <AccordionDetails>
                                 {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget, i: number) => {
-                                    if (budget.type === CategoryTypes.Expense) {
+                                    if (budget.type === CategoryTypes.Income) {
                                         return (
                                             <>
                                                 <Card variant="outlined" >
@@ -300,10 +300,9 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
                                 })}
                                 <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleDeleteCategory(e)} variant="outlined">add recurring expense <AddCircleIcon /></Button>
-                            </AccordionDetails>
+                            </AccordionDetails>AddCircleIcon
                             
                         </Accordion>
-
 
                         <br/>
                         <br/>
@@ -314,12 +313,13 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                                 aria-controls="panel2a-content"
                                 id="panel2a-header"
                             >
+
                                 <Typography><b>One-time Expenses</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
 
                             </AccordionSummary>
                             <AccordionDetails>
                                 {this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event, i: number) => {
-                                    if (event.type === CategoryTypes.Expense) {
+                                    if (event.type === CategoryTypes.Income) {
                                         return (
                                             <>
                                                 <Card variant="outlined" >
@@ -367,4 +367,4 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
 }
 
-export default ExpensesView;
+export default IncomesView;

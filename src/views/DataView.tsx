@@ -49,6 +49,7 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     render() {
+
         if (this.state.balanceData && this.props.simulation) {
             return (<Box>
                 <h1 >Data</h1>

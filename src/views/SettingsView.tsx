@@ -21,6 +21,8 @@ import DatePicker from '@mui/lab/DatePicker';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Input } from '../model/Base/Input';
+import AccountsView from './AccountsView';
+import Divider from '@mui/material/Divider';
 
 interface SettingsViewProps {
     user: string;
@@ -57,37 +59,42 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
     async handleSave(e: any) {
         const id = e.target.id;
 
-    
+
     }
 
 
     render() {
         if (this.props.simulation && this.state.selectedInput) {
             const settings = JSON.parse(this.state.selectedInput.settings);
-            const birthday = settings['birthday'];
+            const birthday = '04/25/1996'
             return (
                 <Box >
                     <h1>Settings</h1>
-                
-                            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-                                <CardContent>
-                                    <Stack direction='column' spacing={2}>    
-                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                            <DatePicker
-                                                label="Birthday"
-                                                value={birthday}
-                                                onChange={(newValue) => {
-                                                
-                                                this.setState({ startDate: newValue } as any);
-                                                }}
-                                                renderInput={(params) => <TextField {...params} />}
-                                                />
-                                        </LocalizationProvider>
-                                        <Button id={''} onClick={this.handleSave} variant="contained">Save</Button>
-                                    </Stack>
 
-                                </CardContent>
-                            </Card>
+                    <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
+                        <CardContent>
+                            <Stack direction='column' spacing={2}>
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DatePicker
+                                        label="Birthday"
+                                        value={birthday}
+                                        onChange={(newValue) => {
+
+                                            this.setState({ startDate: newValue } as any);
+                                        }}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                </LocalizationProvider>
+                                <Button id={''} onClick={this.handleSave} variant="contained">Save</Button>
+                            </Stack>
+
+                        </CardContent>
+                    </Card>
+                    <br />
+                    <br />
+                    <Divider />
+
+                    <AccountsView user={this.props.user} simulation={this.props.simulation} />
                 </Box>
             )
         } else {
