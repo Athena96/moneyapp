@@ -51,6 +51,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { cleanNumberDataInput } from '../utilities/helpers';
 import { Category } from '../model/Base/Category';
+import EventDialogView from './EventDialogView';
+import BudgetDialogView from './BudgetsDialogView';
 Amplify.configure(awsExports);
 
 interface ExpensesViewProps {
@@ -89,8 +91,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
     this.render = this.render.bind(this);
     this.editRecurringExpense = this.editRecurringExpense.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
-    this.handleSaveRecurringExpense = this.handleSaveRecurringExpense.bind(this);
-    this.handleSaveOneTimeExpense = this.handleSaveOneTimeExpense.bind(this);
+
   }
 
   async componentDidMount() {
@@ -144,10 +145,6 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
     return (sum).toFixed(2);
   }
 
-  handleDeleteCategory(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-
-  }
-
   editRecurringExpense(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, budgetToEdit: Budget) {
     this.setState({ recurringExpenseDialogOpen: true, budgetToEdit: budgetToEdit });
   }
@@ -161,103 +158,11 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
     this.setState({ recurringExpenseDialogOpen: false, oneTimeExpenseDialogOpen: false });
   }
 
-  async handleSaveRecurringExpense() {
-    if (this.state.budgetToEdit) {
-      try {
-
-        await API.graphql(graphqlOperation(updateBudget, { input: BudgetDataAccess.convertToDDBObject(this.state.budgetToEdit, this.props.simulation!.id) }))
-      } catch (err) {
-        console.log('error creating todo:', err)
-      }
-      this.closeDialog();
-    }
-  }
-
-  async handleSaveOneTimeExpense() {
-    if (this.state.eventToEdit) {
-      try {
-
-        await API.graphql(graphqlOperation(updateEvent, { input: EventDataAccess.convertToDDBObject(this.state.eventToEdit, this.props.simulation!.id) }))
-      } catch (err) {
-        console.log('error creating todo:', err)
-      }
-      this.closeDialog();
-    }
-  }
-
-  handleRecurringNameChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const newName = event.target.value;
-    if (this.state.budgetToEdit) {
-      const budget = this.state.budgetToEdit;
-      budget.name = newName;
-      this.setState({ budgetToEdit: budget })
-    }
-  }
-
-  handleOneTimeValueChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const newVal = event.target.value;
-    console.log('newval ' + newVal)
-    if (this.state.eventToEdit) {
-      const event = this.state.eventToEdit;
-      event.category!.setValue(cleanNumberDataInput(newVal));
-      this.setState({ eventToEdit: event })
-    }
-  }
-
-  handleOneTimeNameChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const newName = event.target.value;
-    if (this.state.eventToEdit) {
-      const event = this.state.eventToEdit;
-      event.name = newName;
-      this.setState({ eventToEdit: event })
-    }
-  }
-
-  handleRecurringValueChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const newVal = event.target.value;
-    console.log('newval ' + newVal)
-    if (this.state.budgetToEdit) {
-      const budget = this.state.budgetToEdit;
-      budget.categories![0].setValue(cleanNumberDataInput(newVal));
-      this.setState({ budgetToEdit: budget })
-    }
-  }
-
-  handleRecurringStartDateChange(newDate: Date | null) {
-
-    if (this.state.budgetToEdit && newDate) {
-      const budget = this.state.budgetToEdit;
-      budget.startDate = newDate;
-      this.setState({ budgetToEdit: budget })
-    }
-  }
-
-  handleRecurringEndDateChange(newDate: Date | null) {
-    if (this.state.budgetToEdit && newDate) {
-      const budget = this.state.budgetToEdit;
-      budget.endDate = newDate;
-      this.setState({ budgetToEdit: budget })
-    }
-  }
-
-  handleOneTimeDateChange(newDate: Date | null) {
-    if (this.state.eventToEdit && newDate) {
-      const event = this.state.eventToEdit;
-      event.date = newDate;
-      this.setState({ eventToEdit: event })
-    }
-  }
-
   async handleAddEvent() {
     try {
       let newEvent: any = new Event(new Date().getTime().toString(), '...', new Date(), this.state.accounts[0].name, new Category('1', '...', 0.0), CategoryTypes.Expense);
-
       newEvent['simulation'] = this.props.simulation!.id;
-
-      console.log("j " + JSON.stringify(newEvent))
       let formatedEvent = EventDataAccess.convertToDDBObject(newEvent, this.props.simulation!.id);
-      console.log("jj " + JSON.stringify(formatedEvent))
-
       let newEvents = [...this.state.events, formatedEvent]
       this.setState({ events: newEvents });
       await API.graphql(graphqlOperation(createEvent, { input: formatedEvent }))
@@ -315,122 +220,20 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
   }
 
   render() {
-
     if (this.props.simulation && this.state.budgets) {
-      console.log('-' + JSON.stringify(this.state.budgets));
       return (
         <Box>
-
           <Dialog open={this.state.recurringExpenseDialogOpen} onClose={this.closeDialog}>
-            <DialogTitle>Recurring Expense</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-              </DialogContentText>
-
-              <Stack direction='column' spacing={0}>
-                <br />
-                {this.state.budgetToEdit && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleRecurringNameChange(event)} value={this.state.budgetToEdit.name} />}<br />
-                {this.state.budgetToEdit && <TextField label={'amount'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleRecurringValueChange(event)} InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AttachMoneyIcon />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      Monthly
-                    </InputAdornment>
-                  ),
-                }} value={this.state.budgetToEdit.categories![0].strValue}></TextField>}
-
-                <br />
-                <Stack direction='row' spacing={2}>
-
-                  {this.state.budgetToEdit && <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="start date"
-                      value={this.state.budgetToEdit.startDate}
-                      onChange={(newDate) => this.handleRecurringStartDateChange(newDate)}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>}
-
-
-                  {this.state.budgetToEdit && <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-
-                      label="end date"
-                      value={this.state.budgetToEdit.endDate}
-                      onChange={(newDate) => this.handleRecurringEndDateChange(newDate)}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>}
-
-                </Stack>
-
-              </Stack>
-
-
-
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.closeDialog}>Cancel</Button>
-              <Button onClick={this.handleSaveRecurringExpense}>Save</Button>
-            </DialogActions>
+            {this.state.budgetToEdit && <BudgetDialogView user={this.props.user} simulation={this.props.simulation} budget={this.state.budgetToEdit!} type={CategoryTypes.Expense} closeDialog={this.closeDialog} />}
           </Dialog>
 
           <Dialog open={this.state.oneTimeExpenseDialogOpen} onClose={this.closeDialog}>
-            <DialogTitle>One-time Expense</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-              </DialogContentText>
-
-              <Stack direction='column' spacing={0}>
-                <br />
-                {this.state.eventToEdit && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleOneTimeNameChange(event)} value={this.state.eventToEdit.name} />}<br />
-                {this.state.eventToEdit && <TextField label={'amount'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleOneTimeValueChange(event)} InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <AttachMoneyIcon />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      Monthly
-                    </InputAdornment>
-                  ),
-                }} value={this.state.eventToEdit.category!.strValue}></TextField>}
-
-                <br />
-                <Stack direction='row' spacing={2}>
-
-                  {this.state.eventToEdit && <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="date"
-                      value={this.state.eventToEdit.date}
-                      onChange={(newDate) => this.handleOneTimeDateChange(newDate)}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>}
-
-                </Stack>
-
-              </Stack>
-
-
-
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={this.closeDialog}>Cancel</Button>
-              <Button onClick={this.handleSaveOneTimeExpense}>Save</Button>
-            </DialogActions>
+            {this.state.eventToEdit && <EventDialogView user={this.props.user} simulation={this.props.simulation} event={this.state.eventToEdit!} type={CategoryTypes.Income} closeDialog={this.closeDialog} />}
           </Dialog>
 
           <Box>
             <h1>Expenses</h1>
             <br />
-
-
             <Accordion>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -441,7 +244,6 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
 
               </AccordionSummary>
-
               <AccordionDetails>
                 {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget, i: number) => {
                   if (budget.type === CategoryTypes.Expense) {
@@ -456,11 +258,9 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                                 <Button onClick={(e) => this.editRecurringExpense(e, budget)}><EditIcon /></Button>
                                 <Button onClick={(e) => this.deleteRecurringExpense(budget)}><DeleteIcon /></Button>
                               </Grid>
-
                               <Grid item xs={4}>
                                 <Typography ><b>${budget.categories![0].value.toFixed(2)} / mo</b></Typography>
                               </Grid>
-
                             </Grid>
                           </CardContent>
                         </Card>
@@ -470,7 +270,6 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                   } else {
                     return (<></>)
                   }
-
                 })}
                 <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddBudget(e)} variant="outlined">add recurring expense <AddCircleIcon /></Button>
               </AccordionDetails>
@@ -480,6 +279,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
 
             <br />
             <br />
+
 
             <Accordion>
               <AccordionSummary
@@ -526,8 +326,6 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                 <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddEvent()} variant="outlined">add one-time expense <AddCircleIcon /></Button>
               </AccordionDetails>
             </Accordion>
-
-
           </Box>
         </Box>
       )

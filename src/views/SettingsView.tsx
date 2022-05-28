@@ -51,6 +51,7 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
 
     async componentDidMount() {
         if (this.props.simulation) {
+            // todo add inputs
             await InputDataAccess.fetchInputsForSelectedSim(this, this.props.simulation.getKey());
 
         }

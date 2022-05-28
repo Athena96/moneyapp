@@ -13,10 +13,10 @@ export class SimulationDataAccess {
                 query: listSimulations
             })) as { data: ListSimulationsQuery }
             let selSim: any;
-            for (const simulation of response.data.listSimulations!.items!) {             
+            for (const simulation of response.data.listSimulations!.items!) {
                 if (simulation?.user && simulation.user! === user) {
                     fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!), simulation!.user!));
-                
+
                 }
             }
             componentState.setState({ simulations: fetchedSimulations, selectedSimulation: selSim })
@@ -33,7 +33,7 @@ export class SimulationDataAccess {
                 query: listSimulations
             })) as { data: ListSimulationsQuery }
 
-            for (const simulation of response.data.listSimulations!.items!) {            
+            for (const simulation of response.data.listSimulations!.items!) {
                 if (simulation?.selected === 1 && simulation.user && simulation.user === user) {
                     selectedSimulation = new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!), simulation!.user!)
                     break;

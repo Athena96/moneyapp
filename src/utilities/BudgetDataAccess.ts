@@ -52,7 +52,7 @@ export class BudgetDataAccess {
                         for (const category of budget!.categories!) {
                             // if category.name === input.name... use input.value.
 
-                            cats.push(new Category('', category!.name!, category!.value!));
+                            cats.push(new Category(category!.id!, category!.name!, category!.value!));
 
                         }
                     }
@@ -91,7 +91,7 @@ export class BudgetDataAccess {
                         for (const category of budget!.categories!) {
                             // if category.name === input.name... use input.value.
 
-                            cats.push(new Category('', category!.name!, category!.value!));
+                            cats.push(new Category(category!.id!, category!.name!, category!.value!));
 
                         }
                     }
