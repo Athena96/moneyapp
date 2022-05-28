@@ -163,11 +163,11 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
 
     handleRecurringStartDateChange(newDate: string | null, budgetIndex: number) {
 
-      }
-    
-      handleRecurringEndDateChange(newDate: string | null, budgetIndex: number) {
+    }
 
-      }
+    handleRecurringEndDateChange(newDate: string | null, budgetIndex: number) {
+
+    }
 
 
     render() {
@@ -197,29 +197,29 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                         </InputAdornment>
                                     ),
                                 }} value={''}></TextField>
-                                <br/>    <br/>
-                            <Stack direction='row' spacing={2}>
-                            <LocalizationProvider  dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                          label="start date"
-                          value={'1/1/2011'}
-                          onChange={(newDate) => this.handleRecurringStartDateChange(newDate, 1)}
-                          renderInput={(params) => <TextField {...params} />}
-                        />
-                      </LocalizationProvider>
-  
-                  
-                      <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-  
-                          label="end date"
-                          value={'1/1/2011'}
-                          onChange={(newDate) => this.handleRecurringEndDateChange(newDate, 1)}
-                          renderInput={(params) => <TextField {...params} />}
-                        />
-                      </LocalizationProvider>
+                                <br />    <br />
+                                <Stack direction='row' spacing={2}>
+                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                        <DatePicker
+                                            label="start date"
+                                            value={'1/1/2011'}
+                                            onChange={(newDate) => this.handleRecurringStartDateChange(newDate, 1)}
+                                            renderInput={(params) => <TextField {...params} />}
+                                        />
+                                    </LocalizationProvider>
 
-                            </Stack>
+
+                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                        <DatePicker
+
+                                            label="end date"
+                                            value={'1/1/2011'}
+                                            onChange={(newDate) => this.handleRecurringEndDateChange(newDate, 1)}
+                                            renderInput={(params) => <TextField {...params} />}
+                                        />
+                                    </LocalizationProvider>
+
+                                </Stack>
 
                             </Stack>
 
@@ -256,9 +256,8 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                     </Dialog>
 
                     <Box>
-                        <h1>Test</h1>
+                        <h1>Incomes</h1>
                         <br />
-
 
                         <Accordion>
                             <AccordionSummary
@@ -301,11 +300,11 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                 })}
                                 <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleDeleteCategory(e)} variant="outlined">add recurring expense <AddCircleIcon /></Button>
                             </AccordionDetails>AddCircleIcon
-                            
+
                         </Accordion>
 
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
 
                         <Accordion>
                             <AccordionSummary

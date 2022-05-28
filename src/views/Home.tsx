@@ -248,7 +248,7 @@ class Home extends React.Component<IProps, IState> {
                       justifyContent: 'center',
                     }}
                   >
-                    <RemoveCircleOutlineIcon/>
+                    <RemoveCircleOutlineIcon />
                   </ListItemIcon>
                   <ListItemText primary={'Expenses'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
@@ -271,7 +271,7 @@ class Home extends React.Component<IProps, IState> {
                     }}
                   >
 
-                  <AddCircleOutlineIcon />
+                    <AddCircleOutlineIcon />
                   </ListItemIcon>
                   <ListItemText primary={'Incomes'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
@@ -292,7 +292,7 @@ class Home extends React.Component<IProps, IState> {
                       justifyContent: 'center',
                     }}
                   >
-                    <PaidIcon />
+                    <LocalAtmIcon />
                   </ListItemIcon>
                   <ListItemText primary={'Assets'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
@@ -344,7 +344,7 @@ class Home extends React.Component<IProps, IState> {
               </Link> */}
 
 
-<Link style={{ color: 'black', textDecoration: 'none' }} to={`/settings`}>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/settings`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,

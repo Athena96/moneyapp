@@ -15,6 +15,16 @@ import { getCookie, setCookie } from './CookiesHelper';
 
 export class EventDataAccess {
 
+  static convertToDDBObject(event: Event, sim: string) {
+
+    const cc = new Category(event.category!.id, event.category!.name, event.category!.value);
+    delete cc.strValue;
+    let e: any = new Event(event.id, event.name, event.date, event.account, cc, event.type)
+    e['simulation'] = sim;
+    return e;
+
+  }
+
   static async paginateEvents() {
     let nxtTkn: string | null | undefined;
     let events: any = []
@@ -101,7 +111,7 @@ export class EventDataAccess {
       await API.graphql(graphqlOperation(createEvent, { input: event }))
     } catch (err) {
       console.log('error creating event:', err)
-      
+
     }
   }
 

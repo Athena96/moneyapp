@@ -5,15 +5,22 @@ export class Category implements Key {
     id: string;
     name: string;
     value: number;
+    strValue?: string;
 
     constructor(id: string, name: string, value: number) {
         this.id = id;
         this.name = name;
         this.value = value;
+        this.strValue = String(value);
     }
 
-     getValue() {
+    getValue() {
         return this.value;
+    }
+
+    setValue(newVal: string) {
+        this.value = Number(newVal);
+        this.strValue = newVal;
     }
 
     printCategory() {

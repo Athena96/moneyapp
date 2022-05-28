@@ -15,6 +15,26 @@ import { InputDataAccess } from './InputDataAccess';
 
 export class BudgetDataAccess {
 
+    static convertToDDBObject(budget: Budget, sim: string) {
+        let cats = null
+
+        if (budget.categories) {
+            if (budget.categories) {
+                cats = []
+                for (const cat of budget.categories) {
+                    const cc = new Category(cat.id, cat.name, cat.value);
+                    delete cc.strValue;
+                    cats.push(cc)
+                }
+            }
+
+        }
+
+        let b: any = new Budget(budget.id, budget.name, budget.startDate, budget.endDate, cats, budget.type)
+        b['simulation'] = sim;
+        return b;
+    }
+
     static async fetchBudgetsForSelectedSim(componentState: any, userSimulation: string): Promise<Budget[]> {
 
         // fetch inputs.
@@ -33,9 +53,11 @@ export class BudgetDataAccess {
                             // if category.name === input.name... use input.value.
 
                             cats.push(new Category('', category!.name!, category!.value!));
-                            
+
                         }
                     }
+
+                    console.log('here ' + JSON.stringify(cats))
                     fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));
                 }
             }
@@ -70,7 +92,7 @@ export class BudgetDataAccess {
                             // if category.name === input.name... use input.value.
 
                             cats.push(new Category('', category!.name!, category!.value!));
-                            
+
                         }
                     }
                     fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));
