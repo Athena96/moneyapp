@@ -1,6 +1,3 @@
-
-import { Simulation } from '../model/Base/Simulation';
-import { Input } from '../model/Base/Input';
 import { Budget } from '../model/Base/Budget';
 import { Category } from '../model/Base/Category';
 
@@ -8,10 +5,6 @@ import { ListBudgetsQuery } from "../API";
 import { API, graphqlOperation } from 'aws-amplify'
 import { listBudgets } from '../graphql/queries'
 import { createBudget } from '../graphql/mutations';
-import { CategoryTypes } from "../API";
-import { SimulationDataAccess } from './SimulationDataAccess';
-
-import { InputDataAccess } from './InputDataAccess';
 
 export class BudgetDataAccess {
 

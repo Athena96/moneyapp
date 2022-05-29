@@ -1,43 +1,43 @@
 import * as React from 'react';
+
+import { Simulation } from '../model/Base/Simulation';
+import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+
 import '../App.css';
-import { styled, Theme, CSSObject } from '@mui/material/styles';
-import Box from '@mui/material/Box';
+import Main from './Main';
+import { moneyGreen } from '../utilities/constants';
+
 import { Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify'
 import { API, graphqlOperation } from 'aws-amplify'
-
 import awsExports from "../aws-exports";
-import { Simulation } from '../model/Base/Simulation';
-import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
+import { createSimulation } from '../graphql/mutations';
+
+import { Link } from "react-router-dom";
+
+import { styled, Theme, CSSObject } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import TableChartIcon from '@mui/icons-material/TableChart';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from "react-router-dom";
-import { moneyGreen } from '../utilities/constants';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Main from './Main';
-import ViewListIcon from '@mui/icons-material/ViewList';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import BarChartIcon from '@mui/icons-material/BarChart';
-import SignpostIcon from '@mui/icons-material/Signpost';
-import PaidIcon from '@mui/icons-material/Paid';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { createSimulation } from '../graphql/mutations';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+
 const drawerWidth = 175;
+const isMobile = window.innerWidth <= 390;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -54,9 +54,9 @@ const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: `calc(${theme.spacing(isMobile ? 0 : 7)} + 1px)`,
   [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(isMobile ? 0 : 8)} + 1px)`,
   },
 });
 
@@ -173,7 +173,6 @@ class Home extends React.Component<IProps, IState> {
   }
 
   render() {
-    const isMobile = window.innerWidth <= 390;
     if (this.state.user) {
       return (
 

@@ -4,27 +4,16 @@ import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { createEvent, deleteEvent } from '../graphql/mutations'
 import awsExports from "../aws-exports";
 import { Event } from '../model/Base/Event';
-
 import { Simulation } from '../model/Base/Simulation';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Box from '@mui/material/Box';
-
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import TextField from '@mui/material/TextField';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import LoadingButton from "@mui/lab/LoadingButton";
+import { SelectChangeEvent } from '@mui/material';
 import { cleanNumberDataInput, getFinnhubClient } from '../utilities/helpers';
-
 import { Link } from "react-router-dom";
 import { CategoryTypes } from '../API';
 import { EventDataAccess } from '../utilities/EventDataAccess';

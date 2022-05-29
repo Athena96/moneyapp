@@ -25,7 +25,6 @@ import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import Paper from '@mui/material/Paper';
 
 interface BudgetDialogViewProps {
     user: string;

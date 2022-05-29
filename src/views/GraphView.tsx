@@ -6,11 +6,10 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Link } from "react-router-dom";
 
-import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
-import Stack from '@mui/material/Stack';
+
 import IconButton from '@mui/material/IconButton';
 import { API, Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify';
@@ -109,7 +108,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     }
 
     const blue = 'rgba(37,113,207,1)';
-    const yellow = 'rgba(255,204,0,1)';
     const moneyGreen = 'rgba(90,209,171,1)'
     const red = 'rgba(255,0,0,1)'
 

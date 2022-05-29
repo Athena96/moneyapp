@@ -1,5 +1,4 @@
 import { Key } from "../Interfaces/KeyInterface";
-import { CategoryTypes } from "../../API";
 
 export class Category implements Key {
     id: string;

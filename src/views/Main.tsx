@@ -8,14 +8,12 @@ import { Switch, Route } from 'react-router-dom';
 import SimulationView from './SimulationView';
 import GraphsView from './GraphView';
 import { Simulation } from '../model/Base/Simulation';
-import EventsView from './EventsView';
 import ExpensesView from './ExpensesView';
 import DataView from './DataView';
 import SetupView from './SetupView';
 import AccountsView from './AccountsView';
 import AccountDetailView from './DetailViews/AccountDetailView';
 import SettingsView from './SettingsView';
-import { CategoryTypes } from '../API';
 import TestView from './TestView';
 import IncomesView from './IncomesView';
 

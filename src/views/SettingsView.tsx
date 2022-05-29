@@ -1,28 +1,24 @@
 import * as React from 'react';
 
-import { API, graphqlOperation } from 'aws-amplify'
+import { InputDataAccess } from '../utilities/InputDataAccess';
+import { Simulation } from '../model/Base/Simulation';
+import { Input } from '../model/Base/Input';
+
+import { Link } from "react-router-dom";
+
+import AccountsView from './AccountsView';
+
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import { createAssets, deleteAssets, updateAssets } from '../graphql/mutations';
-import { Asset } from '../model/Base/Asset';
-import { AssetDataAccess } from '../utilities/AssetDataAccess';
-import { cleanNumberDataInput } from '../utilities/helpers';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { Simulation } from '../model/Base/Simulation';
-import { Link } from "react-router-dom";
-import { AccountDataAccess } from '../utilities/AccountDataAccess';
-import { Account } from '../model/Base/Account';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
-import { InputDataAccess } from '../utilities/InputDataAccess';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Input } from '../model/Base/Input';
-import AccountsView from './AccountsView';
 import Divider from '@mui/material/Divider';
+
 
 interface SettingsViewProps {
     user: string;
@@ -58,15 +54,13 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
     }
 
     async handleSave(e: any) {
-        const id = e.target.id;
-
-
+        // const id = e.target.id;
     }
 
 
     render() {
         if (this.props.simulation && this.state.selectedInput) {
-            const settings = JSON.parse(this.state.selectedInput.settings);
+            // const settings = JSON.parse(this.state.selectedInput.settings);
             const birthday = '04/25/1996'
             return (
                 <Box >

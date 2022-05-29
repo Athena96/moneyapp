@@ -1,6 +1,16 @@
 
 import '../App.css';
 import * as React from 'react';
+
+import { Simulation } from '../model/Base/Simulation';
+
+import AccountsView from './AccountsView';
+import AssetsView from './AssetsView';
+import ExpensesView from './ExpensesView';
+import EventsView from './EventsView';
+import SettingsView from './SettingsView';
+import IncomesView from './IncomesView';
+
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -9,14 +19,6 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import AccountsView from './AccountsView';
-import { Simulation } from '../model/Base/Simulation';
-import AssetsView from './AssetsView';
-import ExpensesView from './ExpensesView';
-import EventsView from './EventsView';
-import SettingsView from './SettingsView';
-import { CategoryTypes } from '../API';
-import IncomesView from './IncomesView';
 
 interface SetupViewProps {
     user: string;
