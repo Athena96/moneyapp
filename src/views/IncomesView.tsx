@@ -126,7 +126,7 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
         }).reduce((p: number, c: number) => p + c, 0);
 
         let sum = budgets.map((budget: Budget) => {
-            return budget.type === CategoryTypes.Income ? budget.categories![0].getValue() : 0.0
+            return budget.type === CategoryTypes.Income ? budget.getSum() : 0.0
         }).reduce((p: number, c: number) => p + c, 0);
         return (sum / count).toFixed(2);
     }
@@ -260,6 +260,8 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                                             </Grid>
                                                             <Grid item xs={4}>
                                                                 <Typography ><b>${budget.categories![0].value.toFixed(2)} / mo</b></Typography>
+                                                                <Typography ><b>${(budget.getSum()*12).toFixed(2)} / yr</b></Typography>
+
                                                             </Grid>
                                                         </Grid>
                                                     </CardContent>

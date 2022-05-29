@@ -25,6 +25,7 @@ import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import Paper from '@mui/material/Paper';
 
 interface BudgetDialogViewProps {
     user: string;
@@ -128,6 +129,7 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
     }
 
     render() {
+        const isMobile = window.innerWidth <= 390;
         return (
             <>
                 <DialogTitle>Recurring {this.props.type === CategoryTypes.Expense ? "Expense" : "Income"}</DialogTitle>
@@ -135,16 +137,17 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
                     <DialogContentText>
                     </DialogContentText>
 
-                    <Stack direction='column' spacing={0}>
+                    <Stack direction='column' spacing={1}>
                         <br />
-                        {this.state.budgetToSave && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleRecurringNameChange(event)} value={this.state.budgetToSave.name} />}<br />
+                        {this.state.budgetToSave && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleRecurringNameChange(event)} value={this.state.budgetToSave.name} />}
+
 
                         {this.state.budgetToSave.categories && this.state.budgetToSave.categories.map((category: Category, i: number) => {
                             return (
                                 <>
-                                    <Stack direction='row' spacing={1}>
-                                        <TextField sx={{ width: '55%' }} label={'description'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleCategoryNameUpdate(event, i)} value={category.name} />
-                                        <TextField sx={{ width: '40%' }} label={'amount'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleCateogryValueUpdate(event, i)} InputProps={{
+                                    <Stack direction={isMobile ? 'column' : 'row'}  spacing={1}>
+                                        <TextField sx={{ width: isMobile ? '100%' : '55%' }} label={'description'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleCategoryNameUpdate(event, i)} value={category.name} />
+                                        <TextField sx={{ width: isMobile ? '100%' : '40%' }} label={'amount'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleCateogryValueUpdate(event, i)} InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position="start">
                                                     <AttachMoneyIcon />
@@ -156,7 +159,7 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
                                                 </InputAdornment>
                                             ),
                                         }} value={category.strValue}></TextField>
-                                        <Button onClick={(event) => this.handleDeleteCategory(category)} sx={{ width: '5%' }} variant="outlined"><HighlightOffIcon /></Button>
+                                        <Button onClick={(event) => this.handleDeleteCategory(category)} sx={{ width: isMobile ? '100%' : '5%' }} variant="outlined"><HighlightOffIcon /></Button>
                                     </Stack>
 
                                     <br />
@@ -170,7 +173,7 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
 
                         <br />
 
-                        <Stack direction='row' spacing={2}>
+                        <Stack direction={isMobile ? 'column' : 'row'} spacing={2}>
 
                             {this.state.budgetToSave && <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DatePicker
