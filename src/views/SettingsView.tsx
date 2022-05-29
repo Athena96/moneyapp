@@ -54,8 +54,10 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
     }
 
     async handleSave(e: any) {
-        // const id = e.target.id;
+        // console.log('bd ' + this.state.birthday)
     }
+
+
 
 
     render() {
@@ -65,6 +67,7 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
             return (
                 <Box >
                     <h1>Settings</h1>
+                    <h2>Birthday</h2>
 
                     <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                         <CardContent>
@@ -75,7 +78,7 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
                                         value={birthday}
                                         onChange={(newValue) => {
 
-                                            this.setState({ startDate: newValue } as any);
+                                            this.setState({ birthday: newValue } as any);
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
                                     />

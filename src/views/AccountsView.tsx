@@ -143,7 +143,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     if (this.props.simulation) {
       return (
         <Box >
-          <h1 >Accounts</h1>
+          <h2>Accounts</h2>
           <Button style={{ width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account +</Button>
           {this.state.accounts ? this.state.accounts.map((account: Account) => {
             return (

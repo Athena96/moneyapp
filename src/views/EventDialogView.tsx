@@ -9,6 +9,7 @@ import { Event } from "../model/Base/Event";
 
 import { cleanNumberDataInput } from '../utilities/helpers';
 import { EventDataAccess } from '../utilities/EventDataAccess';
+import { AccountDataAccess } from '../utilities/AccountDataAccess';
 
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -22,6 +23,8 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Account } from '../model/Base/Account';
 
 interface EventDialogViewProps {
     user: string;
@@ -32,24 +35,25 @@ interface EventDialogViewProps {
 }
 
 interface EventDialogViewState {
-    eventToSave: Event
+    eventToSave: Event;
+    accounts: Account[];
 }
-
 
 class EventDialogView extends React.Component<EventDialogViewProps, EventDialogViewState> {
     constructor(props: EventDialogViewProps) {
         super(props)
 
         this.state = {
-            eventToSave: this.props.event
+            eventToSave: this.props.event,
+            accounts: []
         }
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.handleAccountChange = this.handleAccountChange.bind(this);
     }
 
-    componentDidMount() {
-
+    async componentDidMount() {
+        await AccountDataAccess.fetchAccountsForUserSelectedSim(this, this.props.simulation.getKey());
     }
-
 
     handleOneTimeValueChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const newVal = event.target.value;
@@ -78,6 +82,15 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
         }
     }
 
+    handleAccountChange(event: SelectChangeEvent) {
+        const account = event.target.value as string;
+        if (this.state.eventToSave) {
+            const event = this.state.eventToSave;
+            event.account = account;
+            this.setState({ eventToSave: event })
+        }
+    }
+
     async saveEvent(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, eventToSave: Event) {
         try {
             await API.graphql(graphqlOperation(updateEvent, { input: EventDataAccess.convertToDDBObject(eventToSave, this.props.simulation!.id) }))
@@ -98,6 +111,24 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
                     <Stack direction='column' spacing={0}>
                         <br />
                         {this.props.event && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleOneTimeNameChange(event)} value={this.props.event.name} />}<br />
+
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">account</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={this.props.event.account}
+                                label="account"
+                                onChange={this.handleAccountChange}
+                            >
+                                {this.state.accounts.map((account: Account) => {
+                                    return (
+                                        <MenuItem value={`${account.name}`}>{account.name}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                        <br />
 
                         {this.props.event && <TextField label={'amount'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleOneTimeValueChange(event)} InputProps={{
                             startAdornment: (
