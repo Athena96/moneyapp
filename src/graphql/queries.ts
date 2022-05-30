@@ -9,6 +9,7 @@ export const getAccount = /* GraphQL */ `
       name
       simulation
       taxAdvantaged
+      contributionPercent
       createdAt
       updatedAt
     }
@@ -26,6 +27,7 @@ export const listAccounts = /* GraphQL */ `
         name
         simulation
         taxAdvantaged
+        contributionPercent
         createdAt
         updatedAt
       }

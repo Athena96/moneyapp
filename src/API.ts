@@ -7,12 +7,14 @@ export type CreateAccountInput = {
   name?: string | null,
   simulation?: string | null,
   taxAdvantaged?: number | null,
+  contributionPercent?: number | null,
 };
 
 export type ModelAccountConditionInput = {
   name?: ModelStringInput | null,
   simulation?: ModelStringInput | null,
   taxAdvantaged?: ModelIntInput | null,
+  contributionPercent?: ModelFloatInput | null,
   and?: Array< ModelAccountConditionInput | null > | null,
   or?: Array< ModelAccountConditionInput | null > | null,
   not?: ModelAccountConditionInput | null,
@@ -70,12 +72,25 @@ export type ModelIntInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
+export type ModelFloatInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
 export type Account = {
   __typename: "Account",
   id: string,
   name?: string | null,
   simulation?: string | null,
   taxAdvantaged?: number | null,
+  contributionPercent?: number | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -85,6 +100,7 @@ export type UpdateAccountInput = {
   name?: string | null,
   simulation?: string | null,
   taxAdvantaged?: number | null,
+  contributionPercent?: number | null,
 };
 
 export type DeleteAccountInput = {
@@ -266,18 +282,6 @@ export type ModelAssetsConditionInput = {
   not?: ModelAssetsConditionInput | null,
 };
 
-export type ModelFloatInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
 export type Assets = {
   __typename: "Assets",
   id: string,
@@ -359,6 +363,7 @@ export type ModelAccountFilterInput = {
   name?: ModelStringInput | null,
   simulation?: ModelStringInput | null,
   taxAdvantaged?: ModelIntInput | null,
+  contributionPercent?: ModelFloatInput | null,
   and?: Array< ModelAccountFilterInput | null > | null,
   or?: Array< ModelAccountFilterInput | null > | null,
   not?: ModelAccountFilterInput | null,
@@ -493,6 +498,7 @@ export type CreateAccountMutation = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -510,6 +516,7 @@ export type UpdateAccountMutation = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -527,6 +534,7 @@ export type DeleteAccountMutation = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -861,6 +869,7 @@ export type GetAccountQuery = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -881,6 +890,7 @@ export type ListAccountsQuery = {
       name?: string | null,
       simulation?: string | null,
       taxAdvantaged?: number | null,
+      contributionPercent?: number | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1186,6 +1196,7 @@ export type OnCreateAccountSubscription = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1198,6 +1209,7 @@ export type OnUpdateAccountSubscription = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1210,6 +1222,7 @@ export type OnDeleteAccountSubscription = {
     name?: string | null,
     simulation?: string | null,
     taxAdvantaged?: number | null,
+    contributionPercent?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,

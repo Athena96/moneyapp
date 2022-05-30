@@ -15,7 +15,7 @@ export class AccountDataAccess {
             })) as { data: ListAccountsQuery }
             for (const account of response.data.listAccounts!.items!) {
                 if (account?.simulation === userSimulation) {
-                    fetchedAccounts.push(new Account(account!.id!, account!.name!, account.taxAdvantaged || 0));
+                    fetchedAccounts.push(new Account(account!.id!, account!.name!, account.taxAdvantaged || 0, account?.contributionPercent || 0.0));
                 }
             }
 

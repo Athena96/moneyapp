@@ -61,7 +61,7 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
     try {
       const ee = await API.graphql({ query: getAccount, variables: { id: accountId } }) as { data: GetAccountQuery }
       const e = ee.data!.getAccount!;
-      const account = new Account(e!.id!, e!.name!, e.taxAdvantaged || 0)
+      const account = new Account(e!.id!, e!.name!, e.taxAdvantaged || 0, e?.contributionPercent || 0.0);
       this.setState({ account: account });
     } catch (err) {
       console.log('error:', err)

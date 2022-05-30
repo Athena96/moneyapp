@@ -13,6 +13,8 @@ import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { Simulation } from '../model/Base/Simulation';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import PercentIcon from '@mui/icons-material/Percent';
+import InputAdornment from '@mui/material/InputAdornment';
 
 interface AccountsViewProps {
   user: string;
@@ -96,6 +98,21 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     }
   }
 
+  handleAllocChange(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, account: Account, i: number) {
+
+    try {
+      const newValue = event.target.value;
+      const accnt = this.state.accounts[i];
+      accnt.contributionPercent = parseFloat(newValue);
+
+      this.setState({ accounts:  this.state.accounts});
+    } catch (e){
+      console.warn(e)
+    }
+
+    
+  }
+
   handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const target = e.target;
     const value = target.value;
@@ -145,12 +162,24 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
         <Box >
           <h2>Accounts</h2>
           <Button style={{ width: "100%" }} onClick={this.handleAddAccount} variant="outlined">Add Account +</Button>
-          {this.state.accounts ? this.state.accounts.map((account: Account) => {
+          {this.state.accounts ? this.state.accounts.map((account: Account, idx: number) => {
             return (
               <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                 <CardContent>
                   <Stack direction='column' spacing={2}>
-                    <TextField label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
+                  <Stack  direction='row' spacing={2}>
+
+                  <TextField sx={{width: '80%'}} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
+                  <TextField sx={{width: '20%'}} label={'Contributon Allocation'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocChange(event, account, idx)} InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <PercentIcon />
+                                </InputAdornment>
+                            ),
+                        }} value={account.contributionPercent}></TextField>
+                    </Stack>
+
+
                     <FormControlLabel control={<Checkbox name={`account-${account.getKey()}`} onChange={this.handleCheckBox} checked={account.taxAdvantaged === 1 ? true : false} />} label="Is this a tax advantaged account? (e.g. 401K, IRA)" />
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="outlined">Delete</Button>
                     <Button id={account.getKey()} onClick={this.handleSaveAccount} variant="contained">Save</Button>

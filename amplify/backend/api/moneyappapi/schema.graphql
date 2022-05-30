@@ -9,6 +9,7 @@ type Account @model {
   name: String
   simulation: String
   taxAdvantaged: Int
+  contributionPercent: Float
 }
 
 # no @model directive because we do not want a Category table, i.e. Categories

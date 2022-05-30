@@ -9,6 +9,7 @@ export const onCreateAccount = /* GraphQL */ `
       name
       simulation
       taxAdvantaged
+      contributionPercent
       createdAt
       updatedAt
     }
@@ -21,6 +22,7 @@ export const onUpdateAccount = /* GraphQL */ `
       name
       simulation
       taxAdvantaged
+      contributionPercent
       createdAt
       updatedAt
     }
@@ -33,6 +35,7 @@ export const onDeleteAccount = /* GraphQL */ `
       name
       simulation
       taxAdvantaged
+      contributionPercent
       createdAt
       updatedAt
     }
