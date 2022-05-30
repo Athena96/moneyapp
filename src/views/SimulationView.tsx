@@ -11,6 +11,9 @@ import TextField from '@mui/material/TextField';
 import LoadingButton from "@mui/lab/LoadingButton";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Dialog from '@mui/material/Dialog';
 
 import { Simulation } from '../model/Base/Simulation';
 import { Budget } from '../model/Base/Budget';
@@ -21,7 +24,6 @@ import { SimulationDataAccess } from '../utilities/SimulationDataAccess';
 import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 import { EventDataAccess } from '../utilities/EventDataAccess';
-import { cleanNumberDataInput } from '../utilities/helpers';
 import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { Account } from '../model/Base/Account';
@@ -35,6 +37,7 @@ interface SimulationViewProps {
 interface IState {
     simulations: Simulation[];
     isLoading: boolean;
+    showError: boolean;
 }
 
 class SimulationView extends React.Component<SimulationViewProps, IState> {
@@ -45,7 +48,8 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
         this.state = {
             simulations: [],
-            isLoading: false
+            isLoading: false,
+            showError: false
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -55,6 +59,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.render = this.render.bind(this);
+        this.closeDialog = this.closeDialog.bind(this);
     }
 
     handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -69,9 +74,6 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
             if (sim.getKey() === key) {
                 if (tp === 'name') {
                     sim.name = value;
-                }
-                if (tp === 'selected') {
-                    sim.selected = Number(cleanNumberDataInput(value));
                 }
             }
         }
@@ -124,7 +126,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                             cat['id'] = (new Date().getTime() + i).toString();
                             i += 1;
                         }
-                        await BudgetDataAccess.createBudgetBranch(cpBudget);
+                        await BudgetDataAccess.createBudgetBranch(BudgetDataAccess.convertToDDBObject(cpBudget, newSimulation.id));
                     }
 
                     // same for events
@@ -132,8 +134,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                         const cpEvent: any = event;
                         cpEvent['simulation'] = newSimulation.id;
                         cpEvent['id'] = new Date().getTime().toString()
-
-                        await EventDataAccess.createEventBranch(cpEvent);
+                        await EventDataAccess.createEventBranch(EventDataAccess.convertToDDBObject(cpEvent, newSimulation.id));
                     }
 
                     // same for inputs
@@ -163,7 +164,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
                     this.setState({ simulations: newSimulations });
                     this.setState({ isLoading: false });
-
+                    window.location.reload();
                 } catch (err) {
                     console.log('error creating...:', err);
                     this.setState({ isLoading: false });
@@ -205,9 +206,18 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         }
     }
 
-    async handleDelete(event: any) {
+    async handleDelete(simulation: Simulation) {
+
+        if (simulation.selected === 1 || this.state.simulations.length === 1) {
+            this.setState({showError: true});
+            return;
+        }
+
         if (window.confirm('Are you sure you want to DELETE this simulation? It will delete all associated Budgets/Events/Inputs...')) {
-            const idToDelete = (event.target as Element).id;
+
+
+
+            const idToDelete = simulation.id;
             let newSimulations = [];
             let simulationToDelete = null;
 
@@ -287,6 +297,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
                 this.setState({ simulations: newSimulations });
                 this.setState({ isLoading: false });
+                window.location.reload();
             } catch (err) {
                 console.log('error:', err);
                 this.setState({ isLoading: false });
@@ -301,10 +312,25 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
         console.log((event.target as Element).id);
     }
 
+  closeDialog() {
+    this.setState({ showError: false });
+  }
+
     render() {
         return (
-            <Box >
+            <Box sx={{margin: '20px'}}>
                 <h1 >Scenarios</h1>
+
+                <Dialog open={this.state.showError} onClose={this.closeDialog}>
+                <Alert severity="error">
+                    <AlertTitle>Oops</AlertTitle>
+                        You tried to delete the current Scenario you have selected, or you tried deleting the only Scenario you have (you must always have at least 1 Scenario).<br/>
+
+
+                </Alert>
+                 </Dialog>
+
+     
                 {this.state.isLoading ? <><Box style={{ textAlign: 'center' }}>
                     <LinearProgress />
                     <br />
@@ -319,9 +345,8 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                             <CardContent>
                                 <Stack direction='column' spacing={2}>
                                     <TextField label="Name" id="outlined-basic" variant="outlined" name={`name-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.name} />
-                                    <TextField label="Is Selected?" id="outlined-basic" variant="outlined" name={`selected-${simulation.getKey()}`} onChange={this.handleChange} value={simulation.selected} />
 
-                                    <LoadingButton id={simulation.getKey()} onClick={this.handleDelete} variant="outlined">Delete</LoadingButton>
+                                    <LoadingButton id={simulation.getKey()} onClick={(e) => this.handleDelete(simulation)} variant="outlined">Delete</LoadingButton>
                                     <LoadingButton id={simulation.getKey()} onClick={this.handleSave} variant="contained" >Save</LoadingButton>
                                 </Stack>
 

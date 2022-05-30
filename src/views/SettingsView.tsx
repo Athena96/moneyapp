@@ -18,7 +18,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import Divider from '@mui/material/Divider';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 interface SettingsViewProps {
     user: string;
@@ -66,7 +66,13 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
             const birthday = '04/25/1996'
             return (
                 <Box >
-                    <h1>Settings</h1>
+                    <Stack direction='row' spacing={1}>
+                        <AccountCircleIcon />
+                        <small >{this.props.user}</small>
+                    </Stack>
+                    <h1 >Settings</h1>
+
+
                     <h2>Birthday</h2>
 
                     <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>

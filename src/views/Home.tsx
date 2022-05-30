@@ -11,7 +11,7 @@ import { Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify'
 import { API, graphqlOperation } from 'aws-amplify'
 import awsExports from "../aws-exports";
-import { createSimulation } from '../graphql/mutations';
+import { createSimulation, updateSimulation } from '../graphql/mutations';
 
 import { Link } from "react-router-dom";
 
@@ -35,6 +35,10 @@ import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import Dialog from '@mui/material/Dialog';
+import SimulationView from './SimulationView';
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -117,7 +121,9 @@ interface IState {
   selectedTab: number;
   user: string | undefined;
   simulation: Simulation | undefined;
+  simulations: Simulation[];
   open: boolean;
+  showScenario: boolean;
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -128,8 +134,9 @@ class Home extends React.Component<IProps, IState> {
       selectedTab: 0,
       user: undefined,
       simulation: undefined,
-      open: false
-
+      open: false,
+      showScenario: false,
+      simulations: []
     }
 
     this.render = this.render.bind(this);
@@ -137,6 +144,10 @@ class Home extends React.Component<IProps, IState> {
     this.newTab = this.newTab.bind(this);
     this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
+    this.scenarioSwitch = this.scenarioSwitch.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
+    this.handleSimulationChange = this.handleSimulationChange.bind(this);
+
   }
 
   async componentDidMount() {
@@ -149,7 +160,10 @@ class Home extends React.Component<IProps, IState> {
       simulation = new Simulation(new Date().getTime().toString(), 'Default Scenario', 1, '[]', "", new Date(), email);
       await API.graphql(graphqlOperation(createSimulation, { input: simulation }));
     }
+
     this.setState({ user: email, simulation: simulation });
+    await SimulationDataAccess.fetchSimulationsForUser(this, this.state.user!);
+
   }
 
   handleDrawerOpen() {
@@ -164,6 +178,46 @@ class Home extends React.Component<IProps, IState> {
     this.setState({ selectedTab: newValue });
   }
 
+  scenarioSwitch() {
+    console.log('scenarioSwitch')
+    this.setState({ showScenario: true });
+  }
+
+  closeDialog() {
+    this.setState({ showScenario: false });
+  }
+
+  async handleSimulationChange(event: SelectChangeEvent) {
+    const selectedSimulationName = event.target.value as string;
+    if (selectedSimulationName !== '#add-new-simulation#') {
+      let sims = this.state.simulations;
+
+      for (const simulation of sims) {
+        if (simulation.name === selectedSimulationName) {
+          simulation.selected = 1
+          this.setState({ simulation: simulation });
+        } else {
+          simulation.selected = 0;
+        }
+        await this.saveSimulation(simulation);
+      }
+
+      this.setState({ simulations: sims });
+      window.location.reload();
+
+    }
+
+  }
+
+
+  async saveSimulation(simulation: Simulation) {
+    try {
+      await API.graphql(graphqlOperation(updateSimulation, { input: simulation }));
+    } catch (err) {
+      console.log('error creating account:', err)
+    }
+  }
+
   async handleSignOut() {
     try {
       await Auth.signOut();
@@ -173,12 +227,20 @@ class Home extends React.Component<IProps, IState> {
   }
 
   render() {
-    if (this.state.user) {
+
+    if (this.state.user && this.state.simulations) {
       return (
 
         <Box sx={{ display: 'flex' }}>
+
+          <Dialog open={this.state.showScenario} onClose={this.closeDialog}>
+            {this.state.simulation && <SimulationView user={this.state.user} simulation={this.state.simulation} />}
+          </Dialog>
+
           <AppBar position="fixed" sx={{ bgcolor: moneyGreen }} >
+
             <Toolbar>
+
               <IconButton
                 edge="start"
                 color="default"
@@ -189,8 +251,31 @@ class Home extends React.Component<IProps, IState> {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                <Link style={{ color: 'white', textDecoration: 'none' }} to="/">Money Tomorrow {<small>{this.state.user}</small>}</Link>
+                <Link style={{ color: 'white', textDecoration: 'none' }} to="/">Money Tomorrow</Link>
               </Typography>
+
+              {/* <Button variant="outlined" style={{ color: 'white' }} onClick={this.scenarioSwitch}>
+                <><small>Scenario</small>:{' '}<u>{this.state.simulation?.name}</u></>
+              </Button> */}
+
+              <FormControl style={{ color: 'white' }}>
+                <InputLabel id="demo-simple-select-label">simulation</InputLabel>
+                <Select
+                  style={{ color: 'white' }}
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={this.state.simulation!.name}
+                  label="simulation"
+                  onChange={this.handleSimulationChange}
+                >
+                  {this.state.simulations.map((sim: Simulation) => {
+                    return (
+                      <MenuItem value={`${sim.name}`}>{sim.name}</MenuItem>
+                    )
+                  })}
+                  <MenuItem value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
+                </Select>
+              </FormControl>
 
               <Button variant="outlined" style={{ color: 'white' }} onClick={this.handleSignOut}>
                 Sign Out

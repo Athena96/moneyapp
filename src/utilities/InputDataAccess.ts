@@ -20,7 +20,9 @@ export class InputDataAccess {
                     break;
                 }
             }
-            componentState.setState({  selectedInput: selectedInput })
+            if (componentState) {
+                componentState.setState({  selectedInput: selectedInput })
+            }
         } catch (error) {
             console.log(error);
         }

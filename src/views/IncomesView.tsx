@@ -284,7 +284,7 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                                         <Grid container>
                                                             <Grid item xs={8}>
                                                                 <Typography ><b>{event.name}</b></Typography>
-                                                                <Typography>from account: {event.account}</Typography>
+                                                                <Typography>to account: {event.account}</Typography>
                                                                 <Button onClick={(e) => this.editOneTimeIncome(e, event)}><EditIcon /></Button>
                                                                 <Button onClick={(e) => this.deleteOneTimeIncome(event)}><DeleteIcon /></Button>
                                                             </Grid>
