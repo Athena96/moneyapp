@@ -26,7 +26,7 @@ export class SimulationDataAccess {
         return fetchedSimulations;
     }
 
-    static async fetchSelectedSimulationForUser(componentState: any, user: string): Promise<Simulation | undefined> {
+    static async fetchSelectedSimulationForUser(componentState: any|null, user: string): Promise<Simulation | undefined> {
         let selectedSimulation: Simulation | undefined = undefined;
         try {
             const response = (await API.graphql({
@@ -39,7 +39,9 @@ export class SimulationDataAccess {
                     break;
                 }
             }
-            componentState.setState({ simulations: [selectedSimulation], selectedSimulation: selectedSimulation })
+            if (componentState) {
+                componentState.setState({ simulations: [selectedSimulation], selectedSimulation: selectedSimulation })
+            }
         } catch (error) {
             console.log(error);
         }

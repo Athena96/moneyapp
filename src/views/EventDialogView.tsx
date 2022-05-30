@@ -31,7 +31,7 @@ interface EventDialogViewProps {
     simulation: Simulation;
     event: Event;
     type: CategoryTypes;
-    closeDialog: () => void;
+    closeDialog?: () => void;
 }
 
 interface EventDialogViewState {
@@ -97,7 +97,9 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
         } catch (err) {
             console.log('error creating todo:', err)
         }
-        this.props.closeDialog();
+        if (this.props.closeDialog) {
+            this.props.closeDialog();
+        }
     }
 
     render() {
@@ -121,9 +123,9 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
                                 label="account"
                                 onChange={this.handleAccountChange}
                             >
-                                {this.state.accounts.map((account: Account) => {
+                                {this.state.accounts.map((account: Account, z: number) => {
                                     return (
-                                        <MenuItem value={`${account.name}`}>{account.name}</MenuItem>
+                                        <MenuItem key={z} value={`${account.name}`}>{account.name}</MenuItem>
                                     )
                                 })}
                             </Select>
@@ -160,7 +162,7 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
                     </Stack>
 
                     <DialogActions>
-                        <Button onClick={this.props.closeDialog}>Cancel</Button>
+                        {this.props.closeDialog && <Button onClick={this.props.closeDialog}>Cancel</Button> }
                         <Button onClick={(e) => this.saveEvent(e, this.state.eventToSave)}>Save</Button>
                     </DialogActions>
 

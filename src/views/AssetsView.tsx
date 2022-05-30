@@ -178,9 +178,9 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                                                 label="Account"
                                                 onChange={this.handleDropChange}
                                             >
-                                                {this.state.accounts.map((account: Account) => {
+                                                {this.state.accounts.map((account: Account, z: number) => {
                                                     return (
-                                                        <MenuItem  value={account.id}>{account.name}</MenuItem>
+                                                        <MenuItem key={z} value={account.id}>{account.name}</MenuItem>
                                                     )
                                                 })}
                                             </Select>

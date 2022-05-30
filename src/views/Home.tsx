@@ -268,12 +268,12 @@ class Home extends React.Component<IProps, IState> {
                   label="simulation"
                   onChange={this.handleSimulationChange}
                 >
-                  {this.state.simulations.map((sim: Simulation) => {
+                  {this.state.simulations.map((sim: Simulation, z: number) => {
                     return (
-                      <MenuItem value={`${sim.name}`}>{sim.name}</MenuItem>
+                      <MenuItem key={z} value={`${sim.name}`}>{sim.name}</MenuItem>
                     )
                   })}
-                  <MenuItem value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
+                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
                 </Select>
               </FormControl>
 

@@ -47,8 +47,9 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/accounts" render={(props) => <AccountsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/scenarios" render={(props) => <SimulationView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/data" render={(props) => <DataView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/event" render={(props) => <EventDetailView user={this.props.user} simulation={this.props.simulation}/>} />
+        
         <Route path="/account" component={AccountDetailView} />
-        <Route path="/event" component={EventDetailView} />
         <Route path="/budget" component={BudgetDetailView} />
         <Route path="/setup" render={(props) => <SetupView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/settings" render={(props) => <SettingsView user={this.props.user} simulation={this.props.simulation} />} />

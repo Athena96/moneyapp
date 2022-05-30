@@ -224,8 +224,8 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                 {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget, i: number) => {
                   if (budget.type === CategoryTypes.Expense) {
                     return (
-                      <>
-                        <Card variant="outlined" >
+                      <div  key={i}>
+                        <Card  variant="outlined" >
                           <CardContent>
                             <Grid container>
                               <Grid item xs={8}>
@@ -242,7 +242,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                           </CardContent>
                         </Card>
                         <br />
-                      </>
+                      </div>
                     )
                   } else {
                     return (<></>)
@@ -271,7 +271,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                 {this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event, i: number) => {
                   if (event.type === CategoryTypes.Expense) {
                     return (
-                      <>
+                      <div  key={i}>
                         <Card variant="outlined" >
                           <CardContent>
                             <Grid container>
@@ -293,7 +293,7 @@ class ExpensesView extends React.Component<ExpensesViewProps, IState> {
                           </CardContent>
                         </Card>
                         <br />
-                      </>
+                      </div>
                     )
                   } else {
                     return (<></>)

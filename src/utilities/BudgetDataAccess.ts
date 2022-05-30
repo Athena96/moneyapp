@@ -49,8 +49,6 @@ export class BudgetDataAccess {
 
                         }
                     }
-
-                    console.log('here ' + JSON.stringify(cats))
                     fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));
                 }
             }

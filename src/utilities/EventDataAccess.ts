@@ -1,12 +1,10 @@
 
-import { listEvents } from '../graphql/queries'
-import { ListEventsQuery } from "../API";
+import { getEvent, listEvents } from '../graphql/queries'
+import { GetEventQuery, ListEventsQuery } from "../API";
 import { createEvent } from '../graphql/mutations';
 import { Event } from '../model/Base/Event';
 
 import { Category } from '../model/Base/Category';
-
-import { Simulation } from '../model/Base/Simulation';
 
 import { API, graphqlOperation } from 'aws-amplify'
 
@@ -113,37 +111,17 @@ export class EventDataAccess {
     }
   }
 
+  static async getEvent(eventId: string) {
 
-  static async computeEvents(currentAmazonStockPrice: number, selectedSim: Simulation, componentState: any) {
-    let fetchedEvents: Event[] = [];
     try {
-      const response = await EventDataAccess.paginateEvents();
-      for (const event of response) {
-
-        if (event?.simulation && event?.simulation! === selectedSim?.id!) {
-          let value = 0.0;
-          let name = event!.name!;
-          if (event!.category && event?.category.value) {
-            value = event?.category!.value!;
-          }
-
-          // if the event is an AMZN stock RSU vesting, then use todays current stock price for this.
-          if (event?.name && event?.name?.includes('amzn')) {
-            const parts = event.name.split(' ');
-            const quantity = Number(parts[1]);
-            name = `earn ${quantity} x amzn stock ${currentAmazonStockPrice}`;
-            value = Number((quantity * currentAmazonStockPrice - (0.299 * quantity * currentAmazonStockPrice)).toFixed(2));
-          }
-          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value) : null;
-          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc, event!.type!);
-
-          fetchedEvents.push(e);
-        }
-      }
-      componentState.setState({ events: fetchedEvents })
-    } catch (error) {
-      console.log(error);
+      const eventResponse = await API.graphql({ query: getEvent, variables: { id: eventId } }) as { data: GetEventQuery }
+      const ddbEvent = eventResponse.data!.getEvent!;
+      const category = ddbEvent?.category ? new Category(ddbEvent.category!.id!, ddbEvent!.category!.name!, ddbEvent!.category!.value!) : null;
+      const event = new Event(ddbEvent!.id!, ddbEvent!.name!, new Date(ddbEvent!.date!), ddbEvent!.account!, category, ddbEvent!.type!);
+      return event;
+    } catch (err) {
+      console.log('error:', err)
     }
-  }
 
+  }
 }
