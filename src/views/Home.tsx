@@ -258,12 +258,12 @@ class Home extends React.Component<IProps, IState> {
                 <><small>Scenario</small>:{' '}<u>{this.state.simulation?.name}</u></>
               </Button> */}
 
-              <FormControl style={{ color: 'white' }}>
-                <InputLabel id="demo-simple-select-label">simulation</InputLabel>
+              <FormControl style={{ color: 'white' }} size="small">
+                <InputLabel id="demo-select-small">simulation</InputLabel>
                 <Select
                   style={{ color: 'white' }}
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
+                  labelId="demo-select-small"
+                  id="demo-select-small"
                   value={this.state.simulation!.name}
                   label="simulation"
                   onChange={this.handleSimulationChange}
