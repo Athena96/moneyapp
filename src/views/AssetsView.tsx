@@ -55,8 +55,8 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
     async handleAddAsset() {
         try {
-            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: this.state.accounts[0].id, isCurrency: 0 };
-            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, this.state.accounts[0].id, 0);
+            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: this.state.accounts[0].name, isCurrency: 0 };
+            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, this.state.accounts[0].name, 0);
             newDBAsset['simulation'] = this.props.simulation!.id;
 
             let newAssets = [...this.state.assets, newAsset]
@@ -180,7 +180,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                                             >
                                                 {this.state.accounts.map((account: Account, z: number) => {
                                                     return (
-                                                        <MenuItem key={z} value={account.id}>{account.name}</MenuItem>
+                                                        <MenuItem key={z} value={account.name}>{account.name}</MenuItem>
                                                     )
                                                 })}
                                             </Select>
