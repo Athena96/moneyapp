@@ -168,9 +168,8 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                 <CardContent>
                   <Stack direction='column' spacing={2}>
                   <Stack  direction='row' spacing={2}>
-
-                  <TextField sx={{width: '80%'}} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
-                  <TextField sx={{width: '20%'}} label={'Contributon Allocation'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocChange(event, account, idx)} InputProps={{
+                  <TextField sx={{width: '60%'}} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
+                  <TextField sx={{width: '40%'}} label={'Contributon Allocation'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocChange(event, account, idx)} InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
                                     <PercentIcon />

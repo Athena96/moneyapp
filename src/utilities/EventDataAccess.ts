@@ -67,8 +67,13 @@ export class EventDataAccess {
             value = event?.category!.value!;
           }
 
-          const cc = event?.category ? new Category(event.category!.id!, event!.category!.name!, value) : null;
-          const e = new Event(event!.id!, name, new Date(event!.date!), event!.account!, cc, event!.type!);
+          const e = new Event(
+            event!.id!, 
+            name, 
+            new Date(event!.date!), 
+            event!.account!, 
+            new Category(event.category!.id!, event!.category!.name!, value), 
+            event!.type!);
 
           fetchedEvents.push(e);
 
@@ -116,8 +121,14 @@ export class EventDataAccess {
     try {
       const eventResponse = await API.graphql({ query: getEvent, variables: { id: eventId } }) as { data: GetEventQuery }
       const ddbEvent = eventResponse.data!.getEvent!;
-      const category = ddbEvent?.category ? new Category(ddbEvent.category!.id!, ddbEvent!.category!.name!, ddbEvent!.category!.value!) : null;
-      const event = new Event(ddbEvent!.id!, ddbEvent!.name!, new Date(ddbEvent!.date!), ddbEvent!.account!, category, ddbEvent!.type!);
+
+      const event = new Event(
+        ddbEvent!.id!, 
+        ddbEvent!.name!, 
+        new Date(ddbEvent!.date!), 
+        ddbEvent!.account!, 
+        new Category(ddbEvent.category!.id!, ddbEvent!.category!.name!, ddbEvent!.category!.value!), 
+        ddbEvent!.type!);
       return event;
     } catch (err) {
       console.log('error:', err)

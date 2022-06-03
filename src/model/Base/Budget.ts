@@ -8,10 +8,10 @@ export class Budget implements Key {
     name: string;
     startDate: Date;
     endDate: Date;
-    categories: Category[] | null;
+    categories: Category[];
     type: CategoryTypes;
 
-    constructor(id: string, name: string, startDate: Date, endDate: Date, categories: Category[] | null,  type: CategoryTypes) {
+    constructor(id: string, name: string, startDate: Date, endDate: Date, categories: Category[],  type: CategoryTypes) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;

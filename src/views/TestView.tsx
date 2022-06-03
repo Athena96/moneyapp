@@ -83,7 +83,8 @@ class TestView extends React.Component<TestViewProps, IState> {
 
     async handleAddBudget(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, simulationId: string) {
         try {
-            let newBudet: any = new Budget(new Date().getTime().toString(), "...", new Date(), new Date(), null, CategoryTypes.Expense);
+
+            let newBudet: any = new Budget(new Date().getTime().toString(), "...", new Date(), new Date(), [], CategoryTypes.Expense);
             newBudet['simulation'] = this.props.simulation!.getKey();
 
             let newBudgets = [...this.state.budgets, newBudet]

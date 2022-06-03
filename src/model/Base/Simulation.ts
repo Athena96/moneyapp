@@ -28,9 +28,8 @@ export class Simulation implements Key {
         const jsonData = JSON.parse(this.simulationData);
         let data: MonteCarloRowData[] = [];
         for (const item of jsonData) {
-
             let d: MonteCarloRowData = {
-                date: item.date,
+                date: new Date(item.date),
                 maxBalance: item.maxBalance,
                 avgBalance: item.avgBalance,
                 assumedAvgBalance: item.assumedAvgBalance,

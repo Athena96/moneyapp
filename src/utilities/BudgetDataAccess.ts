@@ -9,20 +9,12 @@ import { createBudget } from '../graphql/mutations';
 export class BudgetDataAccess {
 
     static convertToDDBObject(budget: Budget, sim: string) {
-        let cats = null
-
-        if (budget.categories) {
-            if (budget.categories) {
-                cats = []
-                for (const cat of budget.categories) {
-                    const cc = new Category(cat.id, cat.name, cat.value);
-                    delete cc.strValue;
-                    cats.push(cc)
-                }
-            }
-
+        let cats: Category[] = []
+        for (const cat of budget.categories) {
+            const cc = new Category(cat.id, cat.name, cat.value);
+            delete cc.strValue;
+            cats.push(cc)
         }
-
         let b: any = new Budget(budget.id, budget.name, budget.startDate, budget.endDate, cats, budget.type)
         b['simulation'] = sim;
         return b;
@@ -37,18 +29,14 @@ export class BudgetDataAccess {
                 query: listBudgets
             })) as { data: ListBudgetsQuery }
             for (const budget of response.data.listBudgets!.items!) {
-                if (budget?.simulation && budget?.simulation! === userSimulation) {
-                    let cats = null;
-
-                    if (budget?.categories) {
-                        cats = [];
-                        for (const category of budget!.categories!) {
-                            // if category.name === input.name... use input.value.
-
-                            cats.push(new Category(category!.id!, category!.name!, category!.value!));
-
+                if (budget?.simulation && budget?.simulation === userSimulation) {
+                    let cats: Category[] = [];
+                    for (const category of budget.categories || []) {
+                        if (category) {
+                            cats.push(new Category(category.id || "", category.name || "", category.value|| 0.0));   
                         }
                     }
+
                     fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));
                 }
             }
@@ -72,18 +60,11 @@ export class BudgetDataAccess {
                 query: listBudgets
             })) as { data: ListBudgetsQuery }
             for (const budget of response.data.listBudgets!.items!) {
-
                 if (budget?.simulation && budget?.simulation! === selectedSimulationId) {
-
-                    let cats = null;
-
-                    if (budget?.categories) {
-                        cats = [];
-                        for (const category of budget!.categories!) {
-                            // if category.name === input.name... use input.value.
-
-                            cats.push(new Category(category!.id!, category!.name!, category!.value!));
-
+                    let cats: Category[] = [];
+                    for (const category of budget.categories || []) {
+                        if (category) {
+                            cats.push(new Category(category.id || "", category.name || "", category.value|| 0.0));   
                         }
                     }
                     fetchedBudgets.push(new Budget(budget!.id!, budget!.name!, new Date(budget!.startDate!), new Date(budget!.endDate!), cats, budget!.type!));

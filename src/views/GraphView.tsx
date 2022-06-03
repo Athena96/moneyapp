@@ -20,8 +20,6 @@ import { moneyGreenBoldText, black } from '../utilities/constants';
 import { Tick } from 'chart.js';
 import { Simulation } from '../model/Base/Simulation';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 interface GraphsViewProps {
   user: string;
@@ -212,10 +210,6 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       return (
         <Box >
           {this.state.chartData && this.state.lastComputed ? <>
-            <Stack direction='row' spacing={1}>
-              <AccountCircleIcon />
-              <small >{this.props.user}</small>
-            </Stack>
             <h1 >Dashboard</h1>
 
             <Paper variant="outlined" sx={{ p: 2, }} >

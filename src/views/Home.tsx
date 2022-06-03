@@ -39,6 +39,8 @@ import Dialog from '@mui/material/Dialog';
 import SimulationView from './SimulationView';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Menu from '@mui/material/Menu';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -124,6 +126,7 @@ interface IState {
   simulations: Simulation[];
   open: boolean;
   showScenario: boolean;
+  profileOpen: boolean;
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -136,7 +139,8 @@ class Home extends React.Component<IProps, IState> {
       simulation: undefined,
       open: false,
       showScenario: false,
-      simulations: []
+      simulations: [],
+      profileOpen: false
     }
 
     this.render = this.render.bind(this);
@@ -147,7 +151,8 @@ class Home extends React.Component<IProps, IState> {
     this.scenarioSwitch = this.scenarioSwitch.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
     this.handleSimulationChange = this.handleSimulationChange.bind(this);
-
+    this.handleProfileOpen = this.handleProfileOpen.bind(this);
+    this.profileClose = this.profileClose.bind(this);
   }
 
   async componentDidMount() {
@@ -226,6 +231,16 @@ class Home extends React.Component<IProps, IState> {
     }
   }
 
+  handleProfileOpen() {
+    const curr = this.state.profileOpen;
+
+    this.setState({profileOpen: !curr});
+  }
+
+  profileClose() {
+    this.setState({profileOpen: false});
+
+  }
   render() {
 
     if (this.state.user && this.state.simulations) {
@@ -258,7 +273,7 @@ class Home extends React.Component<IProps, IState> {
                 <><small>Scenario</small>:{' '}<u>{this.state.simulation?.name}</u></>
               </Button> */}
 
-              <FormControl style={{ color: 'white' }} size="small">
+              <FormControl style={{ color: 'white', marginRight: '10px' }} size="small">
                 <InputLabel id="demo-select-small">simulation</InputLabel>
                 <Select
                   style={{ color: 'white' }}
@@ -273,14 +288,43 @@ class Home extends React.Component<IProps, IState> {
                       <MenuItem key={z} value={`${sim.name}`}>{sim.name}</MenuItem>
                     )
                   })}
-                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
+                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined'  onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
                 </Select>
               </FormControl>
 
-              <Button variant="outlined" style={{ color: 'white' }} onClick={this.handleSignOut}>
-                Sign Out
-              </Button>
 
+
+
+              {/* <Button variant="outlined" style={{ color: 'white' }} onClick={this.handleSignOut}>
+                Sign Out
+              </Button> */}
+
+              <IconButton
+                edge="start"
+                color="default"
+                aria-label="open drawer"
+                style={{ color: 'white' }}
+                onClick={this.handleProfileOpen}
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={this.state.profileOpen}
+                onClose={this.profileClose}
+              >
+                <MenuItem>{this.state.user}</MenuItem>
+                <MenuItem onClick={this.handleSignOut}>Sign Out</MenuItem>
+              </Menu>
             </Toolbar>
 
           </AppBar>

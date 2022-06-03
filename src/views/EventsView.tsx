@@ -75,7 +75,7 @@ class EventsView extends React.Component<EventsViewProps, IState> {
     }
   }
 
-  async addEvent(id: string, name: string, date: Date, account: string, category: Category | null, type: CategoryTypes) {
+  async addEvent(id: string, name: string, date: Date, account: string, category: Category, type: CategoryTypes) {
     try {
       let newEvent: any = new Event(id, name, date, account, category, type);
       newEvent['simulation'] = this.props.simulation!.getKey();
@@ -91,7 +91,9 @@ class EventsView extends React.Component<EventsViewProps, IState> {
   }
 
   async handleAddEvents() {
-    await this.addEvent(new Date().getTime().toString(), '...', new Date(), 'brokerage', null, CategoryTypes.Expense);
+    const eventId = new Date().getTime().toString();
+    const catId = new Date().getTime().toString();
+    await this.addEvent(eventId, '...', new Date(), 'brokerage', new Category(catId, "...", 0.0), CategoryTypes.Expense);
   }
 
   async handleBulkAddEvents() {

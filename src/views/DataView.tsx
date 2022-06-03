@@ -71,31 +71,36 @@ class DataView extends React.Component<DataViewProps, IState> {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {this.state.balanceData.map((row: MonteCarloRowData) => (
-                                <TableRow
-                                    style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
-                                    key={row.date}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {row.date}
-                                    </TableCell>
-
-                                    <TableCell align="center">{row.assumedAvgBalanceBrok}</TableCell>
-                                    <TableCell align="center">{row.assumedAvgBalanceTax}</TableCell>
-
-                                    <TableCell align="center">{row.avgBalance}</TableCell>
-                                    <TableCell align="center">${Number(row.incomeExpenses).toFixed(2)}</TableCell>
-                                    <TableCell align="center">{row.accountUsed}</TableCell>
-                                    {/* <TableCell align="center">{row.taxBal}</TableCell>
-                                            <TableCell align="center">{row.sum}</TableCell> */}
-                                    <TableCell align="center">{row.return}%</TableCell>
-                                    <TableCell align="left">{row.events?.map((e) => {
-                                        const pm = e.type!.toString() === 'Expense' ? '-' : '+';
-                                        return <Link to={`/event/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value} | ` : `${e.name} ${pm}$${e.category!.value} | `}</Link>
-                                    })}</TableCell>
-                                </TableRow>
-                            ))}
+                            {this.state.balanceData.map((row: MonteCarloRowData, i: number) => {
+                                if (i > 0) {
+                                    return (
+                                        <TableRow
+                                        style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
+                                        key={row.date.toString()}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {row.date.getMonth() + 2}/{row.date.getFullYear()}
+                                        </TableCell>
+    
+                                        <TableCell align="center">${Number(row.assumedAvgBalanceBrok).toFixed(2)}</TableCell>
+                                        <TableCell align="center">${Number(row.assumedAvgBalanceTax).toFixed(2)}</TableCell>
+                                        <TableCell align="center">${Number(row.avgBalance).toFixed(2)}</TableCell>
+                                        <TableCell align="center">${Number(row.incomeExpenses).toFixed(2)}</TableCell>
+                                        <TableCell align="center">{row.accountUsed}</TableCell>
+                                        {/* <TableCell align="center">{row.taxBal}</TableCell>
+                                                <TableCell align="center">{row.sum}</TableCell> */}
+                                        <TableCell align="center">{row.return}%</TableCell>
+                                        <TableCell align="left">{row.events?.map((e) => {
+                                            const pm = e.type!.toString() === 'Expense' ? '-' : '+';
+                                            return <Link to={`/event/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value} | ` : `${e.name} ${pm}$${e.category!.value} | `}</Link>
+                                        })}</TableCell>
+                                    </TableRow>
+                                    )
+                                } else {
+                                    return <></>
+                                }
+                        })}
                         </TableBody>
                     </Table>
                 </TableContainer>

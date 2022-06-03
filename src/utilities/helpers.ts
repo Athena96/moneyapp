@@ -1,20 +1,9 @@
 import { Event } from '../model/Base/Event';
 import { Key } from '../model/Interfaces/KeyInterface';
 
-export interface RowData {
-  date: string;
-  brokerageBal: string;
-  taxBal: string;
-  sum: string;
-  note: string;
-  return: string;
-  accountUsed: string;
-  events?: Event[];
-  incomeExpenses?: string;
-}
 
 export interface MonteCarloRowData {
-  date: string;
+  date: Date;
   maxBalance?: string;
   avgBalance?: string;
   assumedAvgBalance?: string;
