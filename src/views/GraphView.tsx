@@ -153,15 +153,17 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
       // eslint-disable-next-line no-loop-func
       simulationData.forEach((dataRow, i) => {
         if (name.key === 'maxBalance') {
-          chartData.datasets[j].data.push(Number(dataRow.maxBalance.replace('$', '')))
+          // chartData.datasets[j].data.push(Number(dataRow.maxBalance.replace('$', '')))
         } else if (name.key === 'avgBalance') {
-          chartData.datasets[j].data.push(Number(dataRow.avgBalance.replace('$', '')))
+          // chartData.datasets[j].data.push(Number(dataRow.avgBalance.replace('$', '')))
         } else if (name.key === 'minBalance') {
-          chartData.datasets[j].data.push(Number(dataRow.minBalance.replace('$', '')))
+          // chartData.datasets[j].data.push(Number(dataRow.minBalance.replace('$', '')))
         } else if (name.key === 'assumedAvgBalanceBrok') {
           chartData.datasets[j].data.push(Number(dataRow.assumedAvgBalanceBrok.replace('$', '')))
         } else if (name.key === 'assumedAvgBalanceTax') {
           chartData.datasets[j].data.push(Number(dataRow.assumedAvgBalanceTax.replace('$', '')))
+        } else if (name.key === 'incomeExpenses') {
+          chartData.datasets[j].data.push(Number(dataRow.incomeExpenses?.replace('$', '')))
         }
       });
       j += 1;

@@ -9,19 +9,23 @@ export interface RowData {
   note: string;
   return: string;
   accountUsed: string;
-  events?: Event[]
+  events?: Event[];
+  incomeExpenses?: string;
 }
 
 export interface MonteCarloRowData {
   date: string;
-  maxBalance: string;
-  avgBalance: string;
-  assumedAvgBalance: string;
-  minBalance: string;
+  maxBalance?: string;
+  avgBalance?: string;
+  assumedAvgBalance?: string;
+  minBalance?: string;
   return: string;
   accountUsed: string;
   note: string;
-  events?: Event[]
+  events?: Event[];
+  assumedAvgBalanceBrok: string;
+  assumedAvgBalanceTax: string;
+  incomeExpenses?: string;
 }
 
 // actual general helpers

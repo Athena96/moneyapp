@@ -18,15 +18,33 @@ export class AssetDataAccess {
         }
       }
 
+      static async paginateAssets() {
+        let nxtTkn: string | null | undefined;
+        let events: any = []
+        do {
+          const response = (await API.graphql({
+            query: listAssets, variables: { nextToken: nxtTkn }
+          })) as { data: ListAssetsQuery }
+    
+          for (const event of response.data.listAssets!.items!) {
+            events.push(event);
+          }
+          nxtTkn = response.data.listAssets?.nextToken;
+        } while (nxtTkn !== null);
+    
+        return events;
+    
+      }
 
     static async fetchAssetsForSelectedSim(componentState: any | null, userSimulation: string): Promise<Asset[]> {
         let fetchedAssets: Asset[] = [];
         try {
-            const response = (await API.graphql({
-                query: listAssets
-            })) as { data: ListAssetsQuery }
-            for (const asset of response.data.listAssets!.items!) {
+            const response =  await AssetDataAccess.paginateAssets();
+
+            console.log(JSON.stringify(response.data))
+            for (const asset of response) {
                 if (asset?.simulation === userSimulation) {
+                    console.log(`asset ` + asset.account)
                     fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, String(asset!.quantity!), asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
                 }
             }

@@ -59,11 +59,15 @@ class DataView extends React.Component<DataViewProps, IState> {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Date</TableCell>
+                                <TableCell align="center">Brokerage Balance</TableCell>
+                                <TableCell align="center">Tax Balance</TableCell>
                                 <TableCell align="center">Total Balance</TableCell>
+                                <TableCell align="center">Income/Expense</TableCell>
+                                <TableCell align="center">Account Withdrawn From</TableCell>
                                 {/* <TableCell align="center">Tax</TableCell>
                                         <TableCell align="center">Sum</TableCell> */}
                                 <TableCell align="center">Return</TableCell>
-                                <TableCell align="left">Note</TableCell>
+                                <TableCell align="left">Events</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -76,7 +80,13 @@ class DataView extends React.Component<DataViewProps, IState> {
                                     <TableCell component="th" scope="row">
                                         {row.date}
                                     </TableCell>
+
+                                    <TableCell align="center">{row.assumedAvgBalanceBrok}</TableCell>
+                                    <TableCell align="center">{row.assumedAvgBalanceTax}</TableCell>
+
                                     <TableCell align="center">{row.avgBalance}</TableCell>
+                                    <TableCell align="center">${Number(row.incomeExpenses).toFixed(2)}</TableCell>
+                                    <TableCell align="center">{row.accountUsed}</TableCell>
                                     {/* <TableCell align="center">{row.taxBal}</TableCell>
                                             <TableCell align="center">{row.sum}</TableCell> */}
                                     <TableCell align="center">{row.return}%</TableCell>

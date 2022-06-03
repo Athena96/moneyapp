@@ -49,6 +49,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
     async componentDidMount() {
         if (this.props.simulation) {
             await AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
+
             await AccountDataAccess.fetchAccountsForUserSelectedSim(this, this.props.simulation.getKey());
         }
     }

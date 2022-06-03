@@ -38,6 +38,9 @@ export class Simulation implements Key {
                 return: item.return,
                 note: item.note,
                 accountUsed: item.accountUsed,
+                assumedAvgBalanceBrok: item.assumedAvgBalanceBrok,
+                assumedAvgBalanceTax: item.assumedAvgBalanceTax,
+                incomeExpenses: item.incomeExpenses
             }
 
             if (item.events) {
