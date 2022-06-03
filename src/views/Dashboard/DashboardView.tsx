@@ -2,11 +2,10 @@ import * as React from 'react';
 
 import {
   MonteCarloRowData
-} from '../utilities/helpers';
+} from '../../utilities/helpers';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Link } from "react-router-dom";
 
-import CircularProgress from '@mui/material/CircularProgress';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 
@@ -14,14 +13,17 @@ import IconButton from '@mui/material/IconButton';
 import { API, Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify';
 import Paper from '@mui/material/Paper';
-import '../App.css';
+import '../../App.css';
 import { Line } from "react-chartjs-2";
-import { moneyGreenBoldText, black } from '../utilities/constants';
+import { moneyGreenBoldText, black } from '../../utilities/constants';
 import { Tick } from 'chart.js';
-import { Simulation } from '../model/Base/Simulation';
+import { Simulation } from '../../model/Base/Simulation';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import { SimulationStatus } from '../../API';
+import { SimulationDataAccess } from '../../utilities/SimulationDataAccess';
 
-interface GraphsViewProps {
+interface DashboardViewProps {
   user: string;
   simulation: Simulation | undefined;
 }
@@ -32,6 +34,7 @@ interface IState {
   lastComputed: number | null;
   successPercent: string;
   simulationButtonLoading: boolean;
+
 }
 
 Amplify.configure({
@@ -49,26 +52,39 @@ Amplify.configure({
   }
 });
 
-class GraphsView extends React.Component<GraphsViewProps, IState> {
+class DashboardView extends React.Component<DashboardViewProps, IState> {
 
-  constructor(props: GraphsViewProps) {
+  constructor(props: DashboardViewProps) {
     super(props);
     this.state = {
       selectedTab: 1,
       chartData: null,
       lastComputed: null,
       successPercent: "0.0",
-      simulationButtonLoading: false,
+      simulationButtonLoading: ((this.props.simulation?.status || SimulationStatus.Done) === SimulationStatus.Done) ? false : true,
     }
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getData = this.getData.bind(this);
     this.handleTriggerSimulation = this.handleTriggerSimulation.bind(this);
+
+    
   }
 
   componentDidMount() {
     this.getData();
+    const self = this;
+    setInterval(async function() {
+      const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, self.props.user);
+      if (simulation) {
+        console.log('5s poll: ' + simulation.status)
+        const status = simulation.status === SimulationStatus.Done ? false : true;
+        const now = new Date();
+        const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
+        self.setState({simulationButtonLoading: status, lastComputed: hours})
+      }
+    }, 5000);
   }
 
   async getData() {
@@ -88,6 +104,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
   async handleTriggerSimulation() {
     try {
+      this.setState({simulationButtonLoading: true});
+
       const user = await Auth.currentAuthenticatedUser();
       const email: string = user.attributes.email;
       const myInit = {
@@ -220,9 +238,12 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
                 <Line data={this.state.chartData} options={options} />
                 <small style={{ marginLeft: '10px' }}>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
 
-                <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
+
+                {this.state.simulationButtonLoading ? <CircularProgress /> : <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
                   <RefreshIcon />
-                </IconButton>
+                </IconButton>}
+
+        
                 <br />
                 <small style={{ marginLeft: '10px' }}><u><Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>see data</Link></u></small><br />
 
@@ -243,4 +264,4 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
   }
 }
 
-export default GraphsView;
+export default DashboardView;

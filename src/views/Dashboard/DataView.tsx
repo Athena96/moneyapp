@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {
     MonteCarloRowData
-} from '../utilities/helpers';
+} from '../../utilities/helpers';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,8 +14,8 @@ import { Link } from "react-router-dom";
 
 import Box from '@mui/material/Box';
 
-import '../App.css';
-import { Simulation } from '../model/Base/Simulation';
+import '../../App.css';
+import { Simulation } from '../../model/Base/Simulation';
 
 interface DataViewProps {
     user: string;

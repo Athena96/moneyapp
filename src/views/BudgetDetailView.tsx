@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { getBudget } from '../../graphql/queries'
-import awsExports from "../../aws-exports";
-import { CategoryTypes, GetBudgetQuery } from "../../API";
+import { getBudget } from '../graphql/queries'
+import awsExports from "../aws-exports";
+import { CategoryTypes, GetBudgetQuery } from "../API";
 
-import { Budget } from '../../model/Base/Budget';
-import { Category } from '../../model/Base/Category';
+import { Budget } from '../model/Base/Budget';
+import { Category } from '../model/Base/Category';
 
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -16,8 +16,8 @@ import Button from '@mui/material/Button';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
-import { updateBudget } from '../../graphql/mutations';
-import { cleanNumberDataInput } from '../../utilities/helpers';
+import { updateBudget } from '../graphql/mutations';
+import { cleanNumberDataInput } from '../utilities/helpers';
 
 Amplify.configure(awsExports);
 

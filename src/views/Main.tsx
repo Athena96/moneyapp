@@ -1,21 +1,21 @@
 
 import * as React from 'react';
 
-import BudgetDetailView from './DetailViews/BudgetDetailView';
-import EventDetailView from './DetailViews/EventDetailView';
-import AssetsView from './AssetsView';
+import BudgetDetailView from './BudgetDetailView';
+import EventDetailView from './EventDetailView';
+import AssetsView from './Assets/AssetsView';
 import { Switch, Route } from 'react-router-dom';
 import SimulationView from './SimulationView';
-import GraphsView from './GraphView';
+import DashboardView from './Dashboard/DashboardView';
 import { Simulation } from '../model/Base/Simulation';
-import ExpensesView from './ExpensesView';
-import DataView from './DataView';
+import ExpensesView from './Expenses/ExpensesView';
+import DataView from './Dashboard/DataView';
 import SetupView from './SetupView';
-import AccountsView from './AccountsView';
-import AccountDetailView from './DetailViews/AccountDetailView';
-import SettingsView from './SettingsView';
+import AccountsView from './Settings/AccountsView';
+import AccountDetailView from './Settings/AccountDetailView';
+import SettingsView from './Settings/SettingsView';
 import TestView from './TestView';
-import IncomesView from './IncomesView';
+import IncomesView from './Incomes/IncomesView';
 
 interface InputsViewProps {
   user: string;
@@ -40,7 +40,7 @@ class Main extends React.Component<InputsViewProps, IState> {
 
     return (
       <Switch>
-        <Route exact path="/" render={(props) => <GraphsView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route exact path="/" render={(props) => <DashboardView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/expenses" render={(props) => <ExpensesView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/incomes" render={(props) => <IncomesView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/assets" render={(props) => <AssetsView user={this.props.user} simulation={this.props.simulation} />} />

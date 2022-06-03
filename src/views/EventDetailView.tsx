@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import { Event } from '../../model/Base/Event';
-import EventDialogView from '../EventDialogView';
-import { Simulation } from '../../model/Base/Simulation';
-import { EventDataAccess } from '../../utilities/EventDataAccess';
+import { Event } from '../model/Base/Event';
+import EventDialogView from './SharedViews/EventDialogView';
+import { Simulation } from '../model/Base/Simulation';
+import { EventDataAccess } from '../utilities/EventDataAccess';
 
 interface EventDetailProps {
   user: string;

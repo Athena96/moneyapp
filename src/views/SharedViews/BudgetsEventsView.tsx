@@ -1,26 +1,26 @@
 import * as React from 'react';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
-import { createBudget, createEvent, deleteBudget, deleteEvent } from '../graphql/mutations'
-import awsExports from "../aws-exports";
-import { Simulation } from '../model/Base/Simulation';
+import { createBudget, createEvent, deleteBudget, deleteEvent } from '../../graphql/mutations'
+import awsExports from "../../aws-exports";
+import { Simulation } from '../../model/Base/Simulation';
 import Box from '@mui/material/Box';
 
-import { Budget } from '../model/Base/Budget';
+import { Budget } from '../../model/Base/Budget';
 import { Link } from "react-router-dom";
 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 
-import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
-import { EventDataAccess } from '../utilities/EventDataAccess';
-import { Account } from '../model/Base/Account';
-import { Category } from '../model/Base/Category';
-import { Event } from '../model/Base/Event';
+import { BudgetDataAccess } from '../../utilities/BudgetDataAccess';
+import { EventDataAccess } from '../../utilities/EventDataAccess';
+import { Account } from '../../model/Base/Account';
+import { Category } from '../../model/Base/Category';
+import { Event } from '../../model/Base/Event';
 
-import { AccountDataAccess } from '../utilities/AccountDataAccess';
-import { CategoryTypes } from '../API';
+import { AccountDataAccess } from '../../utilities/AccountDataAccess';
+import { CategoryTypes } from '../../API';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -36,25 +36,25 @@ import EventDialogView from './EventDialogView';
 
 Amplify.configure(awsExports);
 
-interface IncomesViewProps {
+interface BudgetsEventsViewProps {
     user: string;
     simulation: Simulation | undefined;
-
+    type: CategoryTypes;
 }
 
-interface IState {
+interface BudgetsEventsViewState {
     budgets: Budget[],
     events: Event[],
     accounts: Account[],
-    recurringIncomeDialogOpen: boolean,
-    oneTimeIncomeDialogOpen: boolean,
+    recurringDialogOpen: boolean,
+    oneTimeDialogOpen: boolean,
     budgetToEdit: Budget | undefined,
     eventToEdit: Event | undefined
 }
 
-class IncomesView extends React.Component<IncomesViewProps, IState> {
+class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsEventsViewState> {
 
-    constructor(props: IncomesViewProps) {
+    constructor(props: BudgetsEventsViewProps) {
 
         super(props);
 
@@ -62,15 +62,15 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
             budgets: [],
             events: [],
             accounts: [],
-            recurringIncomeDialogOpen: false,
-            oneTimeIncomeDialogOpen: false,
+            recurringDialogOpen: false,
+            oneTimeDialogOpen: false,
             budgetToEdit: undefined,
             eventToEdit: undefined
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
         this.render = this.render.bind(this);
-        this.editRecurringIncome = this.editRecurringIncome.bind(this);
+        this.editRecurring = this.editRecurring.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
     }
 
@@ -84,7 +84,7 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
 
     async handleAddBudget(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         try {
-            let newBudget: any = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), [new Category('1', '...', 0.0)], CategoryTypes.Income);
+            let newBudget: any = new Budget(new Date().getTime().toString(), '...', new Date(), new Date(), [new Category('1', '...', 0.0)], this.props.type);
 
             newBudget['simulation'] = this.props.simulation!.id;
             let formatedBudget = BudgetDataAccess.convertToDDBObject(newBudget, this.props.simulation!.id);
@@ -101,47 +101,43 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
         return `${date.getMonth() + 1}/${date.getFullYear()}`
     }
 
-    getAvgMonthlyIncomes(budgets: Budget[]) {
+    getAvgMonthlyBudgets(budgets: Budget[]) {
         // not weighted avg
         let count = budgets.map((budget: Budget) => {
-            return budget.type === CategoryTypes.Income ? 1 : 0
+            return budget.type === this.props.type ? 1 : 0
         }).reduce((p: number, c: number) => p + c, 0);
 
         let sum = budgets.map((budget: Budget) => {
-            return budget.type === CategoryTypes.Income ? budget.getSum() : 0.0
+            return budget.type === this.props.type ? budget.getSum() : 0.0
         }).reduce((p: number, c: number) => p + c, 0);
         return (sum / count).toFixed(2);
     }
 
-
-
-
     getEventsTotal(events: Event[]) {
 
         let sum = events.map((event: Event) => {
-            return event.type === CategoryTypes.Income ? event.category?.value || 0 : 0.0
+            return event.type === this.props.type ? event.category?.value || 0 : 0.0
         }).reduce((p: number, c: number) => p + c, 0);
         return (sum).toFixed(2);
     }
 
-    editRecurringIncome(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, budgetToEdit: Budget) {
-        this.setState({ recurringIncomeDialogOpen: true, budgetToEdit: budgetToEdit });
+    editRecurring(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, budgetToEdit: Budget) {
+        this.setState({ recurringDialogOpen: true, budgetToEdit: budgetToEdit });
     }
 
-    editOneTimeIncome(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, eventToEdit: Event) {
-        console.log('d ' + JSON.stringify(eventToEdit))
-        this.setState({ oneTimeIncomeDialogOpen: true, eventToEdit: eventToEdit });
+    editOneTimeEvent(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, eventToEdit: Event) {
+        this.setState({ oneTimeDialogOpen: true, eventToEdit: eventToEdit });
     }
 
 
     closeDialog() {
-        this.setState({ recurringIncomeDialogOpen: false, oneTimeIncomeDialogOpen: false });
+        this.setState({ recurringDialogOpen: false, oneTimeDialogOpen: false });
     }
 
 
     async handleAddEvent() {
         try {
-            let newEvent: any = new Event(new Date().getTime().toString(), '...', new Date(), this.state.accounts[0].name, new Category('1', '...', 0.0), CategoryTypes.Income);
+            let newEvent: any = new Event(new Date().getTime().toString(), '...', new Date(), this.state.accounts[0].name, new Category('1', '...', 0.0), this.props.type);
             newEvent['simulation'] = this.props.simulation!.id;
             let formatedEvent = EventDataAccess.convertToDDBObject(newEvent, this.props.simulation!.id);
             let newEvents = [...this.state.events, formatedEvent]
@@ -152,9 +148,9 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
         }
     }
 
-    async deleteRecurringIncome(budget: Budget) {
+    async deleteRecurringBudget(budget: Budget) {
         const idToDelete = budget.id;
-        if (window.confirm('Are you sure you want to DELETE this Recurring Income?')) {
+        if (window.confirm(`Are you sure you want to DELETE this Recurring ${this.props.type}?`)) {
             let newBudgets = [];
             let budgetToDelete = null;
 
@@ -176,9 +172,9 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
         }
     }
 
-    async deleteOneTimeIncome(event: Event) {
+    async deleteOneTimeEvent(event: Event) {
         const idToDelete = event.id;
-        if (window.confirm('Are you sure you want to DELETE this One Time Income?')) {
+        if (window.confirm(`Are you sure you want to DELETE this One Time ${this.props.type}?`)) {
             let newEvents = [];
             let eventToDelete = null;
 
@@ -203,18 +199,19 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
 
     render() {
         if (this.props.simulation && this.state.budgets) {
+            const title = this.props.type === CategoryTypes.Expense ? "Expenses" : "Incomes";
             return (
                 <Box>
-                    <Dialog open={this.state.recurringIncomeDialogOpen} onClose={this.closeDialog}>
-                        {this.state.budgetToEdit && <BudgetDialogView user={this.props.user} simulation={this.props.simulation} budget={this.state.budgetToEdit!} type={CategoryTypes.Income} closeDialog={this.closeDialog} />}
+                    <Dialog open={this.state.recurringDialogOpen} onClose={this.closeDialog}>
+                        {this.state.budgetToEdit && <BudgetDialogView user={this.props.user} simulation={this.props.simulation} budget={this.state.budgetToEdit!} type={this.props.type} closeDialog={this.closeDialog} />}
                     </Dialog>
 
-                    <Dialog open={this.state.oneTimeIncomeDialogOpen} onClose={this.closeDialog}>
-                        {this.state.eventToEdit && <EventDialogView user={this.props.user} simulation={this.props.simulation} event={this.state.eventToEdit!} type={CategoryTypes.Income} closeDialog={this.closeDialog} />}
+                    <Dialog open={this.state.oneTimeDialogOpen} onClose={this.closeDialog}>
+                        {this.state.eventToEdit && <EventDialogView user={this.props.user} simulation={this.props.simulation} event={this.state.eventToEdit!} type={this.props.type} closeDialog={this.closeDialog} />}
                     </Dialog>
 
                     <Box>
-                        <h1>Incomes</h1>
+                        <h1>{title}</h1>
                         <br />
                         <Accordion>
                             <AccordionSummary
@@ -222,13 +219,13 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
                             >
-                                <Typography><b>Recurring Incomes</b><br />${this.getAvgMonthlyIncomes(this.state.budgets)} / month</Typography>
+                                <Typography><b>Recurring {title}</b><br />${this.getAvgMonthlyBudgets(this.state.budgets)} / month</Typography>
 
 
                             </AccordionSummary>
                             <AccordionDetails>
                                 {this.state.budgets.sort((a, b) => (a.startDate > b.startDate) ? 1 : -1).map((budget: Budget, i: number) => {
-                                    if (budget.type === CategoryTypes.Income) {
+                                    if (budget.type === this.props.type) {
                                         return (
                                             <>
                                                 <Card variant="outlined" >
@@ -237,8 +234,8 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                                             <Grid item xs={8}>
                                                                 <Typography ><b>{budget.name}</b></Typography>
                                                                 <Typography>{this.pretyDate(budget.startDate)} - {this.pretyDate(budget.endDate)}</Typography>
-                                                                <Button onClick={(e) => this.editRecurringIncome(e, budget)}><EditIcon /></Button>
-                                                                <Button onClick={(e) => this.deleteRecurringIncome(budget)}><DeleteIcon /></Button>
+                                                                <Button onClick={(e) => this.editRecurring(e, budget)}><EditIcon /></Button>
+                                                                <Button onClick={(e) => this.deleteRecurringBudget(budget)}><DeleteIcon /></Button>
                                                             </Grid>
                                                             <Grid item xs={4}>
                                                                 <Typography ><b>${budget.categories![0].value.toFixed(2)} / mo</b></Typography>
@@ -271,12 +268,12 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                 aria-controls="panel2a-content"
                                 id="panel2a-header"
                             >
-                                <Typography><b>One-time Incomes</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
+                                <Typography><b>One-time {title}</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
 
                             </AccordionSummary>
                             <AccordionDetails>
                                 {this.state.events.sort((a, b) => (a.date > b.date) ? 1 : -1).map((event: Event, i: number) => {
-                                    if (event.type === CategoryTypes.Income) {
+                                    if (event.type === this.props.type) {
                                         return (
                                             <>
                                                 <Card variant="outlined" >
@@ -285,8 +282,8 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                                             <Grid item xs={8}>
                                                                 <Typography ><b>{event.name}</b></Typography>
                                                                 <Typography>to account: {event.account}</Typography>
-                                                                <Button onClick={(e) => this.editOneTimeIncome(e, event)}><EditIcon /></Button>
-                                                                <Button onClick={(e) => this.deleteOneTimeIncome(event)}><DeleteIcon /></Button>
+                                                                <Button onClick={(e) => this.editOneTimeEvent(e, event)}><EditIcon /></Button>
+                                                                <Button onClick={(e) => this.deleteOneTimeEvent(event)}><DeleteIcon /></Button>
                                                             </Grid>
 
                                                             <Grid item xs={4}>
@@ -307,7 +304,7 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
                                     }
 
                                 })}
-                                <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddEvent()} variant="outlined">add one-time Income <AddCircleIcon /></Button>
+                                <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddEvent()} variant="outlined">add one-time {title} <AddCircleIcon /></Button>
                             </AccordionDetails>
                         </Accordion>
                     </Box>
@@ -324,4 +321,4 @@ class IncomesView extends React.Component<IncomesViewProps, IState> {
 
 }
 
-export default IncomesView;
+export default BudgetsEventsView;

@@ -201,6 +201,7 @@ export const getSimulation = /* GraphQL */ `
       successPercent
       lastComputed
       user
+      status
       createdAt
       updatedAt
     }
@@ -221,6 +222,7 @@ export const listSimulations = /* GraphQL */ `
         successPercent
         lastComputed
         user
+        status
         createdAt
         updatedAt
       }
@@ -285,6 +287,7 @@ export const simulationsByUser = /* GraphQL */ `
         successPercent
         lastComputed
         user
+        status
         createdAt
         updatedAt
       }

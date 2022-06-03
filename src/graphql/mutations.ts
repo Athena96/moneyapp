@@ -291,6 +291,7 @@ export const createSimulation = /* GraphQL */ `
       successPercent
       lastComputed
       user
+      status
       createdAt
       updatedAt
     }
@@ -309,6 +310,7 @@ export const updateSimulation = /* GraphQL */ `
       successPercent
       lastComputed
       user
+      status
       createdAt
       updatedAt
     }
@@ -327,6 +329,7 @@ export const deleteSimulation = /* GraphQL */ `
       successPercent
       lastComputed
       user
+      status
       createdAt
       updatedAt
     }

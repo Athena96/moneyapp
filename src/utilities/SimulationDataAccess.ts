@@ -1,7 +1,7 @@
 
 import { Simulation } from '../model/Base/Simulation';
 import { listSimulations } from '../graphql/queries'
-import { ListSimulationsQuery } from "../API";
+import { ListSimulationsQuery, SimulationStatus } from "../API";
 import { API } from 'aws-amplify'
 
 export class SimulationDataAccess {
@@ -15,8 +15,17 @@ export class SimulationDataAccess {
             let selSim: any;
             for (const simulation of response.data.listSimulations!.items!) {
                 if (simulation?.user && simulation.user! === user) {
-                    fetchedSimulations.push(new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!), simulation!.user!));
-
+                    fetchedSimulations.push(
+                        new Simulation(
+                            simulation!.id!, 
+                            simulation!.name!, 
+                            simulation!.selected!, 
+                            simulation!.simulationData!, 
+                            simulation!.successPercent!, 
+                            new Date(simulation!.lastComputed!), 
+                            simulation!.user!,
+                            simulation!.status || SimulationStatus.Done)
+                    );
                 }
             }
             componentState.setState({ simulations: fetchedSimulations, selectedSimulation: selSim })
@@ -35,7 +44,15 @@ export class SimulationDataAccess {
 
             for (const simulation of response.data.listSimulations!.items!) {
                 if (simulation?.selected === 1 && simulation.user && simulation.user === user) {
-                    selectedSimulation = new Simulation(simulation!.id!, simulation!.name!, simulation!.selected!, simulation!.simulationData!, simulation!.successPercent!, new Date(simulation!.lastComputed!), simulation!.user!)
+                    selectedSimulation = new Simulation(
+                        simulation!.id!, 
+                        simulation!.name!, 
+                        simulation!.selected!, 
+                        simulation!.simulationData!, 
+                        simulation!.successPercent!, 
+                        new Date(simulation!.lastComputed!), 
+                        simulation!.user!, 
+                        simulation!.status || SimulationStatus.Done)
                     break;
                 }
             }

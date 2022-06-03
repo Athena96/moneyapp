@@ -317,7 +317,14 @@ export type CreateSimulationInput = {
   successPercent?: string | null,
   lastComputed?: string | null,
   user?: string | null,
+  status?: SimulationStatus | null,
 };
+
+export enum SimulationStatus {
+  Running = "Running",
+  Done = "Done",
+}
+
 
 export type ModelSimulationConditionInput = {
   name?: ModelStringInput | null,
@@ -326,9 +333,15 @@ export type ModelSimulationConditionInput = {
   successPercent?: ModelStringInput | null,
   lastComputed?: ModelStringInput | null,
   user?: ModelStringInput | null,
+  status?: ModelSimulationStatusInput | null,
   and?: Array< ModelSimulationConditionInput | null > | null,
   or?: Array< ModelSimulationConditionInput | null > | null,
   not?: ModelSimulationConditionInput | null,
+};
+
+export type ModelSimulationStatusInput = {
+  eq?: SimulationStatus | null,
+  ne?: SimulationStatus | null,
 };
 
 export type Simulation = {
@@ -340,6 +353,7 @@ export type Simulation = {
   successPercent?: string | null,
   lastComputed?: string | null,
   user?: string | null,
+  status?: SimulationStatus | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -352,6 +366,7 @@ export type UpdateSimulationInput = {
   successPercent?: string | null,
   lastComputed?: string | null,
   user?: string | null,
+  status?: SimulationStatus | null,
 };
 
 export type DeleteSimulationInput = {
@@ -469,6 +484,7 @@ export type ModelSimulationFilterInput = {
   successPercent?: ModelStringInput | null,
   lastComputed?: ModelStringInput | null,
   user?: ModelStringInput | null,
+  status?: ModelSimulationStatusInput | null,
   and?: Array< ModelSimulationFilterInput | null > | null,
   or?: Array< ModelSimulationFilterInput | null > | null,
   not?: ModelSimulationFilterInput | null,
@@ -813,6 +829,7 @@ export type CreateSimulationMutation = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -833,6 +850,7 @@ export type UpdateSimulationMutation = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -853,6 +871,7 @@ export type DeleteSimulationMutation = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1100,6 +1119,7 @@ export type GetSimulationQuery = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1123,6 +1143,7 @@ export type ListSimulationsQuery = {
       successPercent?: string | null,
       lastComputed?: string | null,
       user?: string | null,
+      status?: SimulationStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1182,6 +1203,7 @@ export type SimulationsByUserQuery = {
       successPercent?: string | null,
       lastComputed?: string | null,
       user?: string | null,
+      status?: SimulationStatus | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1436,6 +1458,7 @@ export type OnCreateSimulationSubscription = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1451,6 +1474,7 @@ export type OnUpdateSimulationSubscription = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1466,6 +1490,7 @@ export type OnDeleteSimulationSubscription = {
     successPercent?: string | null,
     lastComputed?: string | null,
     user?: string | null,
+    status?: SimulationStatus | null,
     createdAt: string,
     updatedAt: string,
   } | null,

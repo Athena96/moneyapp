@@ -1,15 +1,15 @@
 import * as React from 'react';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { updateBudget } from '../graphql/mutations'
-import { CategoryTypes } from '../API';
+import { updateBudget } from '../../graphql/mutations'
+import { CategoryTypes } from '../../API';
 
-import { Simulation } from "../model/Base/Simulation";
-import { Budget } from "../model/Base/Budget";
-import { Category } from '../model/Base/Category';
+import { Simulation } from "../../model/Base/Simulation";
+import { Budget } from "../../model/Base/Budget";
+import { Category } from '../../model/Base/Category';
 
-import { cleanNumberDataInput } from '../utilities/helpers';
-import { BudgetDataAccess } from '../utilities/BudgetDataAccess';
+import { cleanNumberDataInput } from '../../utilities/helpers';
+import { BudgetDataAccess } from '../../utilities/BudgetDataAccess';
 
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';

@@ -1,16 +1,16 @@
 import * as React from 'react';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { createAccount, deleteAccount, updateAccount } from '../graphql/mutations'
-import { Account } from '../model/Base/Account';
+import { createAccount, deleteAccount, updateAccount } from '../../graphql/mutations'
+import { Account } from '../../model/Base/Account';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { AccountDataAccess } from '../utilities/AccountDataAccess';
-import { Simulation } from '../model/Base/Simulation';
+import { AccountDataAccess } from '../../utilities/AccountDataAccess';
+import { Simulation } from '../../model/Base/Simulation';
 import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import PercentIcon from '@mui/icons-material/Percent';
@@ -177,8 +177,6 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                             ),
                         }} value={account.contributionPercent}></TextField>
                     </Stack>
-
-
                     <FormControlLabel control={<Checkbox name={`account-${account.getKey()}`} onChange={this.handleCheckBox} checked={account.taxAdvantaged === 1 ? true : false} />} label="Is this a tax advantaged account? (e.g. 401K, IRA)" />
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="outlined">Delete</Button>
                     <Button id={account.getKey()} onClick={this.handleSaveAccount} variant="contained">Save</Button>

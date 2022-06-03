@@ -2,14 +2,18 @@
 import '../App.css';
 import * as React from 'react';
 
+import Amplify from 'aws-amplify';
+import { API, Auth } from 'aws-amplify';
+
+import { Link } from "react-router-dom";
+
 import { Simulation } from '../model/Base/Simulation';
 
-import AccountsView from './AccountsView';
-import AssetsView from './AssetsView';
-import ExpensesView from './ExpensesView';
-import EventsView from './EventsView';
-import SettingsView from './SettingsView';
-import IncomesView from './IncomesView';
+import AccountsView from './Settings/AccountsView';
+import AssetsView from './Assets/AssetsView';
+import ExpensesView from './Expenses/ExpensesView';
+import SettingsView from './Settings/SettingsView';
+import IncomesView from './Incomes/IncomesView';
 
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -19,6 +23,21 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+
+Amplify.configure({
+    API: {
+      endpoints: [
+        {
+          name: 'apiCall',
+          endpoint: 'https://rpq15azwcf.execute-api.us-west-2.amazonaws.com/Stage',
+          region: 'us-west-2',
+          custom_header: async () => {
+            return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
+          }
+        }
+      ]
+    }
+  });
 
 interface SetupViewProps {
     user: string;
@@ -62,11 +81,6 @@ class SetupView extends React.Component<SetupViewProps, IState> {
                     description: <><IncomesView user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },
-                {
-                    label: 'Add Events',
-                    description: <><EventsView user={this.props.user} simulation={this.props.simulation} /></>,
-
-                },
             ]
         }
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -74,8 +88,23 @@ class SetupView extends React.Component<SetupViewProps, IState> {
         this.handleNext = this.handleNext.bind(this);
         this.handleBack = this.handleBack.bind(this);
         this.handleReset = this.handleReset.bind(this);
-
+        this.handleTriggerSimulation = this.handleTriggerSimulation.bind(this);
     }
+
+    async handleTriggerSimulation() {
+        try {
+          const user = await Auth.currentAuthenticatedUser();
+          const email: string = user.attributes.email;
+          const myInit = {
+            queryStringParameters: {
+              email: email,
+            },
+          };
+          API.get('apiCall', '/trigger', myInit);
+        } catch (e) {
+          console.log(e)
+        }
+      }
 
     componentDidMount() {
         // 1) fetch simulations for user
@@ -145,10 +174,8 @@ class SetupView extends React.Component<SetupViewProps, IState> {
                     {this.state.activeStep === this.state.steps.length && (
                         <Paper square elevation={0} sx={{ p: 3 }}>
                             <Typography>You're all done! Click the button bellow to run your Monte Carlo Simulations.<br />
-
-                                <Button variant='outlined'>Run Simulations</Button>
+                            <Link style={{ color: 'black', textDecoration: 'none' }} to={`/`}><Button variant='outlined' onClick={this.handleTriggerSimulation}>Run Simulations</Button></Link>
                             </Typography>
-
                         </Paper>
                     )}
                 </Box>

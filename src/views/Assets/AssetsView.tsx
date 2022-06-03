@@ -7,15 +7,15 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import { createAssets, deleteAssets, updateAssets } from '../graphql/mutations';
-import { Asset } from '../model/Base/Asset';
-import { AssetDataAccess } from '../utilities/AssetDataAccess';
-import { cleanNumberDataInput } from '../utilities/helpers';
+import { createAssets, deleteAssets, updateAssets } from '../../graphql/mutations';
+import { Asset } from '../../model/Base/Asset';
+import { AssetDataAccess } from '../../utilities/AssetDataAccess';
+import { cleanNumberDataInput } from '../../utilities/helpers';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { Simulation } from '../model/Base/Simulation';
+import { Simulation } from '../../model/Base/Simulation';
 import { Link } from "react-router-dom";
-import { AccountDataAccess } from '../utilities/AccountDataAccess';
-import { Account } from '../model/Base/Account';
+import { AccountDataAccess } from '../../utilities/AccountDataAccess';
+import { Account } from '../../model/Base/Account';
 
 interface AssetsViewProps {
     user: string;

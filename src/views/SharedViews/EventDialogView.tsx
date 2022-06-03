@@ -1,15 +1,15 @@
 import * as React from 'react';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { updateEvent } from '../graphql/mutations'
-import { CategoryTypes } from '../API';
+import { updateEvent } from '../../graphql/mutations'
+import { CategoryTypes } from '../../API';
 
-import { Simulation } from "../model/Base/Simulation";
-import { Event } from "../model/Base/Event";
+import { Simulation } from "../../model/Base/Simulation";
+import { Event } from "../../model/Base/Event";
 
-import { cleanNumberDataInput } from '../utilities/helpers';
-import { EventDataAccess } from '../utilities/EventDataAccess';
-import { AccountDataAccess } from '../utilities/AccountDataAccess';
+import { cleanNumberDataInput } from '../../utilities/helpers';
+import { EventDataAccess } from '../../utilities/EventDataAccess';
+import { AccountDataAccess } from '../../utilities/AccountDataAccess';
 
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -24,7 +24,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DatePicker from '@mui/lab/DatePicker';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { Account } from '../model/Base/Account';
+import { Account } from '../../model/Base/Account';
 
 interface EventDialogViewProps {
     user: string;

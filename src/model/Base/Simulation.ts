@@ -3,9 +3,9 @@ import { MonteCarloRowData } from "../../utilities/helpers";
 import { Key } from "../Interfaces/KeyInterface";
 import { Event } from './Event';
 import { Category } from './Category';
+import { SimulationStatus } from "../../API";
 
 export class Simulation implements Key {
-
     id: string;
     name: string;
     selected: number;
@@ -13,8 +13,9 @@ export class Simulation implements Key {
     successPercent: string;
     lastComputed: Date;
     user: string;
+    status: SimulationStatus;
 
-    constructor(id: string, name: string, selected: number, simulationData: string, successPercent: string, lastComputed: Date, user: string) {
+    constructor(id: string, name: string, selected: number, simulationData: string, successPercent: string, lastComputed: Date, user: string, status: SimulationStatus) {
         this.id = id;
         this.name = name;
         this.selected = selected;
@@ -22,6 +23,7 @@ export class Simulation implements Key {
         this.successPercent = successPercent;
         this.lastComputed = lastComputed;
         this.user = user;
+        this.status = status;
     }
 
     getSimulationData() {

@@ -4,6 +4,11 @@ enum CategoryTypes {
   Income
 }
 
+enum SimulationStatus {
+  Running
+  Done
+}
+
 type Account @model {
   id: ID!
   name: String
@@ -67,4 +72,5 @@ type Simulation @model
   successPercent: String
   lastComputed: AWSDateTime
   user: String
+  status: SimulationStatus
 }

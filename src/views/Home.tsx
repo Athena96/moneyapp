@@ -41,6 +41,7 @@ import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@m
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
+import { SimulationStatus } from '../API';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -162,7 +163,7 @@ class Home extends React.Component<IProps, IState> {
     simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
     if (!simulation) {
       console.log('creating new sim, user did not have one')
-      simulation = new Simulation(new Date().getTime().toString(), 'Default Scenario', 1, '[]', "", new Date(), email);
+      simulation = new Simulation(new Date().getTime().toString(), 'Default Scenario', 1, '[]', "", new Date(), email, SimulationStatus.Done);
       await API.graphql(graphqlOperation(createSimulation, { input: simulation }));
     }
 

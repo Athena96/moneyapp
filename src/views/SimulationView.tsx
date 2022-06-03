@@ -28,6 +28,7 @@ import { AccountDataAccess } from '../utilities/AccountDataAccess';
 import { AssetDataAccess } from '../utilities/AssetDataAccess';
 import { Account } from '../model/Base/Account';
 import { Asset } from '../model/Base/Asset';
+import { SimulationStatus } from '../API';
 
 interface SimulationViewProps {
     user: string;
@@ -94,7 +95,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
             if (this.props.simulation) {
                 try {
                     let selectedSim = SimulationDataAccess.getSelectedSimulation(this.state.simulations)!;
-                    let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date(), this.props.user);
+                    let newSimulation = new Simulation(new Date().getTime().toString(), '...', 0, '[]', "", new Date(), this.props.user, SimulationStatus.Done);
                     let newSimulations = [...this.state.simulations, newSimulation]
                     await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
 
@@ -172,7 +173,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
             } else {
                 // create just 1 sim.
 
-                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 1, '[]', "", new Date(), this.props.user);
+                let newSimulation = new Simulation(new Date().getTime().toString(), '...', 1, '[]', "", new Date(), this.props.user, SimulationStatus.Done);
                 let newSimulations = [...this.state.simulations, newSimulation]
                 await API.graphql(graphqlOperation(createSimulation, { input: newSimulation }));
                 this.setState({ simulations: newSimulations });

@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { InputDataAccess } from '../utilities/InputDataAccess';
-import { Simulation } from '../model/Base/Simulation';
-import { Input } from '../model/Base/Input';
+import { InputDataAccess } from '../../utilities/InputDataAccess';
+import { Simulation } from '../../model/Base/Simulation';
+import { Input } from '../../model/Base/Input';
 
 import { Link } from "react-router-dom";
 
