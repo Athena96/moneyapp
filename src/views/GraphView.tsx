@@ -111,24 +111,29 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
 
     const blue = 'rgba(37,113,207,1)';
     const moneyGreen = 'rgba(90,209,171,1)'
-    const red = 'rgba(255,0,0,1)'
+    // const red = 'rgba(255,0,0,1)'
 
     const names = [
+      // {
+      //   name: 'Best Scenario',
+      //   color: blue,
+      //   key: 'maxBalance'
+      // },
       {
-        name: 'Best Scenario',
-        color: blue,
-        key: 'maxBalance'
-      },
-      {
-        name: 'Average of all Scenarios',
+        name: 'Average of all Scenarios Brok',
         color: moneyGreen,
-        key: 'avgBalance'
+        key: 'assumedAvgBalanceBrok'
       },
       {
-        name: 'Worst Scenario',
-        color: red,
-        key: 'minBalance'
+        name: 'Average of all Scenarios Tax',
+        color: blue,
+        key: 'assumedAvgBalanceTax'
       }
+      // {
+      //   name: 'Worst Scenario',
+      //   color: red,
+      //   key: 'minBalance'
+      // }
     ]
 
     // add date labels
@@ -153,6 +158,10 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
           chartData.datasets[j].data.push(Number(dataRow.avgBalance.replace('$', '')))
         } else if (name.key === 'minBalance') {
           chartData.datasets[j].data.push(Number(dataRow.minBalance.replace('$', '')))
+        } else if (name.key === 'assumedAvgBalanceBrok') {
+          chartData.datasets[j].data.push(Number(dataRow.assumedAvgBalanceBrok.replace('$', '')))
+        } else if (name.key === 'assumedAvgBalanceTax') {
+          chartData.datasets[j].data.push(Number(dataRow.assumedAvgBalanceTax.replace('$', '')))
         }
       });
       j += 1;
@@ -166,8 +175,8 @@ class GraphsView extends React.Component<GraphsViewProps, IState> {
     const options = {
       scales: {
         y: {
-          min: -20000000,
-          max: 20000000,
+          min: -10000000,
+          max: 10000000,
           ticks: {
             callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
               if ((tickValue as number) >= 1000000) {
