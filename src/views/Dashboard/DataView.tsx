@@ -72,7 +72,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                         </TableHead>
                         <TableBody>
                             {this.state.balanceData.map((row: MonteCarloRowData, i: number) => {
-                                if (i > 0) {
+               
                                     return (
                                         <TableRow
                                         style={{ backgroundColor: (row.accountUsed === 'brokerage' ? 'lightblue' : row.accountUsed === 'tax' ? 'lightgreen' : 'white') }}
@@ -80,7 +80,7 @@ class DataView extends React.Component<DataViewProps, IState> {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            {row.date.getMonth() + 2}/{row.date.getFullYear()}
+                                            {`${row.date.getMonth() + 1}/${row.date.getFullYear()}`}
                                         </TableCell>
     
                                         <TableCell align="center">${Number(row.assumedAvgBalanceBrok).toFixed(2)}</TableCell>
@@ -97,9 +97,6 @@ class DataView extends React.Component<DataViewProps, IState> {
                                         })}</TableCell>
                                     </TableRow>
                                     )
-                                } else {
-                                    return <></>
-                                }
                         })}
                         </TableBody>
                     </Table>

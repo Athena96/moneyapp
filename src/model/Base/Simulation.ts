@@ -30,8 +30,11 @@ export class Simulation implements Key {
         const jsonData = JSON.parse(this.simulationData);
         let data: MonteCarloRowData[] = [];
         for (const item of jsonData) {
+            const year = Number(item.date.split('-')[0]);
+            const month = Number(item.date.split('-')[1])-1;
+            const utcDate = new Date(year, month, 1);
             let d: MonteCarloRowData = {
-                date: new Date(item.date),
+                date: utcDate,
                 maxBalance: item.maxBalance,
                 avgBalance: item.avgBalance,
                 assumedAvgBalance: item.assumedAvgBalance,
