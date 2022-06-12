@@ -238,8 +238,8 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                                                 <Button onClick={(e) => this.deleteRecurringBudget(budget)}><DeleteIcon /></Button>
                                                             </Grid>
                                                             <Grid item xs={4}>
-                                                                <Typography ><b>${budget.categories![0].value.toFixed(2)} / mo</b></Typography>
-                                                                <Typography ><b>${(budget.getSum()*12).toFixed(2)} / yr</b></Typography>
+                                                                <Typography ><b>${(budget.getSum()).toFixed(2)} / mo</b></Typography>
+                                                                <Typography ><b>${(budget.getSum() * 12).toFixed(2)} / yr</b></Typography>
 
                                                             </Grid>
                                                         </Grid>

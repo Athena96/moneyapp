@@ -14,16 +14,22 @@ export class InputDataAccess {
                 query: listInputs
             })) as { data: ListInputsQuery }
 
-            for (const input of response.data.listInputs!.items!) {            
+            for (const input of response.data.listInputs!.items!) {
                 if (input?.simulation && input?.simulation! === selectedSimulationId) {
                     selectedInput = new Input(input!.id!, input!.settings!, input!.simulation!)
                     break;
                 }
             }
+
+            console.log(JSON.stringify("selectedInput " + JSON.stringify(selectedInput)))
             if (componentState) {
-                componentState.setState({  selectedInput: selectedInput })
+                console.log(JSON.stringify("selectedInput2 " + JSON.stringify(selectedInput)))
+
+                componentState.setState({ input: selectedInput })
             }
         } catch (error) {
+            console.log("error");
+
             console.log(error);
         }
         return selectedInput!;
@@ -31,11 +37,11 @@ export class InputDataAccess {
 
     static async createInputBranch(input: any) {
         try {
-          await API.graphql(graphqlOperation(createInputs, { input: input }))
+            await API.graphql(graphqlOperation(createInputs, { input: input }))
         } catch (err) {
-          console.log('error creating event:', err)
+            console.log('error creating event:', err)
         }
-      }
-    
+    }
+
 
 }

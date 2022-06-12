@@ -6,19 +6,15 @@ import { Input } from '../../model/Base/Input';
 
 import { Link } from "react-router-dom";
 
-import AccountsView from './AccountsView';
 
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
+
 import Box from '@mui/material/Box';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
 import Divider from '@mui/material/Divider';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import BirthdayView from './BirthdayView';
+import AccountsView from './AccountsView';
+import AssetAllocationView from './AssetAllocationView';
 
 interface SettingsViewProps {
     user: string;
@@ -26,7 +22,7 @@ interface SettingsViewProps {
 }
 
 interface IState {
-    selectedInput: Input | undefined;
+    input: Input | undefined;
 }
 
 class SettingsView extends React.Component<SettingsViewProps, IState> {
@@ -36,20 +32,17 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
         super(props);
 
         this.state = {
-            selectedInput: undefined,
+            input: undefined,
         }
 
         this.componentDidMount = this.componentDidMount.bind(this);
         this.render = this.render.bind(this);
         this.handleSave = this.handleSave.bind(this);
-
     }
 
     async componentDidMount() {
         if (this.props.simulation) {
-            // todo add inputs
             await InputDataAccess.fetchInputsForSelectedSim(this, this.props.simulation.getKey());
-
         }
     }
 
@@ -57,13 +50,8 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
         // console.log('bd ' + this.state.birthday)
     }
 
-
-
-
     render() {
-        if (this.props.simulation && this.state.selectedInput) {
-            // const settings = JSON.parse(this.state.selectedInput.settings);
-            const birthday = '04/25/1996'
+        if (this.props.simulation && this.state.input) {
             return (
                 <Box >
                     <Stack direction='row' spacing={1}>
@@ -72,28 +60,16 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
                     </Stack>
                     <h1 >Settings</h1>
 
+                    <Divider />
 
-                    <h2>Birthday</h2>
+                    <BirthdayView user={this.props.user} simulation={this.props.simulation} />
 
-                    <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-                        <CardContent>
-                            <Stack direction='column' spacing={2}>
-                                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                    <DatePicker
-                                        label="Birthday"
-                                        value={birthday}
-                                        onChange={(newValue) => {
+                    <br />
+                    <br />
+                    <Divider />
 
-                                            this.setState({ birthday: newValue } as any);
-                                        }}
-                                        renderInput={(params) => <TextField {...params} />}
-                                    />
-                                </LocalizationProvider>
-                                <Button id={''} onClick={this.handleSave} variant="contained">Save</Button>
-                            </Stack>
+                    <AssetAllocationView user={this.props.user} simulation={this.props.simulation} />
 
-                        </CardContent>
-                    </Card>
                     <br />
                     <br />
                     <Divider />

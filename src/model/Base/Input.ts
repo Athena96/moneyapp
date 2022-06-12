@@ -1,15 +1,53 @@
 
 import { Key } from "../Interfaces/KeyInterface";
 
+export enum GlidePath {
+    Evenly = "Evenly",
+    Quickly = "Quickly",
+    Slowly = "Slowly",
+}
+export type Allocations = {
+    equities: string,
+    bonds: string,
+    cash: string,
+}
+
+export type AssetAllocation = {
+    startAllocations: Allocations | null,
+    endAllocations: Allocations | null,
+    glidePath: GlidePath | null
+}
+
+
+export type InputSettings = {
+    birthday: Date,
+    assetAllocation: AssetAllocation
+}
+
 export class Input implements Key {
 
     id: string;
-    settings: string;
+    settings: InputSettings;
     simulation: string;
 
     constructor(id: string, settings: string, simulation: string) {
         this.id = id;
-        this.settings = settings;
+        const settingsJSON: any = JSON.parse(settings);
+        console.log(JSON.stringify(settingsJSON));
+        console.log(JSON.stringify(settingsJSON['assetAllocation']));
+        const assetAllocation: AssetAllocation = {
+            startAllocations: {
+                equities: '100',
+                bonds: '0',
+                cash: '0',
+            },
+            endAllocations: null,
+            glidePath: null
+        }
+        this.settings = {
+            birthday: settingsJSON['birthday'] ? new Date(settingsJSON['birthday']) : new Date(),
+            assetAllocation: settingsJSON['assetAllocation'] ? settingsJSON['assetAllocation'] : assetAllocation
+        };
         this.simulation = simulation;
     }
 
