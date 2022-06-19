@@ -33,8 +33,6 @@ export class Input implements Key {
     constructor(id: string, settings: string, simulation: string) {
         this.id = id;
         const settingsJSON: any = JSON.parse(settings);
-        console.log(JSON.stringify(settingsJSON));
-        console.log(JSON.stringify(settingsJSON['assetAllocation']));
         const assetAllocation: AssetAllocation = {
             startAllocations: {
                 equities: '100',
@@ -54,6 +52,4 @@ export class Input implements Key {
     getKey() {
         return this.id;
     }
-
 }
-

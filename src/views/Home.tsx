@@ -118,6 +118,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 Amplify.configure(awsExports);
 
 interface IProps {
+  hideSignIn: () => void;
+  hideShowSignIn: () => void;
 }
 
 interface IState {
@@ -157,6 +159,7 @@ class Home extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
+    this.props.hideSignIn();
     let simulation = undefined;
     const user = await Auth.currentAuthenticatedUser();
     const email: string = user.attributes.email;
@@ -226,6 +229,7 @@ class Home extends React.Component<IProps, IState> {
 
   async handleSignOut() {
     try {
+      this.props.hideShowSignIn();
       await Auth.signOut();
     } catch (error) {
       console.log('error signing out: ', error);
@@ -234,14 +238,13 @@ class Home extends React.Component<IProps, IState> {
 
   handleProfileOpen() {
     const curr = this.state.profileOpen;
-
-    this.setState({profileOpen: !curr});
+    this.setState({ profileOpen: !curr });
   }
 
   profileClose() {
-    this.setState({profileOpen: false});
-
+    this.setState({ profileOpen: false });
   }
+
   render() {
 
     if (this.state.user && this.state.simulations) {
@@ -289,7 +292,7 @@ class Home extends React.Component<IProps, IState> {
                       <MenuItem key={z} value={`${sim.name}`}>{sim.name}</MenuItem>
                     )
                   })}
-                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined'  onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
+                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
                 </Select>
               </FormControl>
 
