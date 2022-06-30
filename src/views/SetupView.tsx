@@ -2,7 +2,7 @@
 import '../App.css';
 import * as React from 'react';
 
-import Amplify from 'aws-amplify';
+import Amplify, { graphqlOperation } from 'aws-amplify';
 import { API, Auth } from 'aws-amplify';
 
 import { Link } from "react-router-dom";
@@ -25,13 +25,15 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import BirthdayView from './Settings/BirthdayView';
 import AssetAllocationView from './Settings/AssetAllocationView';
+import { InputDataAccess } from '../utilities/InputDataAccess';
+import { updateInputs } from '../graphql/mutations';
 
 Amplify.configure({
     API: {
         endpoints: [
             {
                 name: 'apiCall',
-                endpoint: 'https://rpq15azwcf.execute-api.us-west-2.amazonaws.com/Stage',
+                endpoint: 'https://40glxro469.execute-api.us-west-2.amazonaws.com/prod',
                 region: 'us-west-2',
                 custom_header: async () => {
                     return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
@@ -98,14 +100,38 @@ class SetupView extends React.Component<SetupViewProps, IState> {
 
     async handleTriggerSimulation() {
         try {
+
+            const ipt = await InputDataAccess.fetchInputsForSelectedSim(null, this.props.simulation!.id);
+            ipt.settings.firstSignIn = false;
+            await API.graphql(graphqlOperation(updateInputs, {
+                input: {
+                    id: ipt.id,
+                    settings: JSON.stringify(ipt.settings),
+                    simulation: ipt.simulation
+                }
+            }));
+
             const user = await Auth.currentAuthenticatedUser();
             const email: string = user.attributes.email;
-            const myInit = {
-                queryStringParameters: {
-                    email: email,
-                },
-            };
-            API.get('apiCall', '/trigger', myInit);
+
+            try {
+                console.log('POST');
+          
+                // const email = this.state.user;
+                console.log('email ' + email);
+        
+        
+                API.post('apiCall', '/router', {
+                  queryStringParameters: {
+                    email,
+                    command: "runSimulation"
+                  },
+                });
+        
+                // await Auth.signOut();
+              } catch (error) {
+                console.log('error signing out: ', error);
+              }
         } catch (e) {
             console.log(e)
         }

@@ -16,10 +16,12 @@ import AccountDetailView from './Settings/AccountDetailView';
 import SettingsView from './Settings/SettingsView';
 import TestView from './TestView';
 import IncomesView from './Incomes/IncomesView';
+import { Input } from '../model/Base/Input';
 
 interface InputsViewProps {
   user: string;
   simulation: Simulation | undefined;
+  input: Input | undefined;
 }
 
 interface IState {
@@ -37,10 +39,9 @@ class Main extends React.Component<InputsViewProps, IState> {
   }
 
   render() {
-
     return (
       <Switch>
-        <Route exact path="/" render={(props) => <DashboardView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route exact path="/" render={(props) => this.props.input && this.props.input.settings.firstSignIn === true ? <SetupView user={this.props.user} simulation={this.props.simulation} /> : <DashboardView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/expenses" render={(props) => <ExpensesView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/incomes" render={(props) => <IncomesView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/assets" render={(props) => <AssetsView user={this.props.user} simulation={this.props.simulation} />} />

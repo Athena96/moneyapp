@@ -42,7 +42,7 @@ Amplify.configure({
     endpoints: [
       {
         name: 'apiCall',
-        endpoint: 'https://rpq15azwcf.execute-api.us-west-2.amazonaws.com/Stage',
+        endpoint: 'https://40glxro469.execute-api.us-west-2.amazonaws.com/prod',
         region: 'us-west-2',
         custom_header: async () => {
           return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
@@ -111,12 +111,18 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
       const user = await Auth.currentAuthenticatedUser();
       const email: string = user.attributes.email;
-      const myInit = {
-        queryStringParameters: {
-          email: email,
-        },
-      };
-      API.get('apiCall', '/trigger', myInit);
+
+      try {
+        API.post('apiCall', '/router', {
+          queryStringParameters: {
+            email,
+            command: "runSimulation"
+          },
+        });
+
+      } catch (error) {
+        console.log('error signing out: ', error);
+      }
     } catch (e) {
       console.log(e)
     }

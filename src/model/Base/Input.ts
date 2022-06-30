@@ -21,7 +21,8 @@ export type AssetAllocation = {
 
 export type InputSettings = {
     birthday: Date,
-    assetAllocation: AssetAllocation
+    assetAllocation: AssetAllocation,
+    firstSignIn: boolean
 }
 
 export class Input implements Key {
@@ -44,7 +45,8 @@ export class Input implements Key {
         }
         this.settings = {
             birthday: settingsJSON['birthday'] ? new Date(settingsJSON['birthday']) : new Date(),
-            assetAllocation: settingsJSON['assetAllocation'] ? settingsJSON['assetAllocation'] : assetAllocation
+            assetAllocation: settingsJSON['assetAllocation'] ? settingsJSON['assetAllocation'] : assetAllocation,
+            firstSignIn: settingsJSON['firstSignIn'] ? settingsJSON['firstSignIn'] : false
         };
         this.simulation = simulation;
     }

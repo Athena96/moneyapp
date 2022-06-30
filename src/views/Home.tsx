@@ -11,7 +11,7 @@ import { Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify'
 import { API, graphqlOperation } from 'aws-amplify'
 import awsExports from "../aws-exports";
-import { createSimulation, updateSimulation } from '../graphql/mutations';
+import { createInputs, createSimulation, updateSimulation } from '../graphql/mutations';
 
 import { Link } from "react-router-dom";
 
@@ -42,6 +42,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import { SimulationStatus } from '../API';
+import { Input } from '../model/Base/Input';
+import { InputDataAccess } from '../utilities/InputDataAccess';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -130,6 +132,7 @@ interface IState {
   open: boolean;
   showScenario: boolean;
   profileOpen: boolean;
+  input: Input | undefined;
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -143,7 +146,8 @@ class Home extends React.Component<IProps, IState> {
       open: false,
       showScenario: false,
       simulations: [],
-      profileOpen: false
+      profileOpen: false,
+      input: undefined
     }
 
     this.render = this.render.bind(this);
@@ -156,6 +160,7 @@ class Home extends React.Component<IProps, IState> {
     this.handleSimulationChange = this.handleSimulationChange.bind(this);
     this.handleProfileOpen = this.handleProfileOpen.bind(this);
     this.profileClose = this.profileClose.bind(this);
+    this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
   }
 
   async componentDidMount() {
@@ -163,14 +168,26 @@ class Home extends React.Component<IProps, IState> {
     let simulation = undefined;
     const user = await Auth.currentAuthenticatedUser();
     const email: string = user.attributes.email;
+    const simid = new Date().getTime().toString();
     simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
     if (!simulation) {
       console.log('creating new sim, user did not have one')
-      simulation = new Simulation(new Date().getTime().toString(), 'Default Scenario', 1, '[]', "", new Date(), email, SimulationStatus.Done);
+      simulation = new Simulation(simid, 'Default Scenario', 1, '[]', "", new Date(), email, SimulationStatus.Done);
       await API.graphql(graphqlOperation(createSimulation, { input: simulation }));
     }
 
-    this.setState({ user: email, simulation: simulation });
+    let newIpt = await InputDataAccess.fetchInputsForSelectedSim(this, simulation.id);
+    if (!newIpt) {
+      console.log('creating new input settings, user did not have one')
+      const settings = "{\"firstSignIn\":true}";
+      newIpt = new Input(new Date().getTime().toString(),settings, simulation.id);
+      await API.graphql(graphqlOperation(createInputs, { input: newIpt }));
+    }
+
+    console.log('newIpt ')
+    console.log(JSON.stringify(newIpt))
+
+    this.setState({ user: email, simulation: simulation , input: newIpt});
     await SimulationDataAccess.fetchSimulationsForUser(this, this.state.user!);
 
   }
@@ -236,6 +253,30 @@ class Home extends React.Component<IProps, IState> {
     }
   }
 
+  async handleDeleteAccount() {
+
+    if (window.confirm('Are you sure you want to Delete your account?')) {
+      try {
+        console.log('DELTE');
+  
+        const email = this.state.user;
+        console.log('email ' + email);
+        API.del('apiCall', '/router', {
+          queryStringParameters: {
+            email,
+            command: "deleteAccount"
+          },
+        });
+
+
+        await Auth.signOut();
+      } catch (error) {
+        console.log('error signing out: ', error);
+      }
+    }
+
+  }
+
   handleProfileOpen() {
     const curr = this.state.profileOpen;
     this.setState({ profileOpen: !curr });
@@ -247,7 +288,7 @@ class Home extends React.Component<IProps, IState> {
 
   render() {
 
-    if (this.state.user && this.state.simulations) {
+    if (this.state.user && this.state.simulations && this.state.input) {
       return (
 
         <Box sx={{ display: 'flex' }}>
@@ -327,6 +368,7 @@ class Home extends React.Component<IProps, IState> {
                 onClose={this.profileClose}
               >
                 <MenuItem>{this.state.user}</MenuItem>
+                <MenuItem onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
                 <MenuItem onClick={this.handleSignOut}>Sign Out</MenuItem>
               </Menu>
             </Toolbar>
@@ -503,7 +545,7 @@ class Home extends React.Component<IProps, IState> {
           </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
-            <Main user={this.state.user} simulation={this.state.simulation} />
+            <Main user={this.state.user} simulation={this.state.simulation} input={this.state.input} />
           </Box>
 
         </Box>
