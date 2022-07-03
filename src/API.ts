@@ -229,30 +229,77 @@ export type DeleteEventInput = {
 
 export type CreateInputsInput = {
   id?: string | null,
-  settings?: string | null,
-  simulation?: string | null,
+  birthday: string,
+  firstSignIn: boolean,
+  assetAllocation: AssetAllocationInput,
+  simulation: string,
 };
 
+export type AssetAllocationInput = {
+  startAllocations: AllocationsInput,
+  endAllocations?: AllocationsInput | null,
+  glidePath?: GlidePath | null,
+};
+
+export type AllocationsInput = {
+  equities: string,
+  bonds: string,
+  cash: string,
+};
+
+export enum GlidePath {
+  Evenly = "Evenly",
+  Quickly = "Quickly",
+  Slowly = "Slowly",
+}
+
+
 export type ModelInputsConditionInput = {
-  settings?: ModelStringInput | null,
+  birthday?: ModelStringInput | null,
+  firstSignIn?: ModelBooleanInput | null,
   simulation?: ModelStringInput | null,
   and?: Array< ModelInputsConditionInput | null > | null,
   or?: Array< ModelInputsConditionInput | null > | null,
   not?: ModelInputsConditionInput | null,
 };
 
+export type ModelBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
 export type Inputs = {
   __typename: "Inputs",
   id: string,
-  settings?: string | null,
-  simulation?: string | null,
+  birthday: string,
+  firstSignIn: boolean,
+  assetAllocation: AssetAllocation,
+  simulation: string,
   createdAt: string,
   updatedAt: string,
 };
 
+export type AssetAllocation = {
+  __typename: "AssetAllocation",
+  startAllocations: Allocations,
+  endAllocations?: Allocations | null,
+  glidePath?: GlidePath | null,
+};
+
+export type Allocations = {
+  __typename: "Allocations",
+  equities: string,
+  bonds: string,
+  cash: string,
+};
+
 export type UpdateInputsInput = {
   id: string,
-  settings?: string | null,
+  birthday?: string | null,
+  firstSignIn?: boolean | null,
+  assetAllocation?: AssetAllocationInput | null,
   simulation?: string | null,
 };
 
@@ -444,7 +491,8 @@ export type ModelEventConnection = {
 
 export type ModelInputsFilterInput = {
   id?: ModelIDInput | null,
-  settings?: ModelStringInput | null,
+  birthday?: ModelStringInput | null,
+  firstSignIn?: ModelBooleanInput | null,
   simulation?: ModelStringInput | null,
   and?: Array< ModelInputsFilterInput | null > | null,
   or?: Array< ModelInputsFilterInput | null > | null,
@@ -715,8 +763,25 @@ export type CreateInputsMutation = {
   createInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -731,8 +796,25 @@ export type UpdateInputsMutation = {
   updateInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -747,8 +829,25 @@ export type DeleteInputsMutation = {
   deleteInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1033,8 +1132,25 @@ export type GetInputsQuery = {
   getInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1052,8 +1168,24 @@ export type ListInputsQuery = {
     items:  Array< {
       __typename: "Inputs",
       id: string,
-      settings?: string | null,
-      simulation?: string | null,
+      birthday: string,
+      firstSignIn: boolean,
+      assetAllocation:  {
+        __typename: "AssetAllocation",
+        startAllocations:  {
+          equities: string,
+          bonds: string,
+          cash: string,
+        },
+        endAllocations?:  {
+          __typename: "Allocations",
+          equities: string,
+          bonds: string,
+          cash: string,
+        } | null,
+        glidePath?: GlidePath | null,
+      },
+      simulation: string,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1374,8 +1506,25 @@ export type OnCreateInputsSubscription = {
   onCreateInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1385,8 +1534,25 @@ export type OnUpdateInputsSubscription = {
   onUpdateInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1396,8 +1562,25 @@ export type OnDeleteInputsSubscription = {
   onDeleteInputs?:  {
     __typename: "Inputs",
     id: string,
-    settings?: string | null,
-    simulation?: string | null,
+    birthday: string,
+    firstSignIn: boolean,
+    assetAllocation:  {
+      __typename: "AssetAllocation",
+      startAllocations:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      },
+      endAllocations?:  {
+        __typename: "Allocations",
+        equities: string,
+        bonds: string,
+        cash: string,
+      } | null,
+      glidePath?: GlidePath | null,
+    },
+    simulation: string,
     createdAt: string,
     updatedAt: string,
   } | null,

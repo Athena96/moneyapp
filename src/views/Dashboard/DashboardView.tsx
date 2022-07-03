@@ -69,13 +69,13 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     this.getData = this.getData.bind(this);
     this.handleTriggerSimulation = this.handleTriggerSimulation.bind(this);
 
-    
+
   }
 
   componentDidMount() {
     this.getData();
     const self = this;
-    setInterval(async function() {
+    setInterval(async function () {
       const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, self.props.user);
       if (simulation) {
         console.log('5s poll: ' + simulation.status)
@@ -85,7 +85,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         const status = simulation.status === SimulationStatus.Done ? false : true;
         const now = new Date();
         const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
-        self.setState({chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours})
+        self.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours })
       }
     }, 5000);
   }
@@ -107,7 +107,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
   async handleTriggerSimulation() {
     try {
-      this.setState({simulationButtonLoading: true});
+      this.setState({ simulationButtonLoading: true });
 
       const user = await Auth.currentAuthenticatedUser();
       const email: string = user.attributes.email;
@@ -116,7 +116,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         API.post('apiCall', '/router', {
           queryStringParameters: {
             email,
-            command: "runSimulation"
+            command: "RunSimulation"
           },
         });
 
@@ -252,7 +252,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
                   <RefreshIcon />
                 </IconButton>}
 
-        
+
                 <br />
                 <small style={{ marginLeft: '10px' }}><u><Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>see data</Link></u></small><br />
 

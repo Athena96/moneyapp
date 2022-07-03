@@ -1,9 +1,77 @@
 
 import { Input } from '../model/Base/Input';
-import { listInputs } from '../graphql/queries'
 import { createInputs } from '../graphql/mutations';
-import { ListInputsQuery } from "../API";
+import { GlidePath } from "../API";
 import { API, graphqlOperation } from 'aws-amplify'
+import { Allocations } from '../model/Base/Allocations';
+import { AssetAllocation } from '../model/Base/AssetAllocation';
+
+export const myListInputs = /* GraphQL */ `
+  query ListInputs(
+    $filter: ModelInputsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listInputs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        birthday
+        firstSignIn
+        assetAllocation {
+          glidePath
+          startAllocations {
+            equities
+            bonds
+            cash
+          }
+          endAllocations {
+            equities
+            bonds
+            cash
+          }
+        }
+        simulation
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+
+export type MyListInputsQuery = {
+    listInputs?: {
+        __typename: "ModelInputsConnection",
+        items: Array<{
+            __typename: "Inputs",
+            id: string,
+            birthday: string,
+            firstSignIn: boolean,
+            assetAllocation: {
+                __typename: "AssetAllocation",
+                startAllocations: {
+                    __typename: "Allocations",
+                    equities: string,
+                    bonds: string,
+                    cash: string,
+                },
+                endAllocations?: {
+                    __typename: "Allocations",
+                    equities: string,
+                    bonds: string,
+                    cash: string,
+                } | null,
+                glidePath?: GlidePath | null,
+            },
+            simulation: string,
+            createdAt: string,
+            updatedAt: string,
+        } | null>,
+        nextToken?: string | null,
+    } | null,
+};
+
+//   "Validation error of type SubSelectionRequired: Sub selection required for type Allocations of field endAllocations @ 'listInputs/items/assetAllocation/endAllocations'"
 
 export class InputDataAccess {
 
@@ -11,26 +79,52 @@ export class InputDataAccess {
         let selectedInput: Input | undefined = undefined;
         try {
             const response = (await API.graphql({
-                query: listInputs
-            })) as { data: ListInputsQuery }
+                query: myListInputs
+            })) as { data: MyListInputsQuery }
 
             for (const input of response.data.listInputs!.items!) {
                 if (input?.simulation && input?.simulation! === selectedSimulationId) {
-                    selectedInput = new Input(input!.id!, input!.settings!, input!.simulation!)
+                    let endAllocations: Allocations | undefined = undefined;
+                    if (input.assetAllocation.endAllocations) {
+                        endAllocations = new Allocations(
+                            input.assetAllocation.endAllocations.equities,
+                            input.assetAllocation.endAllocations.bonds,
+                            input.assetAllocation.endAllocations.cash,
+                        )
+                    }
+
+                    let glidePath: GlidePath | undefined = undefined;
+                    if (input.assetAllocation.glidePath) {
+                        glidePath = input.assetAllocation.glidePath
+                    }
+
+                    let startAllocations: Allocations = new Allocations(
+                        input.assetAllocation.startAllocations.equities,
+                        input.assetAllocation.startAllocations.bonds,
+                        input.assetAllocation.startAllocations.cash)
+
+                    const assetAllocations: AssetAllocation = new AssetAllocation(
+                        startAllocations,
+                        endAllocations,
+                        glidePath
+                    )
+
+                    selectedInput = new Input(
+                        input.id!,
+                        new Date(input.birthday),
+                        input.firstSignIn,
+                        assetAllocations,
+                        input.simulation!)
+
                     break;
                 }
             }
 
-            console.log(JSON.stringify("selectedInput " + JSON.stringify(selectedInput)))
             if (componentState) {
-                console.log(JSON.stringify("selectedInput2 " + JSON.stringify(selectedInput)))
-
                 componentState.setState({ input: selectedInput })
             }
         } catch (error) {
-            console.log("error");
-
-            console.log(error);
+            console.error(error);
         }
         return selectedInput!;
     }

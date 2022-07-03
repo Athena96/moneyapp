@@ -47,10 +47,30 @@ type Event @model {
   type: CategoryTypes
 }
 
+type Allocations {
+    equities: String!
+    bonds: String!
+    cash: String!
+}
+
+enum GlidePath {
+    Evenly
+    Quickly
+    Slowly
+}
+
+type AssetAllocation {
+  startAllocations: Allocations!
+  endAllocations: Allocations
+  glidePath: GlidePath
+}
+
 type Inputs @model {
   id: ID!
-  settings: String
-  simulation: String
+  birthday: AWSDateTime!
+  firstSignIn: Boolean!
+  assetAllocation: AssetAllocation!
+  simulation: String!
 }
 
 type Assets @model {

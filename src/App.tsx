@@ -45,7 +45,12 @@ class App extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
-    const user = await Auth.currentAuthenticatedUser();
+    let user;
+    try {
+      user = await Auth.currentAuthenticatedUser();
+    } catch (e) {
+      user = null;
+    }
     if (user) {
       this.setState({ signedIn: true })
     } else {

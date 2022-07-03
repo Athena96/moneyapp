@@ -43,7 +43,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import Menu from '@mui/material/Menu';
 import { SimulationStatus } from '../API';
 import { Input } from '../model/Base/Input';
-import { InputDataAccess } from '../utilities/InputDataAccess';
+import { AssetAllocation } from '../model/Base/AssetAllocation';
+import { Allocations } from '../model/Base/Allocations';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -166,28 +167,33 @@ class Home extends React.Component<IProps, IState> {
   async componentDidMount() {
     this.props.hideSignIn();
     let simulation = undefined;
+    let inputSettings = undefined;
     const user = await Auth.currentAuthenticatedUser();
     const email: string = user.attributes.email;
     const simid = new Date().getTime().toString();
+    const inputId = (new Date().getTime() + 1).toString();
+
     simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
     if (!simulation) {
       console.log('creating new sim, user did not have one')
       simulation = new Simulation(simid, 'Default Scenario', 1, '[]', "", new Date(), email, SimulationStatus.Done);
       await API.graphql(graphqlOperation(createSimulation, { input: simulation }));
+
+      console.log('also create Input')
+      const assetAllocation: AssetAllocation = new AssetAllocation(
+        new Allocations(
+          '80.0',
+          '16.0',
+          '4.0'
+        ),
+        undefined,
+        undefined)
+
+      inputSettings = new Input(inputId, new Date(), true, assetAllocation, simid);
+      await API.graphql(graphqlOperation(createInputs, { input: inputSettings }));
     }
 
-    let newIpt = await InputDataAccess.fetchInputsForSelectedSim(this, simulation.id);
-    if (!newIpt) {
-      console.log('creating new input settings, user did not have one')
-      const settings = "{\"firstSignIn\":true}";
-      newIpt = new Input(new Date().getTime().toString(),settings, simulation.id);
-      await API.graphql(graphqlOperation(createInputs, { input: newIpt }));
-    }
-
-    console.log('newIpt ')
-    console.log(JSON.stringify(newIpt))
-
-    this.setState({ user: email, simulation: simulation , input: newIpt});
+    this.setState({ user: email, simulation: simulation, simulations: [simulation], input: inputSettings });
     await SimulationDataAccess.fetchSimulationsForUser(this, this.state.user!);
 
   }
@@ -258,13 +264,13 @@ class Home extends React.Component<IProps, IState> {
     if (window.confirm('Are you sure you want to Delete your account?')) {
       try {
         console.log('DELTE');
-  
+
         const email = this.state.user;
         console.log('email ' + email);
         API.del('apiCall', '/router', {
           queryStringParameters: {
             email,
-            command: "deleteAccount"
+            command: "DeleteAccount"
           },
         });
 
@@ -288,7 +294,7 @@ class Home extends React.Component<IProps, IState> {
 
   render() {
 
-    if (this.state.user && this.state.simulations && this.state.input) {
+    if (this.state.user && this.state.simulations) {
       return (
 
         <Box sx={{ display: 'flex' }}>
@@ -328,7 +334,7 @@ class Home extends React.Component<IProps, IState> {
                   label="simulation"
                   onChange={this.handleSimulationChange}
                 >
-                  {this.state.simulations.map((sim: Simulation, z: number) => {
+                  {this.state.simulations && this.state.simulations.map((sim: Simulation, z: number) => {
                     return (
                       <MenuItem key={z} value={`${sim.name}`}>{sim.name}</MenuItem>
                     )

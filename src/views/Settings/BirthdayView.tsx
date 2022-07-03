@@ -26,7 +26,6 @@ interface BirthdayViewProps {
 }
 
 interface IState {
-  birthday: string,
   input: Input | undefined
 }
 
@@ -37,7 +36,6 @@ class BirthdayView extends React.Component<BirthdayViewProps, IState> {
     super(props);
 
     this.state = {
-      birthday: "",
       input: undefined
     }
 
@@ -59,7 +57,7 @@ class BirthdayView extends React.Component<BirthdayViewProps, IState> {
         await API.graphql(graphqlOperation(updateInputs, {
           input: {
             id: this.state.input.id,
-            settings: JSON.stringify(this.state.input.settings),
+            birthday: this.state.input.birthday,
             simulation: this.state.input?.simulation
           }
         }));
@@ -80,11 +78,11 @@ class BirthdayView extends React.Component<BirthdayViewProps, IState> {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     label="Birthday"
-                    value={this.state.input?.settings.birthday || new Date()}
+                    value={this.state.input?.birthday || new Date()}
                     onChange={(newValue) => {
                       const ipt = this.state.input;
                       if (ipt && newValue) {
-                        ipt.settings.birthday = newValue;
+                        ipt.birthday = newValue;
                         this.setState({ input: ipt } as any);
                       }
 

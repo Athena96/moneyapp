@@ -98,40 +98,50 @@ class SetupView extends React.Component<SetupViewProps, IState> {
         this.handleTriggerSimulation = this.handleTriggerSimulation.bind(this);
     }
 
+
+    async setFirstSignIn() {
+        if (this.props.simulation) {
+            try {
+                const input = await InputDataAccess.fetchInputsForSelectedSim(null, this.props.simulation.id);
+                await API.graphql(graphqlOperation(updateInputs, {
+                    input: {
+                        id: input.id,
+                        firstSignIn: false,
+                        simulation: this.props.simulation.id
+                    }
+                }));
+            } catch (err) {
+                console.log('error updateInputs:', err)
+            }
+        }
+    }
     async handleTriggerSimulation() {
         try {
-
-            const ipt = await InputDataAccess.fetchInputsForSelectedSim(null, this.props.simulation!.id);
-            ipt.settings.firstSignIn = false;
-            await API.graphql(graphqlOperation(updateInputs, {
-                input: {
-                    id: ipt.id,
-                    settings: JSON.stringify(ipt.settings),
-                    simulation: ipt.simulation
-                }
-            }));
 
             const user = await Auth.currentAuthenticatedUser();
             const email: string = user.attributes.email;
 
+            await this.setFirstSignIn();
+
             try {
                 console.log('POST');
-          
+
                 // const email = this.state.user;
                 console.log('email ' + email);
-        
-        
-                API.post('apiCall', '/router', {
-                  queryStringParameters: {
-                    email,
-                    command: "runSimulation"
-                  },
+
+
+                await API.post('apiCall', '/router', {
+                    queryStringParameters: {
+                        email,
+                        command: "RunSimulation"
+                    },
                 });
-        
-                // await Auth.signOut();
-              } catch (error) {
+
+
+                window.location.reload();
+            } catch (error) {
                 console.log('error signing out: ', error);
-              }
+            }
         } catch (e) {
             console.log(e)
         }

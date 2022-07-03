@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-
-
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateInputs } from '../../graphql/mutations'
 
@@ -19,13 +17,15 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 
 import { InputDataAccess } from '../../utilities/InputDataAccess';
-import { Allocations, AssetAllocation, GlidePath, Input } from '../../model/Base/Input';
+import { Input } from '../../model/Base/Input';
 
 import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from '@mui/material/InputAdornment';
 import Alert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { GlidePath } from '../../API';
+import { Allocations } from '../../model/Base/Allocations';
 
 interface AssetAllocationViewProps {
     user: string;
@@ -52,6 +52,7 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
         this.render = this.render.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleUseGlidePath = this.handleUseGlidePath.bind(this);
+        this.validPercentsCheck = this.validPercentsCheck.bind(this);
     }
 
     async componentDidMount() {
@@ -67,7 +68,7 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                 await API.graphql(graphqlOperation(updateInputs, {
                     input: {
                         id: this.state.input.id,
-                        settings: JSON.stringify(this.state.input.settings),
+                        assetAllocation: this.state.input.assetAllocation,
                         simulation: this.state.input?.simulation
                     }
                 }));
@@ -77,178 +78,72 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
         }
     }
 
-    handleEquityChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, startEnd: string) {
-        const target = e.target;
-        const value: string = target.value;
-        console.log("handleEquityChange")
-        console.log("value " + value)
-        if (this.state.input) {
-            console.log("this.state.input")
-
-            const ipt: Input = this.state.input;
-            const assetAllocation: AssetAllocation = ipt.settings.assetAllocation;
-            console.log("startEnd " + startEnd)
-            console.log("assetAllocation.startAllocations " + startEnd)
-
-            if (startEnd === "startAllocations") {
-                console.log("startAllocations")
-
-                if (!assetAllocation.startAllocations) {
-                    assetAllocation.startAllocations = {
-                        equities: "0",
-                        bonds: "0",
-                        cash: "0"
-                    }
-                }
-
-                const newTotal = parseFloat(value) + parseFloat(assetAllocation.startAllocations.bonds) + parseFloat(assetAllocation.startAllocations.cash);
-                if (newTotal > 100.0 || newTotal < 0.0) {
-                    this.setState({ invalidPercentTotal: true });
-                    return;
-                } else {
-                    this.setState({ invalidPercentTotal: false });
-                }
-
-                const startingAllocations: Allocations = assetAllocation.startAllocations
-                startingAllocations.equities = value;
-                this.setState({ input: ipt } as any);
-            } else if (startEnd === "endAllocations") {
-                console.log("endAllocations")
-                if (!assetAllocation.endAllocations) {
-                    assetAllocation.endAllocations = {
-                        equities: "0",
-                        bonds: "0",
-                        cash: "0"
-                    }
-                }
-                const newTotal = parseFloat(value) + parseFloat(assetAllocation.endAllocations.bonds) + parseFloat(assetAllocation.endAllocations.cash);
-                if (newTotal > 100.0 || newTotal < 0.0) {
-                    this.setState({ invalidPercentTotal: true });
-                    return;
-                } else {
-                    this.setState({ invalidPercentTotal: false });
-                }
-
-                const endingAllocations: Allocations = assetAllocation.endAllocations
-                endingAllocations.equities = value;
-                this.setState({ input: ipt } as any);
-            }
-        }
-    }
-
-    handleBondChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, startEnd: string) {
-        const target = e.target;
-        const value: string = target.value;
-        if (this.state.input) {
-            const ipt: Input = this.state.input;
-            const assetAllocation: AssetAllocation = ipt.settings.assetAllocation;
-            if (startEnd === "startAllocations") {
-                if (!assetAllocation.startAllocations) {
-                    assetAllocation.startAllocations = {
-                        equities: "0",
-                        bonds: "0",
-                        cash: "0"
-                    }
-                }
-                const newTotal = parseFloat(value) + parseFloat(assetAllocation.startAllocations.equities) + parseFloat(assetAllocation.startAllocations.cash);
-                if (newTotal > 100.0 || newTotal < 0.0) {
-                    this.setState({ invalidPercentTotal: true });
-                    return;
-                } else {
-                    this.setState({ invalidPercentTotal: false });
-                }
-                const startingAllocations: Allocations = assetAllocation.startAllocations
-                startingAllocations.bonds = value;
-                this.setState({ input: ipt } as any);
-            } else if (startEnd === "endAllocations") {
-                if (!assetAllocation.endAllocations) {
-                    assetAllocation.endAllocations = {
-                        equities: "0",
-                        bonds: "0",
-                        cash: "0"
-                    }
-                }
-                const newTotal = parseFloat(value) + parseFloat(assetAllocation.endAllocations.equities) + parseFloat(assetAllocation.endAllocations.cash);
-                if (newTotal > 100.0 || newTotal < 0.0) {
-                    this.setState({ invalidPercentTotal: true });
-                    return;
-                } else {
-                    this.setState({ invalidPercentTotal: false });
-                }
-
-                const endingAllocations: Allocations = assetAllocation.endAllocations
-                endingAllocations.bonds = value;
-                this.setState({ input: ipt } as any);
-            }
-        }
-    }
-
-    handleCashChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, startEnd: string) {
-        const target = e.target;
-        const value: string = target.value;
-        if (this.state.input) {
-            const ipt: Input = this.state.input;
-            const assetAllocation: AssetAllocation = ipt.settings.assetAllocation;
-            if (startEnd === "startAllocations") {
-                if (!assetAllocation.startAllocations) {
-                    assetAllocation.startAllocations = {
-                        equities: "0",
-                        bonds: "0",
-                        cash: "0"
-                    }
-                }
-                const newTotal = parseFloat(value) + parseFloat(assetAllocation.startAllocations.bonds) + parseFloat(assetAllocation.startAllocations.equities);
-                if (newTotal > 100.0 || newTotal < 0.0) {
-                    this.setState({ invalidPercentTotal: true });
-                    return;
-                } else {
-                    this.setState({ invalidPercentTotal: false });
-                }
-                const startingAllocations: Allocations = assetAllocation.startAllocations
-                startingAllocations.cash = value;
-                this.setState({ input: ipt } as any);
-            } else if (assetAllocation.endAllocations && startEnd === "endAllocations") {
-                if (!assetAllocation.endAllocations) {
-                    assetAllocation.endAllocations = {
-                        equities: "0",
-                        bonds: "0",
-                        cash: "0"
-                    }
-                }
-                const newTotal = parseFloat(value) + parseFloat(assetAllocation.endAllocations.bonds) + parseFloat(assetAllocation.endAllocations.equities);
-                if (newTotal > 100.0 || newTotal < 0.0) {
-                    this.setState({ invalidPercentTotal: true });
-                    return;
-                } else {
-                    this.setState({ invalidPercentTotal: false });
-                }
-
-                const endingAllocations: Allocations = assetAllocation.endAllocations
-                endingAllocations.cash = value;
-                this.setState({ input: ipt } as any);
-            }
-        }
-    }
-
     handleUseGlidePath(event: React.ChangeEvent<HTMLInputElement>) {
-        console.log('handleUseGlidePath')
         const checked = event.target.checked;
         if (this.state.input) {
-            const ipt: Input = this.state.input;
+            const updatedInput: Input = this.state.input;
+            updatedInput.assetAllocation.glidePath = checked ? GlidePath.Evenly : undefined;
+            updatedInput.assetAllocation.endAllocations = checked ? new Allocations('45.0',
+                '50.0',
+                '5.0') : undefined;
 
-            ipt.settings.assetAllocation.glidePath = checked ? GlidePath.Evenly : null;
-            this.setState({ input: ipt });
+            console.log('input af: ' + JSON.stringify(updatedInput));
+            this.setState({ input: updatedInput });
         }
     }
 
+    validPercentsCheck(input: Input, stardOrEnd: string) {
+        let newTotal = 0.0;
+        switch (stardOrEnd) {
+            case "Start":
+                newTotal = parseFloat(input.assetAllocation.startAllocations.equities) +
+                    parseFloat(input.assetAllocation.startAllocations.bonds) +
+                    parseFloat(input.assetAllocation.startAllocations.cash);
+                break;
+            case "End":
+                newTotal = parseFloat(input.assetAllocation.endAllocations!.equities) +
+                    parseFloat(input.assetAllocation.endAllocations!.bonds) +
+                    parseFloat(input.assetAllocation.endAllocations!.cash);
+                break;
+        }
+        if (newTotal > 100.0 || newTotal < 0.0) {
+            this.setState({ invalidPercentTotal: true });
+            return;
+        } else {
+            this.setState({ invalidPercentTotal: false });
+        }
+    }
+
+    handleAllocationChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, stardOrEnd: string, asset: 'equities' | 'bonds' | 'cash') {
+        const target = e.target;
+        const value: string = target.value;
+
+        if (this.state.input) {
+            const updatedInput: Input = this.state.input;
+            switch (stardOrEnd) {
+                case "Start":
+                    updatedInput.assetAllocation.startAllocations[asset] = value;
+                    break;
+                case "End":
+                    updatedInput.assetAllocation.endAllocations![asset] = value;
+                    break;
+            }
+            this.validPercentsCheck(updatedInput, stardOrEnd)
+            this.setState({ input: updatedInput });
+        }
+    }
 
     render() {
         if (this.props.simulation && this.state.input) {
-            const useGlidePath = this.state.input.settings.assetAllocation.glidePath !== null;
+
+            const useGlidePath = this.state.input.assetAllocation?.glidePath ? true : false;
+
+            console.log('useGlidePath ' + useGlidePath);
+
             return (
                 <Box >
                     <h2>Asset Allocation</h2>
-                    {this.state.invalidPercentTotal ? <Alert severity="error">This is an error alert — check it out!</Alert> : <></>}
+                    {this.state.invalidPercentTotal ? <Alert severity="error">The total Asset Allocation needs to add up to 100% </Alert> : <></>}
                     <FormControlLabel control={<Checkbox name={`stock-allocation-end`} onChange={this.handleUseGlidePath} checked={useGlidePath} />} label="Change allocation over time?" />
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -258,21 +153,21 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                                 <CardContent>
                                     <Stack direction='column' spacing={2}>
                                         <h2>Stocks</h2>
-                                        <TextField label={'Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleEquityChange(event, 'startAllocations')} InputProps={{
+                                        <TextField label={'Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "Start", 'equities')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.settings.assetAllocation?.startAllocations?.equities || ""}></TextField>
-                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleEquityChange(event, 'endAllocations')} InputProps={{
+                                        }} value={this.state.input.assetAllocation?.startAllocations?.equities || ""}></TextField>
+
+                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'equities')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.settings.assetAllocation?.endAllocations?.equities || ""}></TextField>}
-                                        <Button id={''} onClick={this.handleSave} variant="contained">Save</Button>
+                                        }} value={this.state.input.assetAllocation?.endAllocations?.equities || ""}></TextField>}
                                     </Stack>
 
                                 </CardContent>
@@ -283,21 +178,20 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                                 <CardContent>
                                     <Stack direction='column' spacing={2}>
                                         <h2>Bonds</h2>
-                                        <TextField label={'Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleBondChange(event, 'startAllocations')} InputProps={{
+                                        <TextField label={'Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "Start", 'bonds')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.settings.assetAllocation?.startAllocations?.bonds || ""}></TextField>
-                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleBondChange(event, 'endAllocations')} InputProps={{
+                                        }} value={this.state.input.assetAllocation?.startAllocations?.bonds || ""}></TextField>
+                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'bonds')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.settings.assetAllocation?.endAllocations?.bonds || ""}></TextField>}
-                                        <Button id={''} onClick={this.handleSave} variant="contained">Save</Button>
+                                        }} value={this.state.input.assetAllocation?.endAllocations?.bonds || ""}></TextField>}
                                     </Stack>
 
                                 </CardContent>
@@ -308,21 +202,20 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                                 <CardContent>
                                     <Stack direction='column' spacing={2}>
                                         <h2>Cash</h2>
-                                        <TextField label={'Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleCashChange(event, 'startAllocations')} InputProps={{
+                                        <TextField label={'Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "Start", 'cash')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.settings.assetAllocation?.startAllocations?.cash || ""}></TextField>
-                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleCashChange(event, 'endAllocations')} InputProps={{
+                                        }} value={this.state.input.assetAllocation?.startAllocations?.cash || ""}></TextField>
+                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'cash')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.settings.assetAllocation?.endAllocations?.cash || ""}></TextField>}
-                                        <Button id={''} onClick={this.handleSave} variant="contained">Save</Button>
+                                        }} value={this.state.input.assetAllocation?.endAllocations?.cash || ""}></TextField>}
                                     </Stack>
 
                                 </CardContent>
@@ -330,6 +223,9 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                         </Grid>
                     </Grid>
 
+                    <br />
+
+                    <Button sx={{ width: '100%' }} id={''} onClick={this.handleSave} variant="contained">Save</Button>
 
                 </Box>
             )

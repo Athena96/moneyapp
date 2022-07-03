@@ -189,7 +189,21 @@ export const createInputs = /* GraphQL */ `
   ) {
     createInputs(input: $input, condition: $condition) {
       id
-      settings
+      birthday
+      firstSignIn
+      assetAllocation {
+        startAllocations {
+          equities
+          bonds
+          cash
+        }
+        endAllocations {
+          equities
+          bonds
+          cash
+        }
+        glidePath
+      }
       simulation
       createdAt
       updatedAt
@@ -203,7 +217,21 @@ export const updateInputs = /* GraphQL */ `
   ) {
     updateInputs(input: $input, condition: $condition) {
       id
-      settings
+      birthday
+      firstSignIn
+      assetAllocation {
+        startAllocations {
+          equities
+          bonds
+          cash
+        }
+        endAllocations {
+          equities
+          bonds
+          cash
+        }
+        glidePath
+      }
       simulation
       createdAt
       updatedAt
@@ -217,7 +245,21 @@ export const deleteInputs = /* GraphQL */ `
   ) {
     deleteInputs(input: $input, condition: $condition) {
       id
-      settings
+      birthday
+      firstSignIn
+      assetAllocation {
+        startAllocations {
+          equities
+          bonds
+          cash
+        }
+        endAllocations {
+          equities
+          bonds
+          cash
+        }
+        glidePath
+      }
       simulation
       createdAt
       updatedAt

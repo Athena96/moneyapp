@@ -129,7 +129,21 @@ export const getInputs = /* GraphQL */ `
   query GetInputs($id: ID!) {
     getInputs(id: $id) {
       id
-      settings
+      birthday
+      firstSignIn
+      assetAllocation {
+        startAllocations {
+          equities
+          bonds
+          cash
+        }
+        endAllocations {
+          equities
+          bonds
+          cash
+        }
+        glidePath
+      }
       simulation
       createdAt
       updatedAt
@@ -145,7 +159,11 @@ export const listInputs = /* GraphQL */ `
     listInputs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        settings
+        birthday
+        firstSignIn
+        assetAllocation {
+          glidePath
+        }
         simulation
         createdAt
         updatedAt
