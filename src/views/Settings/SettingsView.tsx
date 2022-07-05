@@ -12,7 +12,6 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import BirthdayView from './BirthdayView';
 import AccountsView from './AccountsView';
 import AssetAllocationView from './AssetAllocationView';
 
@@ -60,12 +59,6 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
                     </Stack>
                     <h1 >Settings</h1>
 
-                    <Divider />
-
-                    <BirthdayView user={this.props.user} simulation={this.props.simulation} />
-
-                    <br />
-                    <br />
                     <Divider />
 
                     <AssetAllocationView user={this.props.user} simulation={this.props.simulation} />
