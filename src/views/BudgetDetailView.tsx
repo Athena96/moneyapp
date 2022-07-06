@@ -2,28 +2,23 @@ import * as React from 'react';
 
 import Amplify, { API, graphqlOperation } from 'aws-amplify'
 import { getBudget } from '../graphql/queries'
+
 import awsExports from "../aws-exports";
 import { CategoryTypes, GetBudgetQuery } from "../API";
+import { updateBudget } from '../graphql/mutations';
 
 import { Budget } from '../model/Base/Budget';
 import { Category } from '../model/Base/Category';
-
-import Divider from '@mui/material/Divider';
-import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import { updateBudget } from '../graphql/mutations';
 import { cleanNumberDataInput } from '../utilities/helpers';
+
+import { Button, TextField, Container, Stack, Divider } from '@mui/material';
+import { LocalizationProvider, DatePicker }from '@mui/lab';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 Amplify.configure(awsExports);
 
 interface BudgetDetailProps {
 }
-
 
 interface IState {
   id: string;

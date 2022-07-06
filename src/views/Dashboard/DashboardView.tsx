@@ -78,7 +78,6 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     setInterval(async function () {
       const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, self.props.user);
       if (simulation) {
-        console.log('5s poll: ' + simulation.status)
         const chartDataRaw = simulation.getSimulationData()!;
         const chartData = self.generateGraphData(chartDataRaw, 'brokerage');
         const successPercent = String(Number(simulation.successPercent).toFixed(0));

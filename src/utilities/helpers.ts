@@ -1,3 +1,4 @@
+import { Budget } from '../model/Base/Budget';
 import { Event } from '../model/Base/Event';
 import { Key } from '../model/Interfaces/KeyInterface';
 
@@ -94,4 +95,15 @@ export function getFinnhubClient() {
   delete finnhub.ApiClient.instance.defaultHeaders['User-Agent'];
   api_key.apiKey = "c56e8vqad3ibpaik9s20" // Replace this
   return new finnhub.DefaultApi()
+}
+
+export function getActiveBudgets(date: Date, budgets: Budget[]) {
+  let currentBudgets: Budget[] = [];
+  date.setHours(0, 0, 0);
+  for (const budget of budgets) {
+      if (date >= new Date(budget.startDate.setHours(0, 0, 0)) && date <= new Date(budget.endDate.setHours(0, 0, 0))) {
+          currentBudgets.push(budget);
+      }
+  }
+  return currentBudgets;
 }

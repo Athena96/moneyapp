@@ -47,7 +47,6 @@ class BirthdayView extends React.Component<BirthdayViewProps, IState> {
   async componentDidMount() {
     if (this.props.simulation) {
       await InputDataAccess.fetchInputsForSelectedSim(this, this.props.simulation.getKey());
-      console.log(JSON.stringify(this.state.input))
     }
   }
 

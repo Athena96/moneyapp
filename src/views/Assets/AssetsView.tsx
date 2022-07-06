@@ -1,21 +1,18 @@
 import * as React from 'react';
 
 import { API, graphqlOperation } from 'aws-amplify'
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
 import { createAssets, deleteAssets, updateAssets } from '../../graphql/mutations';
+
 import { Asset } from '../../model/Base/Asset';
-import { AssetDataAccess } from '../../utilities/AssetDataAccess';
-import { cleanNumberDataInput } from '../../utilities/helpers';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { Simulation } from '../../model/Base/Simulation';
-import { Link } from "react-router-dom";
-import { AccountDataAccess } from '../../utilities/AccountDataAccess';
 import { Account } from '../../model/Base/Account';
+import { Simulation } from '../../model/Base/Simulation';
+import { AssetDataAccess } from '../../utilities/AssetDataAccess';
+import { AccountDataAccess } from '../../utilities/AccountDataAccess';
+import { cleanNumberDataInput } from '../../utilities/helpers';
+
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Card, CardContent, Button, Stack, TextField, Box } from '@mui/material';
+
+import { Link } from "react-router-dom";
 
 interface AssetsViewProps {
     user: string;
@@ -43,6 +40,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleDeleteAsset = this.handleDeleteAsset.bind(this);
+        this.handleCheckBox = this.handleCheckBox.bind(this);
         this.render = this.render.bind(this);
     }
 
@@ -125,9 +123,9 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                 if (tp === 'hasIndexData') {
                     asset.hasIndexData = Number(value);
                 }
-                if (tp === 'isCurrency') {
-                    asset.isCurrency = Number(value);
-                }
+                // if (tp === 'isCurrency') {
+                //     asset.isCurrency = Number(value);
+                // }
             }
         }
         this.setState({ assets: assts });
@@ -155,20 +153,30 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         this.setState({assets: currAssets});
     };
 
+    handleCheckBox(assetToUpdate: Asset) {
+        const assets = this.state.assets;
+        for (const asset of assets) {
+            if (asset.id === assetToUpdate.id) {
+                let newHasIndexData = asset.hasIndexData === 1 ? 0 : 1;
+                asset.hasIndexData = newHasIndexData;
+            }
+        }
+        this.setState({assets: assets})
+        console.log(JSON.stringify(assets))
+    }
+
     render() {
         if (this.props.simulation) {
             return (
                 <Box >
                     <h1 >Assets</h1>
-                    <Button style={{ width: "100%" }} onClick={this.handleAddAsset} variant="outlined">add assets +</Button>
-                    {this.state.assets ? this.state.assets.sort((a, b) => (a.id > b.id) ? 1 : -1).map((asset: Asset, i: number) => {
+                    {this.state.assets ? this.state.assets.map((asset: Asset, i: number) => {
                         return (
                             <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                                 <CardContent>
                                     <Stack direction='column' spacing={2}>
-                                        <TextField label="Ticker Code" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
-                                        <TextField label="Quantity" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
-                                        <TextField label="Has Data in API" id="outlined-basic" variant="outlined" name={`hasIndexData-${asset.getKey()}`} onChange={this.handleChange} value={asset.hasIndexData} />
+                                        <TextField label="Ticker Code / Asset Name" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
+                                        <TextField label="Quantity / Total value" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
                                         <FormControl fullWidth>
                                             <InputLabel id="demo-simple-select-label">Account</InputLabel>
                                             <Select
@@ -186,7 +194,9 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                                                 })}
                                             </Select>
                                         </FormControl>
-                                        <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} />
+                                        {/* <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} /> */}
+                                        
+                                        <FormControlLabel control={<Checkbox name={`use-online-data`} onChange={(e) => this.handleCheckBox(asset)} checked={asset.hasIndexData === 1 ? true : false} />} label="Is this an asset who's value is publicly available? (i.e. a Stock/Fund on the publicly traded market?)" />
                                         <Button id={asset.getKey()} onClick={this.handleDeleteAsset} variant="outlined">Delete</Button>
                                         <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
                                     </Stack>
@@ -195,6 +205,11 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
                             </Card>
                         );
                     }) : <></>}
+                    <br/>
+                    <Button style={{ width: "100%" }} onClick={this.handleAddAsset} variant="outlined">add assets +</Button>
+                    <br/>
+                    <br/>
+
                 </Box>
             )
         } else {

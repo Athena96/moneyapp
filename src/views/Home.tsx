@@ -15,36 +15,31 @@ import { createInputs, createSimulation, updateSimulation } from '../graphql/mut
 
 import { Link } from "react-router-dom";
 
-import { styled, Theme, CSSObject } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import Divider from '@mui/material/Divider';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LocalAtmIcon from '@mui/icons-material/LocalAtm';
-import SettingsIcon from '@mui/icons-material/Settings';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import Dialog from '@mui/material/Dialog';
+
 import SimulationView from './SimulationView';
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Menu from '@mui/material/Menu';
 import { SimulationStatus } from '../API';
 import { Input } from '../model/Base/Input';
 import { AssetAllocation } from '../model/Base/AssetAllocation';
 import { Allocations } from '../model/Base/Allocations';
+
+import { styled, Theme, CSSObject } from '@mui/material/styles';
+
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+
+import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Menu, Dialog, ListItemText, ListItemIcon,
+  ListItemButton, List, Divider, Button, Typography, IconButton,Toolbar, Box } from '@mui/material';
+
+import BarChartIcon from '@mui/icons-material/BarChart';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -260,21 +255,15 @@ class Home extends React.Component<IProps, IState> {
   }
 
   async handleDeleteAccount() {
-
-    if (window.confirm('Are you sure you want to Delete your account?')) {
+    if (window.confirm('Are you sure you want to Delete your account? This will delete all of your data and cannot be undone. You can still return at any time and create a new account in the future.')) {
       try {
-        console.log('DELTE');
-
         const email = this.state.user;
-        console.log('email ' + email);
         API.del('apiCall', '/router', {
           queryStringParameters: {
             email,
             command: "DeleteAccount"
           },
         });
-
-
         await Auth.signOut();
       } catch (error) {
         console.log('error signing out: ', error);
@@ -293,7 +282,6 @@ class Home extends React.Component<IProps, IState> {
   }
 
   render() {
-
     if (this.state.user && this.state.simulations) {
       return (
 
@@ -374,7 +362,7 @@ class Home extends React.Component<IProps, IState> {
                 onClose={this.profileClose}
               >
                 <MenuItem>{this.state.user}</MenuItem>
-                <MenuItem onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
+                <MenuItem sx={{color: 'red'}} onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
                 <MenuItem onClick={this.handleSignOut}>Sign Out</MenuItem>
               </Menu>
             </Toolbar>

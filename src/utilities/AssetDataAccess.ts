@@ -3,7 +3,6 @@ import { Asset } from '../model/Base/Asset';
 import { API, graphqlOperation } from 'aws-amplify'
 import { ListAssetsQuery } from "../API";
 import { listAssets } from '../graphql/queries'
-
 import { createAssets } from '../graphql/mutations';
 
 export class AssetDataAccess {

@@ -102,6 +102,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
     }
 
     getAvgMonthlyBudgets(budgets: Budget[]) {
+        if (budgets.length === 0) return "0.00"
         // not weighted avg
         let count = budgets.map((budget: Budget) => {
             return budget.type === this.props.type ? 1 : 0

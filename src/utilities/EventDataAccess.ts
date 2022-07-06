@@ -3,9 +3,7 @@ import { getEvent, listEvents } from '../graphql/queries'
 import { GetEventQuery, ListEventsQuery } from "../API";
 import { createEvent } from '../graphql/mutations';
 import { Event } from '../model/Base/Event';
-
 import { Category } from '../model/Base/Category';
-
 import { API, graphqlOperation } from 'aws-amplify'
 
 

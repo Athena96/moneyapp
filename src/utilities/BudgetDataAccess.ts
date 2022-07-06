@@ -1,6 +1,5 @@
 import { Budget } from '../model/Base/Budget';
 import { Category } from '../model/Base/Category';
-
 import { ListBudgetsQuery } from "../API";
 import { API, graphqlOperation } from 'aws-amplify'
 import { listBudgets } from '../graphql/queries'

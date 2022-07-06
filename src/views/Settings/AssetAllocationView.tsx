@@ -58,7 +58,6 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
     async componentDidMount() {
         if (this.props.simulation) {
             await InputDataAccess.fetchInputsForSelectedSim(this, this.props.simulation.getKey());
-            console.log(JSON.stringify(this.state.input))
         }
     }
 
@@ -135,11 +134,7 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
 
     render() {
         if (this.props.simulation && this.state.input) {
-
             const useGlidePath = this.state.input.assetAllocation?.glidePath ? true : false;
-
-            console.log('useGlidePath ' + useGlidePath);
-
             return (
                 <Box >
                     <h2>Asset Allocation</h2>
@@ -226,6 +221,8 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                     <br />
 
                     <Button sx={{ width: '100%' }} id={''} onClick={this.handleSave} variant="contained">Save</Button>
+                    <br />
+                    <br />
 
                 </Box>
             )
