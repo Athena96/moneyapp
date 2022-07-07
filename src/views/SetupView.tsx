@@ -67,7 +67,7 @@ class SetupView extends React.Component<SetupViewProps, IState> {
                 },
                 {
                     label: 'Add Investment Accounts',
-                    description: <><AccountsView user={this.props.user} simulation={this.props.simulation} /></>,
+                    description: <><AccountsView user={this.props.user} simulation={this.props.simulation} isShownInSetup={true} /></>,
                 },
                 {
                     label: 'Add Asset Allocation',

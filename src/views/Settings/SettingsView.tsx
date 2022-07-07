@@ -67,7 +67,7 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
                     <br />
                     <Divider />
 
-                    <AccountsView user={this.props.user} simulation={this.props.simulation} />
+                    <AccountsView user={this.props.user} simulation={this.props.simulation} isShownInSetup={false}/>
                 </Box>
             )
         } else {

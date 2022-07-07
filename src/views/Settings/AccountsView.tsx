@@ -23,6 +23,7 @@ import { CategoryTypes } from '../../API';
 interface AccountsViewProps {
   user: string;
   simulation: Simulation | undefined;
+  isShownInSetup: boolean;
 }
 
 interface IState {
@@ -131,12 +132,12 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     const percents = this.state.accountsContributionPercents;
 
     for (const p of percents!) {
-      
+
       const pv = Math.round(Math.ceil(parseFloat(p)))
       sum += pv;
     }
 
-    if (sum > 100  || sum < 0) {
+    if (sum > 100 || sum < 0) {
       window.confirm('the allocation percents must add up to 100 or 0')
       return;
     }
@@ -157,7 +158,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     const percents = this.state.accountsContributionPercents;
     percents![i] = newValue;
 
-    
+
     this.setState({ accountsContributionPercents: percents });
 
   }
@@ -214,7 +215,11 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                 <CardContent>
                   <Stack direction='column' spacing={2}>
                     <Stack direction='row' spacing={2}>
-                      <TextField sx={{ width: '60%' }} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} />
+                      {this.props.isShownInSetup ?
+                        <TextField sx={{ width: '60%' }} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} /> :
+                        <><h2 style={{ marginLeft: '10px' }}>{account.name}</h2></>}
+                    </Stack>
+                    <Stack direction='row' spacing={2}>
                       <TextField sx={{ width: '40%' }} label={'Contributon Allocation'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocChange(event, account, idx)} InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -222,7 +227,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                           </InputAdornment>
                         ),
                       }} value={this.state.accountsContributionPercents![idx]}></TextField>
-                      <p><b>${(cp * savings).toFixed(2) }</b> of ${savings.toFixed(2)}</p>
+                      <p style={{ marginTop: '12px' }}><b>${(cp * savings).toFixed(2)}</b> of ${savings.toFixed(2)}</p>
                     </Stack>
                     <FormControlLabel control={<Checkbox name={`account-${account.getKey()}`} onChange={this.handleCheckBox} checked={account.taxAdvantaged === 1 ? true : false} />} label="Is this a tax advantaged account? (e.g. 401K, IRA)" />
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="outlined">Delete</Button>
