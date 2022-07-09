@@ -86,7 +86,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
         self.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours })
       }
-    }, 5000);
+    }, 6000);
   }
 
   async getData() {
@@ -111,17 +111,14 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       const user = await Auth.currentAuthenticatedUser();
       const email: string = user.attributes.email;
 
-      try {
-        API.post('apiCall', '/router', {
-          queryStringParameters: {
-            email,
-            command: "RunSimulation"
-          },
-        });
 
-      } catch (error) {
-        console.log('error signing out: ', error);
-      }
+      API.post('apiCall', '/router', {
+        queryStringParameters: {
+          email,
+          command: "RunSimulation"
+        },
+      });
+
     } catch (e) {
       console.log(e)
     }

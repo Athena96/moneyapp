@@ -200,7 +200,6 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
 
     render() {
         if (this.props.simulation && this.state.budgets) {
-            const title = this.props.type === CategoryTypes.Expense ? "Expenses" : "Incomes";
             return (
                 <Box>
                     <Dialog open={this.state.recurringDialogOpen} onClose={this.closeDialog}>
@@ -212,7 +211,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                     </Dialog>
 
                     <Box>
-                        <h1>{title}</h1>
+                        <h1>{this.props.type}s</h1>
                         <br />
                         <Accordion>
                             <AccordionSummary
@@ -220,7 +219,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
                             >
-                                <Typography><b>Recurring {title}</b><br />${this.getAvgMonthlyBudgets(this.state.budgets)} / month</Typography>
+                                <Typography><b>Recurring {this.props.type}</b><br />${this.getAvgMonthlyBudgets(this.state.budgets)} / month</Typography>
 
 
                             </AccordionSummary>
@@ -253,7 +252,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                         return (<></>)
                                     }
                                 })}
-                                <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddBudget(e)} variant="outlined">add recurring Income <AddCircleIcon /></Button>
+                                <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddBudget(e)} variant="outlined">add recurring {this.props.type} <AddCircleIcon /></Button>
                             </AccordionDetails>
 
                         </Accordion>
@@ -269,7 +268,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                 aria-controls="panel2a-content"
                                 id="panel2a-header"
                             >
-                                <Typography><b>One-time {title}</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
+                                <Typography><b>One-time {this.props.type}</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
 
                             </AccordionSummary>
                             <AccordionDetails>
@@ -305,7 +304,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                     }
 
                                 })}
-                                <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddEvent()} variant="outlined">add one-time {title} <AddCircleIcon /></Button>
+                                <Button style={{ width: "100%" }} key={'add'} onClick={(e) => this.handleAddEvent()} variant="outlined">add one-time {this.props.type} <AddCircleIcon /></Button>
                             </AccordionDetails>
                         </Accordion>
                     </Box>
