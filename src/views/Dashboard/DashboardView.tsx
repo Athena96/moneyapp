@@ -198,7 +198,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     const options = {
       scales: {
         y: {
-          min: -10000000,
+          min: 0,
           max: 10000000,
           ticks: {
             callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
