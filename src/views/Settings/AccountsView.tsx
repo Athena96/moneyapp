@@ -19,6 +19,8 @@ import { BudgetDataAccess } from '../../utilities/BudgetDataAccess';
 import { Budget } from '../../model/Base/Budget';
 import { getActiveBudgets } from '../../utilities/helpers';
 import { CategoryTypes } from '../../API';
+import { Tooltip } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface AccountsViewProps {
   user: string;
@@ -59,9 +61,6 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
     if (this.props.simulation) {
       const accounts = await AccountDataAccess.fetchAccountsForUserSelectedSim(this, this.props.simulation.getKey());
       const budgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(this, this.props.simulation.getKey());
-
-      console.log('accounts ' + JSON.stringify(accounts))
-      console.log('budgets ' + JSON.stringify(budgets))
       const today = new Date();
       const currentBudgets = getActiveBudgets(today, budgets || [])
       const monthlySpending = currentBudgets.map((budget: Budget) => {
@@ -76,14 +75,9 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
         percents.push(account.contributionPercent.toFixed(2));
       }
 
-      console.log('monthlySpending ' + monthlySpending)
-      console.log('monthlyIncome ' + monthlyIncome)
-      console.log('percents ' + JSON.stringify(percents))
-
       this.setState({ totalCurrentBudgetExpenses: monthlySpending, totalCurrentBudgetIncome: monthlyIncome, accountsContributionPercents: percents });
 
       if (accounts.length === 0) {
-        console.log('no accounts, create a default one')
         await this.handleAddAccount();
       }
     }
@@ -202,7 +196,6 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
   render() {
     if (this.props.simulation !== undefined && this.state.totalCurrentBudgetExpenses !== undefined && this.state.totalCurrentBudgetIncome !== undefined && this.state.accountsContributionPercents !== undefined) {
       const savings = this.state.totalCurrentBudgetIncome - this.state.totalCurrentBudgetExpenses;
-      console.log("savings")
       return (
         <Box >
           <h2>Accounts</h2>
@@ -216,18 +209,21 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                   <Stack direction='column' spacing={2}>
                     <Stack direction='row' spacing={2}>
                       {this.props.isShownInSetup ?
-                        <TextField sx={{ width: '60%' }} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} /> :
+                        <TextField sx={{ width: '100%' }} label="Account Name" id="outlined-basic" variant="outlined" name={`account-${account.getKey()}`} onChange={this.handleChange} value={account.name} /> :
                         <><h2 style={{ marginLeft: '10px' }}>{account.name}</h2></>}
                     </Stack>
                     <Stack direction='row' spacing={2}>
-                      <TextField sx={{ width: '40%' }} label={'Contributon Allocation'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocChange(event, account, idx)} InputProps={{
+                      <TextField sx={{ width: '100%' }} label={'Contribution Allocation'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocChange(event, account, idx)} InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
                             <PercentIcon />
                           </InputAdornment>
                         ),
                       }} value={this.state.accountsContributionPercents![idx]}></TextField>
-                      <p style={{ marginTop: '12px' }}><b>${(cp * savings).toFixed(2)}</b> of ${savings.toFixed(2)}</p>
+                   
+
+                      {this.props.isShownInSetup===false && <p style={{ marginTop: '12px' }}><b>${(cp * savings).toFixed(2)}</b> of ${savings.toFixed(2)}</p>}
+                      <Tooltip title={`Of the money you're saving each month, what percent is going to this account? If you're not sure, you can always come back and add it later.`}><InfoIcon /></Tooltip>
                     </Stack>
                     <FormControlLabel control={<Checkbox name={`account-${account.getKey()}`} onChange={this.handleCheckBox} checked={account.taxAdvantaged === 1 ? true : false} />} label="Is this a tax advantaged account? (e.g. 401K, IRA)" />
                     <Button id={account.getKey()} onClick={this.handleDeleteAccount} variant="outlined">Delete</Button>

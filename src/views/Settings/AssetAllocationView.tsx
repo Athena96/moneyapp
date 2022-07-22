@@ -22,8 +22,7 @@ import { Input } from '../../model/Base/Input';
 import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from '@mui/material/InputAdornment';
 import Alert from '@mui/material/Alert';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+
 import { GlidePath } from '../../API';
 import { Allocations } from '../../model/Base/Allocations';
 
@@ -134,12 +133,12 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
 
     render() {
         if (this.props.simulation && this.state.input) {
-            const useGlidePath = this.state.input.assetAllocation?.glidePath ? true : false;
+            // const useGlidePath = this.state.input.assetAllocation?.glidePath ? true : false;
             return (
                 <Box >
                     <h2>Asset Allocation</h2>
                     {this.state.invalidPercentTotal ? <Alert severity="error">The total Asset Allocation needs to add up to 100% </Alert> : <></>}
-                    <FormControlLabel control={<Checkbox name={`stock-allocation-end`} onChange={this.handleUseGlidePath} checked={useGlidePath} />} label="Change allocation over time?" />
+                    {/* <FormControlLabel control={<Checkbox name={`stock-allocation-end`} onChange={this.handleUseGlidePath} checked={useGlidePath} />} label="Change allocation over time?" /> */}
 
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
 
@@ -156,13 +155,13 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                                             ),
                                         }} value={this.state.input.assetAllocation?.startAllocations?.equities || ""}></TextField>
 
-                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'equities')} InputProps={{
+                                        {/* {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'equities')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.assetAllocation?.endAllocations?.equities || ""}></TextField>}
+                                        }} value={this.state.input.assetAllocation?.endAllocations?.equities || ""}></TextField>} */}
                                     </Stack>
 
                                 </CardContent>
@@ -180,13 +179,13 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                                                 </InputAdornment>
                                             ),
                                         }} value={this.state.input.assetAllocation?.startAllocations?.bonds || ""}></TextField>
-                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'bonds')} InputProps={{
+                                        {/* {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'bonds')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.assetAllocation?.endAllocations?.bonds || ""}></TextField>}
+                                        }} value={this.state.input.assetAllocation?.endAllocations?.bonds || ""}></TextField>} */}
                                     </Stack>
 
                                 </CardContent>
@@ -204,13 +203,13 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                                                 </InputAdornment>
                                             ),
                                         }} value={this.state.input.assetAllocation?.startAllocations?.cash || ""}></TextField>
-                                        {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'cash')} InputProps={{
+                                        {/* {useGlidePath && <TextField label={'End Allocation %'} id="outlined-number" variant="outlined" onChange={(event) => this.handleAllocationChange(event, "End", 'cash')} InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <PercentIcon />
                                                 </InputAdornment>
                                             ),
-                                        }} value={this.state.input.assetAllocation?.endAllocations?.cash || ""}></TextField>}
+                                        }} value={this.state.input.assetAllocation?.endAllocations?.cash || ""}></TextField>} */}
                                     </Stack>
 
                                 </CardContent>

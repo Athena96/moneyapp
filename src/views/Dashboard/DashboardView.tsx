@@ -34,7 +34,7 @@ interface IState {
   lastComputed: number | null;
   successPercent: string;
   simulationButtonLoading: boolean;
-
+  chartDataRaw: MonteCarloRowData[] | undefined;
 }
 
 Amplify.configure({
@@ -57,6 +57,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
   constructor(props: DashboardViewProps) {
     super(props);
     this.state = {
+      chartDataRaw: undefined,
       selectedTab: 1,
       chartData: null,
       lastComputed: null,
@@ -84,7 +85,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         const status = simulation.status === SimulationStatus.Done ? false : true;
         const now = new Date();
         const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
-        self.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours })
+        self.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours, chartDataRaw: chartDataRaw })
       }
     }, 6000);
   }
@@ -96,7 +97,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       const successPercent = String(Number(this.props.simulation.successPercent).toFixed(0));
       const now = new Date();
       const hours = Math.abs(now.getTime() - this.props.simulation.lastComputed.getTime()) / 3600000;
-      this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours });
+      this.setState({ chartData: chartData, successPercent: successPercent, lastComputed: hours, chartDataRaw: chartDataRaw });
     }
   }
 
@@ -193,13 +194,31 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     return chartData;
   }
 
+  getMax() {
+    if (this.state.chartDataRaw) {
+      let max = 0.0
+      for (const dir of this.state.chartDataRaw || []) {
+        const tax = parseFloat(dir.assumedAvgBalanceTax);
+        const brok = parseFloat(dir.assumedAvgBalanceBrok);
+        const maxBetweenAccnts = Math.max(tax, brok);
+        if (maxBetweenAccnts > max) {
+          max = maxBetweenAccnts;
+        }
+      }
+      let nextMill = Math.round((max + 1000000) / 1000000) * 1000000;
+      return Math.round(nextMill);
+    }
+    return 0;
+  }
+
   render() {
     const isMobile = window.innerWidth <= 390;
+    const max = this.getMax();
     const options = {
       scales: {
         y: {
           min: 0,
-          max: 10000000,
+          max: this.state.chartDataRaw ? max : 1000000,
           ticks: {
             callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
               if ((tickValue as number) >= 1000000) {

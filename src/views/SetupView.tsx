@@ -175,7 +175,7 @@ class SetupView extends React.Component<SetupViewProps, IState> {
     render() {
         return (
             <Box>
-                <Box sx={{ maxWidth: 400 }}>
+                <Box sx={{ }}>
                     <Stepper activeStep={this.state.activeStep} orientation="vertical">
                         {this.state.steps.map((step: any, index: any) => (
                             <Step key={step.label}>
