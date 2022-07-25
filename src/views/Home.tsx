@@ -304,9 +304,9 @@ class Home extends React.Component<IProps, IState> {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              {!isMobile && <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 <Link style={{ color: 'white', textDecoration: 'none' }} to="/">Money Tomorrow</Link>
-              </Typography>
+              </Typography>}
 
               {/* <Button variant="outlined" style={{ color: 'white' }} onClick={this.scenarioSwitch}>
                 <><small>Scenario</small>:{' '}<u>{this.state.simulation?.name}</u></>
