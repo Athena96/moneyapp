@@ -21,9 +21,10 @@ const AssetComponent: FC<AssetComponentProps> = ({ asset, handleChange, handleDr
     return (
         <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
             <CardContent>
+                <p><b>{asset.hasIndexData === 1 ? "Stock/ETF" : "Custom Asset"}</b></p>
                 <Stack direction='column' spacing={2}>
-                    <TextField label="Ticker Code / Asset Name" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={handleChange} value={asset.ticker} />
-                    <TextField label="Quantity / Total value" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={handleChange} value={asset.strQuantity} />
+                    <TextField label={asset.hasIndexData === 1 ? "Ticker Code" : "Asset Name"} id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={handleChange} value={asset.ticker} />
+                    <TextField label={asset.hasIndexData === 1 ? "Quantity" : "Current Value (in Dollars)"} id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={handleChange} value={asset.strQuantity} />
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Account</InputLabel>
                         <Select
