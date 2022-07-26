@@ -10,9 +10,17 @@ import { AssetDataAccess } from '../../utilities/AssetDataAccess';
 import { AccountDataAccess } from '../../utilities/AccountDataAccess';
 import { cleanNumberDataInput } from '../../utilities/helpers';
 
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, SelectChangeEvent, Card, CardContent, Button, Stack, TextField, Box } from '@mui/material';
+import { SelectChangeEvent, Button, Box } from '@mui/material';
 
 import { Link } from "react-router-dom";
+import AssetComponent from './components/AssetComponent';
+import AddAssetComponent from './components/AddAssetComponent';
+
+
+export type AssetData = {
+    asset: Asset
+    adding: boolean
+}
 
 interface AssetsViewProps {
     user: string;
@@ -20,7 +28,7 @@ interface AssetsViewProps {
 }
 
 interface IState {
-    assets: Asset[]
+    assets: AssetData[]
     accounts: Account[]
 }
 
@@ -41,24 +49,32 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         this.handleSave = this.handleSave.bind(this);
         this.handleDeleteAsset = this.handleDeleteAsset.bind(this);
         this.handleCheckBox = this.handleCheckBox.bind(this);
+        this.setHasIndexData = this.setHasIndexData.bind(this);
         this.render = this.render.bind(this);
     }
 
     async componentDidMount() {
         if (this.props.simulation) {
-            await AssetDataAccess.fetchAssetsForSelectedSim(this, this.props.simulation.getKey());
-
+            const assets: Asset[] = await AssetDataAccess.fetchAssetsForSelectedSim(null, this.props.simulation.getKey());
+            const assetData: AssetData[] = []
+            for (const asset of assets) {
+                assetData.push({
+                    asset,
+                    adding: false
+                })
+            }
+            this.setState({ assets: assetData })
             await AccountDataAccess.fetchAccountsForUserSelectedSim(this, this.props.simulation.getKey());
         }
     }
 
     async handleAddAsset() {
         try {
-            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "OOO", quantity: 0, hasIndexData: 1, account: this.state.accounts[0].name, isCurrency: 0 };
-            let newAsset = new Asset(new Date().getTime().toString(), "OOO", "0", 1, this.state.accounts[0].name, 0);
+            let newDBAsset: any = { id: new Date().getTime().toString(), ticker: "...", quantity: 0, hasIndexData: 1, account: this.state.accounts[0].name, isCurrency: 0 };
+            let newAsset = new Asset(new Date().getTime().toString(), "...", "0", 1, this.state.accounts[0].name, 0);
             newDBAsset['simulation'] = this.props.simulation!.id;
 
-            let newAssets = [...this.state.assets, newAsset]
+            let newAssets = [...this.state.assets, { asset: newAsset, adding: true }]
             this.setState({ assets: newAssets });
             await API.graphql(graphqlOperation(createAssets, { input: newDBAsset }))
         } catch (err) {
@@ -73,9 +89,9 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             let assetToDelete = null;
 
             for (const asset of this.state.assets) {
-                if (asset.getKey() === idToDelete) {
+                if (asset.asset.getKey() === idToDelete) {
                     assetToDelete = {
-                        'id': asset.getKey()
+                        'id': asset.asset.getKey()
                     }
                     continue;
                 }
@@ -96,8 +112,8 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         try {
             const ipt = this.getAssetToSave(id);
             let d = ipt;
-            delete d?.strQuantity;
-            await API.graphql(graphqlOperation(updateAssets, { input: d! }));
+            delete d?.asset.strQuantity;
+            await API.graphql(graphqlOperation(updateAssets, { input: d?.asset! }));
         } catch (err) {
             console.log('error creating account:', err)
         }
@@ -113,15 +129,15 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
         for (const asset of assts) {
 
-            if (asset.getKey() === key) {
+            if (asset.asset.getKey() === key) {
                 if (tp === 'ticker') {
-                    asset.ticker = value;
+                    asset.asset.ticker = value;
                 }
                 if (tp === 'quantity') {
-                    asset.setQuantity(cleanNumberDataInput(value));
+                    asset.asset.setQuantity(cleanNumberDataInput(value));
                 }
                 if (tp === 'hasIndexData') {
-                    asset.hasIndexData = Number(value);
+                    asset.asset.hasIndexData = Number(value);
                 }
                 // if (tp === 'isCurrency') {
                 //     asset.isCurrency = Number(value);
@@ -134,7 +150,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
     getAssetToSave(id: string) {
         for (const i of this.state.assets) {
-            if (i.getKey() === id) {
+            if (i.asset.getKey() === id) {
                 return i;
             }
         }
@@ -145,23 +161,36 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
         const assetId = event.target.name;
         let currAssets = this.state.assets;
         for (const asset of currAssets) {
-            if (asset.id === assetId) {
-                asset.account = newAccountId;
+            if (asset.asset.id === assetId) {
+                asset.asset.account = newAccountId;
                 break;
             }
         }
-        this.setState({assets: currAssets});
+        this.setState({ assets: currAssets });
     };
+
+
+    setHasIndexData(event: React.MouseEvent<HTMLDivElement> | undefined, has: boolean, assetToAdd: Asset) {
+        console.log('taptaps')
+        let currAssets = this.state.assets;
+        for (const asset of currAssets) {
+            if (asset.asset.id === assetToAdd.id) {
+                asset.asset.hasIndexData = has ? 1 : 0;
+                break;
+            }
+        }
+        this.setState({ assets: currAssets });
+    }
 
     handleCheckBox(assetToUpdate: Asset) {
         const assets = this.state.assets;
         for (const asset of assets) {
-            if (asset.id === assetToUpdate.id) {
-                let newHasIndexData = asset.hasIndexData === 1 ? 0 : 1;
-                asset.hasIndexData = newHasIndexData;
+            if (asset.asset.id === assetToUpdate.id) {
+                let newHasIndexData = asset.asset.hasIndexData === 1 ? 0 : 1;
+                asset.asset.hasIndexData = newHasIndexData;
             }
         }
-        this.setState({assets: assets})
+        this.setState({ assets: assets })
         console.log(JSON.stringify(assets))
     }
 
@@ -170,45 +199,23 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             return (
                 <Box >
                     <h1 >Assets</h1>
-                    {this.state.assets ? this.state.assets.map((asset: Asset, i: number) => {
-                        return (
-                            <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-                                <CardContent>
-                                    <Stack direction='column' spacing={2}>
-                                        <TextField label="Ticker Code / Asset Name" id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={this.handleChange} value={asset.ticker} />
-                                        <TextField label="Quantity / Total value" id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={this.handleChange} value={asset.strQuantity} />
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Account</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                name={asset.id}
-                                                value={asset.account}
-                                                label="Account"
-                                                onChange={this.handleDropChange}
-                                            >
-                                                {this.state.accounts.map((account: Account, z: number) => {
-                                                    return (
-                                                        <MenuItem key={z} value={account.name}>{account.name}</MenuItem>
-                                                    )
-                                                })}
-                                            </Select>
-                                        </FormControl>
-                                        {/* <TextField label="Is Currency" id="outlined-basic" variant="outlined" name={`isCurrency-${asset.getKey()}`} onChange={this.handleChange} value={asset.isCurrency} /> */}
-                                        
-                                        <FormControlLabel control={<Checkbox name={`use-online-data`} onChange={(e) => this.handleCheckBox(asset)} checked={asset.hasIndexData === 1 ? true : false} />} label="Is this an asset who's value is publicly available? (i.e. a Stock/Fund on the publicly traded market?)" />
-                                        <Button id={asset.getKey()} onClick={this.handleDeleteAsset} variant="outlined">Delete</Button>
-                                        <Button id={asset.getKey()} onClick={this.handleSave} variant="contained">Save</Button>
-                                    </Stack>
+                    {this.state.assets ? this.state.assets.map((asset: AssetData, i: number) => {
 
-                                </CardContent>
-                            </Card>
-                        );
+                        if (asset.adding) {
+                            return (
+                                <AddAssetComponent asset={asset.asset} handleChange={this.handleChange} handleDropChange={this.handleDropChange} accounts={this.state.accounts} handleDeleteAsset={this.handleDeleteAsset} handleSave={this.handleSave} setHasIndexData={this.setHasIndexData} />
+                            );
+                        } else {
+                            return (
+                                <AssetComponent asset={asset.asset} handleChange={this.handleChange} handleDropChange={this.handleDropChange} accounts={this.state.accounts} handleDeleteAsset={this.handleDeleteAsset} handleSave={this.handleSave} handleCheckBox={this.handleCheckBox} />
+                            );
+                        }
+
                     }) : <></>}
-                    <br/>
+                    <br />
                     <Button style={{ width: "100%" }} onClick={this.handleAddAsset} variant="outlined">add assets +</Button>
-                    <br/>
-                    <br/>
+                    <br />
+                    <br />
 
                 </Box>
             )
