@@ -263,7 +263,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
                 <small style={{ marginLeft: '10px' }}>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
 
 
-                {this.state.simulationButtonLoading ? <CircularProgress /> : <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
+                {this.state.simulationButtonLoading ? <Box ><CircularProgress /><small >Running 1,000 different Monte Carlo Simulations, this may take a moment... </small></Box>: <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
                   <RefreshIcon />
                 </IconButton>}
 
