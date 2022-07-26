@@ -111,7 +111,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
         let sum = budgets.map((budget: Budget) => {
             return budget.type === this.props.type ? budget.getSum() : 0.0
         }).reduce((p: number, c: number) => p + c, 0);
-        return (sum / count).toFixed(2);
+        return isNaN(sum / count) ? "0.00" : (sum / count).toFixed(2);
     }
 
     getEventsTotal(events: Event[]) {
