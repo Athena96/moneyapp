@@ -86,7 +86,7 @@ class AddAssetComponent extends React.Component<AddAssetComponentProps, IState> 
             <>
                 <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                     <CardContent>
-                        <p><b>Stock/ETF</b></p>
+                        <p><BusinessIcon/>{' '}<b>Stock/ETF</b></p>
 
                         <Stack direction='column' spacing={2}>
                             <TextField label="Ticker Code" id="outlined-basic" variant="outlined" name={`ticker-${this.props.asset.getKey()}`} onChange={this.props.handleChange} value={this.props.asset.ticker} />
@@ -124,7 +124,9 @@ class AddAssetComponent extends React.Component<AddAssetComponentProps, IState> 
             <>
                 <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                     <CardContent>
-                        <p><b>Other (Home, Car, Art, ...)</b></p>
+
+                        <p><InsertChartIcon/>{' '}<b>Other (Home, Car, Art, ...)</b></p>
+
                         <Stack direction='column' spacing={2}>
                             <TextField label="Asset Name" id="outlined-basic" variant="outlined" name={`ticker-${this.props.asset.getKey()}`} onChange={this.props.handleChange} value={this.props.asset.ticker} />
                             <TextField label="Current Value (in dollars)" id="outlined-basic" variant="outlined" name={`quantity-${this.props.asset.getKey()}`} onChange={this.props.handleChange} value={this.props.asset.strQuantity} />

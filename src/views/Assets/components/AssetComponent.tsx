@@ -6,7 +6,8 @@ import {
 } from '@mui/material';
 import { Asset } from '../../../model/Base/Asset';
 import { Account } from '../../../model/Base/Account';
-
+import BusinessIcon from '@mui/icons-material/Business';
+import InsertChartIcon from '@mui/icons-material/InsertChart';
 interface AssetComponentProps {
     asset: Asset
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
@@ -21,7 +22,7 @@ const AssetComponent: FC<AssetComponentProps> = ({ asset, handleChange, handleDr
     return (
         <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
             <CardContent>
-                <p><b>{asset.hasIndexData === 1 ? "Stock/ETF" : "Custom Asset"}</b></p>
+                <p>{asset.hasIndexData === 1 ? <BusinessIcon/> : <InsertChartIcon/>}{' '}<b>{asset.hasIndexData === 1 ? "Stock/ETF" : "Custom Asset"}</b></p>
                 <Stack direction='column' spacing={2}>
                     <TextField label={asset.hasIndexData === 1 ? "Ticker Code" : "Asset Name"} id="outlined-basic" variant="outlined" name={`ticker-${asset.getKey()}`} onChange={handleChange} value={asset.ticker} />
                     <TextField label={asset.hasIndexData === 1 ? "Quantity" : "Current Value (in Dollars)"} id="outlined-basic" variant="outlined" name={`quantity-${asset.getKey()}`} onChange={handleChange} value={asset.strQuantity} />
