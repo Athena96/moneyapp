@@ -23,6 +23,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { SimulationStatus } from '../../API';
 import { SimulationDataAccess } from '../../utilities/SimulationDataAccess';
 
+
 interface DashboardViewProps {
   user: string;
   simulation: Simulation | undefined;
@@ -35,6 +36,7 @@ interface IState {
   successPercent: string;
   simulationButtonLoading: boolean;
   chartDataRaw: MonteCarloRowData[] | undefined;
+  timeout: number;
 }
 
 Amplify.configure({
@@ -62,6 +64,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       chartData: null,
       lastComputed: null,
       successPercent: "0.0",
+      timeout: 5000,
       simulationButtonLoading: ((this.props.simulation?.status || SimulationStatus.Done) === SimulationStatus.Done) ? false : true,
     }
     this.componentDidMount = this.componentDidMount.bind(this);
@@ -77,17 +80,25 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     this.getData();
     const self = this;
     setInterval(async function () {
+      console.log('poll ' + self.state.timeout)
       const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, self.props.user);
       if (simulation) {
         const chartDataRaw = simulation.getSimulationData()!;
         const chartData = self.generateGraphData(chartDataRaw, 'brokerage');
         const successPercent = String(Number(simulation.successPercent).toFixed(0));
         const status = simulation.status === SimulationStatus.Done ? false : true;
+        if (simulation.status === SimulationStatus.Done) {
+          self.setState({ timeout: 5000 })
+
+        } else {
+          self.setState({ timeout: 10000 })
+
+        }
         const now = new Date();
         const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
         self.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours, chartDataRaw: chartDataRaw })
       }
-    }, 6000);
+    }, this.state.timeout);
   }
 
   async getData() {
@@ -107,7 +118,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
   async handleTriggerSimulation() {
     try {
-      this.setState({ simulationButtonLoading: true });
+      this.setState({ simulationButtonLoading: true, timeout: 10000 });
 
       const user = await Auth.currentAuthenticatedUser();
       const email: string = user.attributes.email;

@@ -71,7 +71,7 @@ class AddAssetComponent extends React.Component<AddAssetComponentProps, IState> 
                     </Card>
                     <Card onClick={(e) => this.setDataAndNextStep(e, false, this.props.asset)}>
                         <InsertChartIcon sx={{ ml: '20px', mt: '20px' }} />
-                        <p style={{ margin: '20px' }}>Other</p>
+                        <p style={{ margin: '20px' }}>Other (Home, Car, Art, ...)</p>
                     </Card>
                 </Stack>
 
@@ -124,7 +124,7 @@ class AddAssetComponent extends React.Component<AddAssetComponentProps, IState> 
             <>
                 <Card variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
                     <CardContent>
-                        <p><b>Other</b></p>
+                        <p><b>Other (Home, Car, Art, ...)</b></p>
                         <Stack direction='column' spacing={2}>
                             <TextField label="Asset Name" id="outlined-basic" variant="outlined" name={`ticker-${this.props.asset.getKey()}`} onChange={this.props.handleChange} value={this.props.asset.ticker} />
                             <TextField label="Current Value (in dollars)" id="outlined-basic" variant="outlined" name={`quantity-${this.props.asset.getKey()}`} onChange={this.props.handleChange} value={this.props.asset.strQuantity} />

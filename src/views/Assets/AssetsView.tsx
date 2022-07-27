@@ -171,7 +171,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
 
 
     setHasIndexData(event: React.MouseEvent<HTMLDivElement> | undefined, has: boolean, assetToAdd: Asset) {
-        console.log('taptaps')
         let currAssets = this.state.assets;
         for (const asset of currAssets) {
             if (asset.asset.id === assetToAdd.id) {
