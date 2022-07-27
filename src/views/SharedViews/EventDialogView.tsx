@@ -95,7 +95,7 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
         try {
             await API.graphql(graphqlOperation(updateEvent, { input: EventDataAccess.convertToDDBObject(eventToSave, this.props.simulation!.id) }))
         } catch (err) {
-            console.log('error creating todo:', err)
+            console.error('error creating todo:', err)
         }
         if (this.props.closeDialog) {
             this.props.closeDialog();

@@ -46,7 +46,7 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
     }
 
     async handleSave(e: any) {
-        // console.log('bd ' + this.state.birthday)
+
     }
 
     render() {

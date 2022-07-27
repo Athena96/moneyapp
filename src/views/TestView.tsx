@@ -91,7 +91,7 @@ class TestView extends React.Component<TestViewProps, IState> {
             this.setState({ budgets: newBudgets });
             await API.graphql(graphqlOperation(createBudget, { input: newBudet }))
         } catch (err) {
-            console.log('error creating todo:', err)
+            console.error('error creating todo:', err)
         }
     }
 

@@ -30,7 +30,7 @@ export class SimulationDataAccess {
             }
             componentState.setState({ simulations: fetchedSimulations, selectedSimulation: selSim })
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
         return fetchedSimulations;
     }
@@ -60,7 +60,7 @@ export class SimulationDataAccess {
                 componentState.setState({ simulations: [selectedSimulation], selectedSimulation: selectedSimulation })
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
         return selectedSimulation!;
     }

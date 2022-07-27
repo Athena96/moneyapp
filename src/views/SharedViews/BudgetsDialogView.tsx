@@ -122,7 +122,7 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
         try {
             await API.graphql(graphqlOperation(updateBudget, { input: BudgetDataAccess.convertToDDBObject(budgetToSave, this.props.simulation!.id) }))
         } catch (err) {
-            console.log('error creating todo:', err)
+            console.error('error creating todo:', err)
         }
         this.props.closeDialog();
     }

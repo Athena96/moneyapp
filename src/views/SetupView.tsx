@@ -111,7 +111,7 @@ class SetupView extends React.Component<SetupViewProps, IState> {
                     }
                 }));
             } catch (err) {
-                console.log('error updateInputs:', err)
+                console.error('error updateInputs:', err)
             }
         }
     }
@@ -124,12 +124,6 @@ class SetupView extends React.Component<SetupViewProps, IState> {
             await this.setFirstSignIn();
 
             try {
-                console.log('POST');
-
-                // const email = this.state.user;
-                console.log('email ' + email);
-
-
                 await API.post('apiCall', '/router', {
                     queryStringParameters: {
                         email,
@@ -140,10 +134,10 @@ class SetupView extends React.Component<SetupViewProps, IState> {
 
                 window.location.reload();
             } catch (error) {
-                console.log('error signing out: ', error);
+                console.error('error signing out: ', error);
             }
         } catch (e) {
-            console.log(e)
+            console.error(e)
         }
     }
 

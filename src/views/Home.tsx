@@ -170,11 +170,8 @@ class Home extends React.Component<IProps, IState> {
 
     simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
     if (!simulation) {
-      console.log('creating new sim, user did not have one')
       simulation = new Simulation(simid, 'Default Scenario', 1, '[]', "", new Date(), email, SimulationStatus.Done);
       await API.graphql(graphqlOperation(createSimulation, { input: simulation }));
-
-      console.log('also create Input')
       const assetAllocation: AssetAllocation = new AssetAllocation(
         new Allocations(
           '80.0',
@@ -206,7 +203,6 @@ class Home extends React.Component<IProps, IState> {
   }
 
   scenarioSwitch() {
-    console.log('scenarioSwitch')
     this.setState({ showScenario: true });
   }
 
@@ -241,7 +237,7 @@ class Home extends React.Component<IProps, IState> {
     try {
       await API.graphql(graphqlOperation(updateSimulation, { input: simulation }));
     } catch (err) {
-      console.log('error creating account:', err)
+      console.error('error creating account:', err)
     }
   }
 
@@ -250,7 +246,7 @@ class Home extends React.Component<IProps, IState> {
       this.props.hideShowSignIn();
       await Auth.signOut();
     } catch (error) {
-      console.log('error signing out: ', error);
+      console.error('error signing out: ', error);
     }
   }
 
@@ -266,7 +262,7 @@ class Home extends React.Component<IProps, IState> {
         });
         await Auth.signOut();
       } catch (error) {
-        console.log('error signing out: ', error);
+        console.error('error signing out: ', error);
       }
     }
 

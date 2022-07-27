@@ -85,7 +85,7 @@ export class EventDataAccess {
 
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     return fetchedEvents;
@@ -100,7 +100,7 @@ export class EventDataAccess {
       }
 
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     return fetchedEvents;
   }
@@ -109,7 +109,7 @@ export class EventDataAccess {
     try {
       await API.graphql(graphqlOperation(createEvent, { input: event }))
     } catch (err) {
-      console.log('error creating event:', err)
+      console.error('error creating event:', err)
 
     }
   }
@@ -129,7 +129,7 @@ export class EventDataAccess {
         ddbEvent!.type!);
       return event;
     } catch (err) {
-      console.log('error:', err)
+      console.error('error:', err)
     }
 
   }

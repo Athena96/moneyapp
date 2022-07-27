@@ -44,7 +44,7 @@ export class BudgetDataAccess {
                 componentState.setState({ budgets: fetchedBudgets })
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
         return fetchedBudgets;
 
@@ -71,7 +71,7 @@ export class BudgetDataAccess {
             }
 
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
 
         return fetchedBudgets;
@@ -81,7 +81,7 @@ export class BudgetDataAccess {
         try {
             await API.graphql(graphqlOperation(createBudget, { input: budget }))
         } catch (err) {
-            console.log('error creating budget:', err)
+            console.error('error creating budget:', err)
         }
     }
 
@@ -96,7 +96,7 @@ export class BudgetDataAccess {
             }
 
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
         return fetchedBudgets;
     }

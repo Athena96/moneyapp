@@ -80,7 +80,6 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     this.getData();
     const self = this;
     setInterval(async function () {
-      console.log('poll ' + self.state.timeout)
       const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, self.props.user);
       if (simulation) {
         const chartDataRaw = simulation.getSimulationData()!;
@@ -132,7 +131,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       });
 
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   }
 

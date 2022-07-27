@@ -92,7 +92,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       this.setState({ accounts: newAccounts });
       await API.graphql(graphqlOperation(createAccount, { input: newAccount }))
     } catch (err) {
-      console.log('error creating todo:', err)
+      console.error('error creating todo:', err)
     }
   }
 
@@ -115,7 +115,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       try {
         await API.graphql({ query: deleteAccount, variables: { input: accntToDelete } });
       } catch (err) {
-        console.log('error:', err)
+        console.error('error:', err)
       }
     }
   }
@@ -141,7 +141,7 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
       ipt.contributionPercent = isNaN(parseFloat(this.state.accountsContributionPercents![i])) ? 0.0 : parseFloat(this.state.accountsContributionPercents![i]);
       await API.graphql(graphqlOperation(updateAccount, { input: ipt! }));
     } catch (err) {
-      console.log('error creating account:', err)
+      console.error('error creating account:', err)
     }
   }
 

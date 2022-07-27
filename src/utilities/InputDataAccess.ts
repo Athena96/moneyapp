@@ -133,7 +133,7 @@ export class InputDataAccess {
         try {
             await API.graphql(graphqlOperation(createInputs, { input: input }))
         } catch (err) {
-            console.log('error creating event:', err)
+            console.error('error creating event:', err)
         }
     }
 

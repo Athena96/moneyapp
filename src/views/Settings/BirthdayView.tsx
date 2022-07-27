@@ -62,7 +62,7 @@ class BirthdayView extends React.Component<BirthdayViewProps, IState> {
         }));
       }
     } catch (err) {
-      console.log('error updateInputs:', err)
+      console.error('error updateInputs:', err)
     }
   }
 

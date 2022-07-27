@@ -53,7 +53,7 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
     try {
       await API.graphql(graphqlOperation(updateAccount, { input: this.state.account }))
     } catch (err) {
-      console.log('error creating account:', err)
+      console.error('error creating account:', err)
     }
   }
 
@@ -64,7 +64,7 @@ class AccountDetailView extends React.Component<AccountDetailProps, IState> {
       const account = new Account(e!.id!, e!.name!, e.taxAdvantaged || 0, e?.contributionPercent || 0.0);
       this.setState({ account: account });
     } catch (err) {
-      console.log('error:', err)
+      console.error('error:', err)
     }
   }
 

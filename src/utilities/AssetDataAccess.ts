@@ -13,7 +13,7 @@ export class AssetDataAccess {
    
           await API.graphql(graphqlOperation(createAssets, { input: asset }))
         } catch (err) {
-          console.log('error creating asset:', err)
+          console.error('error creating asset:', err)
         }
       }
 
@@ -39,11 +39,8 @@ export class AssetDataAccess {
         let fetchedAssets: Asset[] = [];
         try {
             const response =  await AssetDataAccess.paginateAssets();
-
-            console.log(JSON.stringify(response.data))
             for (const asset of response) {
                 if (asset?.simulation === userSimulation) {
-                    console.log(`asset ` + asset.account)
                     fetchedAssets.push(new Asset(asset!.id, asset!.ticker!, String(asset!.quantity!), asset!.hasIndexData!, asset!.account!, asset!.isCurrency!));
                 }
             }
@@ -51,7 +48,7 @@ export class AssetDataAccess {
                 componentState.setState({ assets: fetchedAssets })
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
         return fetchedAssets;
 

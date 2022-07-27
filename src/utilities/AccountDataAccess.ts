@@ -23,7 +23,7 @@ export class AccountDataAccess {
                 componentState.setState({ accounts: fetchedAccounts })
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
 
         return fetchedAccounts;
@@ -33,7 +33,7 @@ export class AccountDataAccess {
         try {
           await API.graphql(graphqlOperation(createAccount, { input: account }))
         } catch (err) {
-          console.log('error creating event:', err)
+          console.error('error creating event:', err)
         }
       }
 

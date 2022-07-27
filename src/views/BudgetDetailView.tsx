@@ -60,7 +60,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
 
       await API.graphql(graphqlOperation(updateBudget, { input: newBudget }))
     } catch (err) {
-      console.log('error creating todo:', err)
+      console.error('error creating todo:', err)
     }
   }
 
@@ -130,7 +130,7 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
         type: e!.type!
       });
     } catch (err) {
-      console.log('error:', err)
+      console.error('error:', err)
     }
 
   }

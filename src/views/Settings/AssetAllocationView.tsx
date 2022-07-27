@@ -72,7 +72,7 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                 }));
             }
         } catch (err) {
-            console.log('error updateInputs:', err)
+            console.error('error updateInputs:', err)
         }
     }
 
@@ -85,7 +85,6 @@ class AssetAllocationView extends React.Component<AssetAllocationViewProps, ISta
                 '50.0',
                 '5.0') : undefined;
 
-            console.log('input af: ' + JSON.stringify(updatedInput));
             this.setState({ input: updatedInput });
         }
     }

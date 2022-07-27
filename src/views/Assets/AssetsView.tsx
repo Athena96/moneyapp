@@ -78,7 +78,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             this.setState({ assets: newAssets });
             await API.graphql(graphqlOperation(createAssets, { input: newDBAsset }))
         } catch (err) {
-            console.log('error creating todo:', err)
+            console.error('error creating todo:', err)
         }
     }
 
@@ -101,7 +101,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             try {
                 await API.graphql({ query: deleteAssets, variables: { input: assetToDelete } });
             } catch (err) {
-                console.log('error:', err)
+                console.error('error:', err)
             }
         }
     }
@@ -115,7 +115,7 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             delete d?.asset.strQuantity;
             await API.graphql(graphqlOperation(updateAssets, { input: d?.asset! }));
         } catch (err) {
-            console.log('error creating account:', err)
+            console.error('error creating account:', err)
         }
     }
 
@@ -190,7 +190,6 @@ class AssetsView extends React.Component<AssetsViewProps, IState> {
             }
         }
         this.setState({ assets: assets })
-        console.log(JSON.stringify(assets))
     }
 
     render() {

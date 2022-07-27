@@ -167,7 +167,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     this.setState({ isLoading: false });
                     window.location.reload();
                 } catch (err) {
-                    console.log('error creating...:', err);
+                    console.error('error creating...:', err);
                     this.setState({ isLoading: false });
                 }
             } else {
@@ -182,9 +182,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
 
 
         } else {
-            console.log('did not create new Simulation.');
             return;
-
         }
     }
 
@@ -203,7 +201,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
             const sim = this.getSimulationToSave(id);
             await API.graphql(graphqlOperation(updateSimulation, { input: sim }));
         } catch (err) {
-            console.log('error creating account:', err)
+            console.error('error creating account:', err)
         }
     }
 
@@ -252,7 +250,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     try {
                         await API.graphql({ query: deleteBudget, variables: { input: { 'id': b.id } } });
                     } catch (err) {
-                        console.log('error:', err)
+                        console.error('error:', err)
                     }
 
                 }
@@ -262,7 +260,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     try {
                         await API.graphql({ query: deleteEvent, variables: { input: { 'id': e.id } } });
                     } catch (err) {
-                        console.log('error:', err)
+                        console.error('error:', err)
                     }
 
                 }
@@ -272,7 +270,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 try {
                     await API.graphql({ query: deleteInputs, variables: { input: { 'id': input.id } } });
                 } catch (err) {
-                    console.log('error:', err)
+                    console.error('error:', err)
                 }
 
                 // }
@@ -281,7 +279,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     try {
                         await API.graphql({ query: deleteAccount, variables: { input: { 'id': ac.id } } });
                     } catch (err) {
-                        console.log('error:', err)
+                        console.error('error:', err)
                     }
 
                 }
@@ -291,7 +289,7 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                     try {
                         await API.graphql({ query: deleteInputs, variables: { input: { 'id': as.id } } });
                     } catch (err) {
-                        console.log('error:', err)
+                        console.error('error:', err)
                     }
 
                 }
@@ -300,17 +298,16 @@ class SimulationView extends React.Component<SimulationViewProps, IState> {
                 this.setState({ isLoading: false });
                 window.location.reload();
             } catch (err) {
-                console.log('error:', err);
+                console.error('error:', err);
                 this.setState({ isLoading: false });
             }
         } else {
-            console.log('chose not to delete');
             return;
         }
     }
 
     handleEditSimulation(event: any) {
-        console.log((event.target as Element).id);
+
     }
 
   closeDialog() {

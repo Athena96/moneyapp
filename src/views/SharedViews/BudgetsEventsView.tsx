@@ -92,7 +92,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
             this.setState({ budgets: newBudgets });
             await API.graphql(graphqlOperation(createBudget, { input: formatedBudget }))
         } catch (err) {
-            console.log('error creating todo:', err)
+            console.error('error creating todo:', err)
         }
     }
 
@@ -145,7 +145,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
             this.setState({ events: newEvents });
             await API.graphql(graphqlOperation(createEvent, { input: formatedEvent }))
         } catch (err) {
-            console.log('error creating todo:', err)
+            console.error('error creating todo:', err)
         }
     }
 
@@ -168,7 +168,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
             try {
                 await API.graphql({ query: deleteBudget, variables: { input: budgetToDelete } });
             } catch (err) {
-                console.log('error:', err)
+                console.error('error:', err)
             }
         }
     }
@@ -192,7 +192,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
             try {
                 await API.graphql({ query: deleteEvent, variables: { input: eventToDelete } });
             } catch (err) {
-                console.log('error:', err)
+                console.error('error:', err)
             }
         }
     }
