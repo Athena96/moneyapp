@@ -12,6 +12,7 @@ import SettingsView from './Settings/SettingsView';
 import IncomesView from './Incomes/IncomesView';
 import { Input } from '../model/Base/Input';
 import EventDetailView from './EventDetailView';
+import LearnMoreView from './LearnMoreView';
 
 interface InputsViewProps {
   user: string;
@@ -44,6 +45,7 @@ class Main extends React.Component<InputsViewProps, IState> {
         <Route path="/setup" render={(props) => <SetupView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/settings" render={(props) => <SettingsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/event" render={(props) => <EventDetailView user={this.props.user} simulation={this.props.simulation}/>} />
+        <Route path="/about" render={(props) => <LearnMoreView />} />
 
       </Switch>
     );

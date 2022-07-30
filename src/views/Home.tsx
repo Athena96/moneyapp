@@ -367,6 +367,9 @@ class Home extends React.Component<IProps, IState> {
               >
                 <MenuItem>{this.state.user}</MenuItem>
                 <MenuItem sx={{ color: 'red' }} onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
+                <MenuItem><Link style={{ color: 'black', textDecoration: 'none' }} to={`/about`}>
+                Learn More</Link></MenuItem>
+
                 <MenuItem onClick={this.handleSignOut}>Sign Out</MenuItem>
               </Menu>
             </Toolbar>

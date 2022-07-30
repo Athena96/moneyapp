@@ -3,7 +3,7 @@ import { moneyGreen } from '../utilities/constants';
 import main from '../images/main.png'
 import Paper from '@mui/material/Paper';
 
-interface SignInViewProps {
+interface LearnMoreViewProps {
 
 }
 
@@ -11,8 +11,8 @@ interface IState {
 
 }
 
-class SignInView extends React.Component<SignInViewProps, IState> {
-    constructor(props: SignInViewProps) {
+class LearnMoreView extends React.Component<LearnMoreViewProps, IState> {
+    constructor(props: LearnMoreViewProps) {
         super(props);
         this.state = {}
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -34,8 +34,12 @@ class SignInView extends React.Component<SignInViewProps, IState> {
                 <p >This is a simple, free tool that uses <a target="_blank " href="https://www.investopedia.com/terms/m/montecarlosimulation.asp#:~:text=A%20Monte%20Carlo%20simulation%20is,in%20prediction%20and%20forecasting%20models.">Monte Carlo simulation</a> to help you determine when you can retire.</p>
                 <p >You input how much you're saving, your living expenses, and your assets and we uses this to project out how your portfolio will perform!</p>
 
-                <p >Create your free account today to answer the question of when you can retire, it might be sooner than you think!</p>
-                <p>📺 check out this <a target="_blank " href="https://youtu.be/3cgWJbxQ-5I">short video</a> to learn more!</p>
+
+                <h3>Video Tutorials</h3>
+
+                <p>📺 <a target="_blank " href="https://youtu.be/3cgWJbxQ-5I">Create Account Tutorial</a></p>
+                <p>📺 <a target="_blank " href="https://youtu.be/Pkk8YA-jYDQ">How to use the Life Scenarios Feature</a></p>
+
 
                 {/* <Card variant="outlined"> */}
                 <Paper elevation={3} style={{borderRadius: '10px'}} >
@@ -52,4 +56,4 @@ class SignInView extends React.Component<SignInViewProps, IState> {
     }
 }
 
-export default SignInView;
+export default LearnMoreView;
