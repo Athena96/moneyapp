@@ -138,9 +138,7 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
 
                     <Stack direction='column' spacing={1}>
                         <br />
-                        {this.state.budgetToSave && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleRecurringNameChange(event)} value={this.state.budgetToSave.name} />}
-
-
+                        {this.state.budgetToSave && <TextField label={'name'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleRecurringNameChange(event)} value={this.state.budgetToSave.name} />}
                         {this.state.budgetToSave.categories && this.state.budgetToSave.categories.map((category: Category, i: number) => {
                             return (
                                 <>

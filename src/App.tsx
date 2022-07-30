@@ -71,50 +71,54 @@ class App extends React.Component<IProps, IState> {
     return (
       <div>
         <div >
-  
-  {
-    !this.state.signedIn ? <>
-      <Stack direction='row' spacing={2}>
-    
-          <div style={{marginTop: '175px', marginLeft: '30px'}}>
-            <p style={{color: moneyGreen, textAlign: 'center'}}><b>Sign in to your Account</b></p>
-          <AmplifyProvider theme={theme}>
-            <Authenticator >
-              {({ signOut, user }) => {
-                return (
-                  <>
-                    <Container >
-                      <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} />
-                    </Container>
-                  </>
-                )}
-              }
-            </Authenticator>
-          </AmplifyProvider>
-          </div>
 
-    <div >
-    {!this.state.signedIn && <SignInView />}
+          {
+            !this.state.signedIn ? <>
+              <Stack direction='row' spacing={2}>
 
-    </div>
-   </Stack></> : <>
-   <AmplifyProvider theme={theme}>
-      <Authenticator >
-        {({ signOut, user }) => {
-          return (
-            <>
-              <Container >
-                <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} />
-              </Container>
-            </>
-          )}
-        }
-      </Authenticator>
-    </AmplifyProvider>
-   </>
-  }
-      
-          
+                <div style={{ marginTop: '175px', marginLeft: '30px' }}>
+                  <p style={{ color: moneyGreen, textAlign: 'center' }}><b>Sign in to your Account</b></p>
+                  <AmplifyProvider theme={theme}>
+                    <Authenticator >
+                      {({ signOut, user }) => {
+                        return (
+                          <>
+                            <Container >
+                              <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} signedIn={this.state.signedIn} />
+                            </Container>
+                          </>
+                        )
+                      }
+                      }
+                    </Authenticator>
+                  </AmplifyProvider>
+                </div>
+
+                <div >
+                  {!this.state.signedIn && <SignInView />}
+
+                </div>
+              </Stack></> :
+
+              <>
+                <AmplifyProvider theme={theme}>
+                  <Authenticator >
+                    {({ signOut, user }) => {
+                      return (
+                        <>
+                          <Container >
+                            <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} signedIn={this.state.signedIn} />
+                          </Container>
+                        </>
+                      )
+                    }
+                    }
+                  </Authenticator>
+                </AmplifyProvider>
+              </>
+          }
+
+
         </div>
       </div>
     );

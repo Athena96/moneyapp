@@ -34,7 +34,7 @@ class SignInView extends React.Component<SignInViewProps, IState> {
                 <p >This is a simple, free tool that uses Monte Carlo simulation to help you determine when you can retire.</p>
                 <p >You input how much you're saving, your living expenses, and your assets and we uses this to project out how your portfolio will perform!</p>
 
-                <p >Create your free account today to answer the question of when you can retire, if might be sooner than you think!</p>
+                <p >Create your free account today to answer the question of when you can retire, it might be sooner than you think!</p>
 
 
                 {/* <Card variant="outlined"> */}

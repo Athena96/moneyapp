@@ -27,8 +27,10 @@ import { styled, Theme, CSSObject } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 
-import {FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Menu, Dialog, ListItemText, ListItemIcon,
-  ListItemButton, List, Divider, Button, Typography, IconButton,Toolbar, Box } from '@mui/material';
+import {
+  FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Menu, Dialog, ListItemText, ListItemIcon,
+  ListItemButton, List, Divider, Button, Typography, IconButton, Toolbar, Box
+} from '@mui/material';
 
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
@@ -118,6 +120,7 @@ Amplify.configure(awsExports);
 interface IProps {
   hideSignIn: () => void;
   hideShowSignIn: () => void;
+  signedIn: boolean;
 }
 
 interface IState {
@@ -161,6 +164,11 @@ class Home extends React.Component<IProps, IState> {
 
   async componentDidMount() {
     this.props.hideSignIn();
+
+    if (!this.props.signedIn) {
+      return;
+    }
+
     let simulation = undefined;
     let inputSettings = undefined;
     const user = await Auth.currentAuthenticatedUser();
@@ -358,7 +366,7 @@ class Home extends React.Component<IProps, IState> {
                 onClose={this.profileClose}
               >
                 <MenuItem>{this.state.user}</MenuItem>
-                <MenuItem sx={{color: 'red'}} onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
+                <MenuItem sx={{ color: 'red' }} onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
                 <MenuItem onClick={this.handleSignOut}>Sign Out</MenuItem>
               </Menu>
             </Toolbar>

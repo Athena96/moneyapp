@@ -99,7 +99,7 @@ export function getFinnhubClient() {
 
 export function getActiveBudgets(date: Date, budgets: Budget[]) {
   let currentBudgets: Budget[] = [];
-  date.setHours(0, 0, 0);
+  date.setHours(25, 0, 0); // add a day so there's the day is in the budget window (if user adds budget same day)
   for (const budget of budgets) {
       if (date >= new Date(budget.startDate.setHours(0, 0, 0)) && date <= new Date(budget.endDate.setHours(0, 0, 0))) {
           currentBudgets.push(budget);

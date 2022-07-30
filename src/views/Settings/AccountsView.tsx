@@ -220,9 +220,9 @@ class AccountsView extends React.Component<AccountsViewProps, IState> {
                           </InputAdornment>
                         ),
                       }} value={this.state.accountsContributionPercents![idx]}></TextField>
-                   
 
-                      {this.props.isShownInSetup===false && <p style={{ marginTop: '12px' }}><b>${(cp * savings).toFixed(2)}</b> of ${savings.toFixed(2)}</p>}
+
+                      {this.props.isShownInSetup === false && <p style={{ marginTop: '12px' }}><b>${(cp * savings).toFixed(2)}</b> of ${savings.toFixed(2)}</p>}
                       <Tooltip title={`Of the money you're saving each month, what percent is going to this account? If you're not sure, you can always come back and add it later.`}><InfoIcon /></Tooltip>
                     </Stack>
                     <FormControlLabel control={<Checkbox name={`account-${account.getKey()}`} onChange={this.handleCheckBox} checked={account.taxAdvantaged === 1 ? true : false} />} label="Is this a tax advantaged account? (e.g. 401K, IRA)" />

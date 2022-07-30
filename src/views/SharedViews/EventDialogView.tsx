@@ -112,7 +112,7 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
 
                     <Stack direction='column' spacing={0}>
                         <br />
-                        {this.props.event && <TextField label={'label'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleOneTimeNameChange(event)} value={this.props.event.name} />}<br />
+                        {this.props.event && <TextField label={'name'} id="outlined-basic" variant="outlined" onChange={(event) => this.handleOneTimeNameChange(event)} value={this.props.event.name} />}<br />
 
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">account</InputLabel>
@@ -138,11 +138,7 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
                                     <AttachMoneyIcon />
                                 </InputAdornment>
                             ),
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    Monthly
-                                </InputAdornment>
-                            ),
+                        
                         }} value={this.props.event.category!.strValue}></TextField>}
 
                         <br />
