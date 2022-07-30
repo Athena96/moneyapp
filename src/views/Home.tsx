@@ -317,7 +317,7 @@ class Home extends React.Component<IProps, IState> {
               </Button> */}
 
               <FormControl style={{ color: 'white', marginRight: '10px' }} size="small">
-                <InputLabel id="demo-select-small">simulation</InputLabel>
+                <InputLabel id="demo-select-small">scenario</InputLabel>
                 <Select
                   style={{ color: 'white' }}
                   labelId="demo-select-small"
@@ -331,7 +331,7 @@ class Home extends React.Component<IProps, IState> {
                       <MenuItem key={z} value={`${sim.name}`}>{sim.name}</MenuItem>
                     )
                   })}
-                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Simulations<AddCircleIcon /></Button></MenuItem>
+                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}><Button variant='outlined' onClick={this.scenarioSwitch}>Create/Edit/Delete Scenarios<AddCircleIcon /></Button></MenuItem>
                 </Select>
               </FormControl>
 
