@@ -87,11 +87,9 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         const successPercent = String(Number(simulation.successPercent).toFixed(0));
         const status = simulation.status === SimulationStatus.Done ? false : true;
         if (simulation.status === SimulationStatus.Done) {
-          self.setState({ timeout: 5000 })
-
+          self.setState({ timeout: 6000 })
         } else {
-          self.setState({ timeout: 10000 })
-
+          self.setState({ timeout: 1000 })
         }
         const now = new Date();
         const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
