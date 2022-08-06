@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import { API, Auth } from 'aws-amplify';
 import Amplify from 'aws-amplify';
 import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import '../../App.css';
 import { Line } from "react-chartjs-2";
 import { moneyGreenBoldText, black } from '../../utilities/constants';
@@ -22,6 +23,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { SimulationStatus } from '../../API';
 import { SimulationDataAccess } from '../../utilities/SimulationDataAccess';
+import StockViewComponent from './components/StockViewComponent';
 
 
 interface DashboardViewProps {
@@ -220,7 +222,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
   }
 
   render() {
-    const isMobile = window.innerWidth <= 390;
+    const isMobile = window.innerWidth <= 399;
     const max = this.getMax();
     const options = {
       scales: {
@@ -256,33 +258,41 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       }
     };
 
+    // add more quote data: https://finnhub.io/docs/api/quote
+
     if (this.props.simulation) {
       return (
         <Box >
           {this.state.chartData && this.state.lastComputed ? <>
             <h1 >Dashboard</h1>
 
-            <Paper variant="outlined" sx={{ p: 2, }} >
-              <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
-              <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
-              <Paper  >
-                {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
-                <Line data={this.state.chartData} options={options} />
-                <small style={{ marginLeft: '10px' }}>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
+            <Stack direction={isMobile ? 'column' : 'row'} spacing={2}>
+              <Paper variant="outlined" sx={{ width: isMobile ? '100%' : '75%', p: 2, }} >
+                <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
+                <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
+                <Paper  >
+                  {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
+                  <Line data={this.state.chartData} options={options} />
+                  <small style={{ marginLeft: '10px' }}>Last simulation generated <b>{this.state.lastComputed < 1 ? (this.state.lastComputed * 60).toFixed(0) : this.state.lastComputed.toFixed(0)} {this.state.lastComputed < 1 ? `minute(s)` : `hour(s)`} ago</b></small>
 
 
-                {this.state.simulationButtonLoading ? <Box ><CircularProgress /><small >Running 1,000 different Monte Carlo Simulations, this may take a moment... </small></Box>: <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
-                  <RefreshIcon />
-                </IconButton>}
+                  {this.state.simulationButtonLoading ? <Box ><CircularProgress /><small >Running 1,000 different Monte Carlo Simulations, this may take a moment... </small></Box> : <IconButton onClick={this.handleTriggerSimulation} color="primary" aria-label="upload picture" component="span">
+                    <RefreshIcon />
+                  </IconButton>}
 
 
-                <br />
-                <small style={{ marginLeft: '10px' }}><u><Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>see data</Link></u></small><br />
+                  <br />
+                  <small style={{ marginLeft: '10px' }}><u><Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>see data</Link></u></small><br />
 
-              </Paper >
+                </Paper >
 
-            </Paper>
+              </Paper>
+              <Paper variant="outlined" sx={{ width: isMobile ? '100%' : '25%', marginLeft: '10px', p: 2, }} >
+                <h3 style={{ color: black, width: 'min-width' }}>Stocks<Tooltip title={`These are the securities you're invested in.`}><InfoIcon /></Tooltip></h3>
 
+                <StockViewComponent simulationId={this.props.simulation.id} />
+              </Paper>
+            </Stack>
           </> : < >
             <CircularProgress />
           </>

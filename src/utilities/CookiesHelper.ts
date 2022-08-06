@@ -36,7 +36,7 @@ export function getCookie(key: string): Cookie | null {
     }
     if (c.indexOf(name) === 0) {
       const cookieValue = c.substring(name.length, c.length);
-      console.error(`cache HIT [${key}] : ${cookieValue}`)
+      console.log(`cache HIT [${key}] : ${cookieValue}`)
       return new Cookie(key, cookieValue)
     }
   }
