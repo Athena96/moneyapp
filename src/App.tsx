@@ -16,6 +16,8 @@ import { Auth } from 'aws-amplify';
 import SignInView from './views/SignInView';
 import { moneyGreen } from './utilities/constants';
 
+const isMobile = window.innerWidth <= 390;
+
 Amplify.configure(aws_exports);
 
 interface IProps {
@@ -74,9 +76,11 @@ class App extends React.Component<IProps, IState> {
 
           {
             !this.state.signedIn ? <>
-              <Stack direction='row' spacing={2}>
+              <Stack direction={isMobile ? 'column' : 'row'} spacing={2}>
 
-                <div style={{ marginTop: '175px', marginLeft: '30px' }}>
+                <div style={{ textAlign: 'center', marginTop: isMobile ? '0px' : '175px' , marginLeft: isMobile ? '0px' : '30px' }}>
+                  {isMobile && <h1 style={{ color: moneyGreen }}>Money Tomorrow</h1>}
+
                   <p style={{ color: moneyGreen, textAlign: 'center' }}><b>Sign in to your Account</b></p>
                   <AmplifyProvider theme={theme}>
                     <Authenticator >
@@ -94,9 +98,11 @@ class App extends React.Component<IProps, IState> {
                   </AmplifyProvider>
                 </div>
 
+                {isMobile && <hr style={{ margin: '20px' }} />}
+
+
                 <div >
                   {!this.state.signedIn && <SignInView />}
-
                 </div>
               </Stack></> :
 
