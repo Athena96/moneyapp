@@ -316,7 +316,7 @@ class Home extends React.Component<IProps, IState> {
                 <><small>Scenario</small>:{' '}<u>{this.state.simulation?.name}</u></>
               </Button> */}
 
-              <FormControl style={{ color: 'white', marginRight: '10px' }} size="small">
+              <FormControl style={{ maxWidth: isMobile ? '200px' : '400px', position: 'absolute', right: '50px', color: 'white', }} size="small">
                 <InputLabel id="demo-select-small">scenario</InputLabel>
                 <Select
                   style={{ color: 'white' }}
@@ -346,7 +346,7 @@ class Home extends React.Component<IProps, IState> {
                 edge="start"
                 color="default"
                 aria-label="open drawer"
-                style={{ color: 'white' }}
+                style={{ color: 'white', position: 'absolute', right: '10px' }}
                 onClick={this.handleProfileOpen}
               >
                 <AccountCircle />
@@ -368,7 +368,7 @@ class Home extends React.Component<IProps, IState> {
                 <MenuItem>{this.state.user}</MenuItem>
                 <MenuItem sx={{ color: 'red' }} onClick={this.handleDeleteAccount}>Delete Account</MenuItem>
                 <MenuItem><Link style={{ color: 'black', textDecoration: 'none' }} to={`/about`}>
-                Learn More</Link></MenuItem>
+                  Learn More</Link></MenuItem>
 
                 <MenuItem onClick={this.handleSignOut}>Sign Out</MenuItem>
               </Menu>
