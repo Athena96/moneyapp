@@ -23,7 +23,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { SimulationStatus } from '../../API';
 import { SimulationDataAccess } from '../../utilities/SimulationDataAccess';
-import StockViewComponent from './components/StockViewComponent';
+import AssetViewComponent from './components/AssetViewComponent';
 
 
 interface DashboardViewProps {
@@ -288,9 +288,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
               </Paper>
               <Paper variant="outlined" sx={{ width: isMobile ? '100%' : '25%', marginLeft: '10px', p: 2, }} >
-                <h3 style={{ color: black, width: 'min-width' }}>Stocks<Tooltip title={`These are the securities you're invested in.`}><InfoIcon /></Tooltip></h3>
-
-                <StockViewComponent simulationId={this.props.simulation.id} />
+                <AssetViewComponent simulationId={this.props.simulation.id} />
               </Paper>
             </Stack>
           </> : < >
