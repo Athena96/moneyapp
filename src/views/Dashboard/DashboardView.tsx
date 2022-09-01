@@ -78,26 +78,24 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
   }
 
+  async pollStatus() {
+    const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, this.props.user);
+    if (simulation) {
+      const chartDataRaw = simulation.getSimulationData()!;
+      const chartData = this.generateGraphData(chartDataRaw, 'brokerage');
+      const successPercent = String(Number(simulation.successPercent).toFixed(0));
+      const status = simulation.status === SimulationStatus.Done ? false : true;
+      const now = new Date();
+      const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
+      this.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours, chartDataRaw: chartDataRaw })
+      return simulation.status;
+    }
+    return SimulationStatus.Done;
+  }
+
   componentDidMount() {
     this.getData();
-    const self = this;
-    setInterval(async function () {
-      const simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(null, self.props.user);
-      if (simulation) {
-        const chartDataRaw = simulation.getSimulationData()!;
-        const chartData = self.generateGraphData(chartDataRaw, 'brokerage');
-        const successPercent = String(Number(simulation.successPercent).toFixed(0));
-        const status = simulation.status === SimulationStatus.Done ? false : true;
-        if (simulation.status === SimulationStatus.Done) {
-          self.setState({ timeout: 6000 })
-        } else {
-          self.setState({ timeout: 1000 })
-        }
-        const now = new Date();
-        const hours = Math.abs(now.getTime() - simulation.lastComputed.getTime()) / 3600000;
-        self.setState({ chartData: chartData, successPercent: successPercent, simulationButtonLoading: status, lastComputed: hours, chartDataRaw: chartDataRaw })
-      }
-    }, this.state.timeout);
+    this.pollStatus();
   }
 
   async getData() {
@@ -130,6 +128,16 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         },
       });
 
+      let initialSleepTime = 3000;
+      for (let i = 0; i < 10; i += 1) {
+        // eslint-disable-next-line no-loop-func
+        await new Promise(f => setTimeout(f, initialSleepTime));
+        const status = await this.pollStatus();
+        if (status === SimulationStatus.Done) {
+          break;
+        }
+        initialSleepTime = 500;
+      }
     } catch (e) {
       console.error(e)
     }
