@@ -134,11 +134,14 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         await new Promise(f => setTimeout(f, initialSleepTime));
         const status = await this.pollStatus();
         if (status === SimulationStatus.Done) {
+          this.setState({ simulationButtonLoading: false });
           break;
         }
         initialSleepTime = 500;
       }
+      this.setState({ simulationButtonLoading: false });
     } catch (e) {
+      this.setState({ simulationButtonLoading: false });
       console.error(e)
     }
   }
