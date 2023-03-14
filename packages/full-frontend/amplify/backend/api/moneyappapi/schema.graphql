@@ -1,0 +1,96 @@
+
+enum CategoryTypes {
+  Expense
+  Income
+}
+
+enum SimulationStatus {
+  Running
+  Done
+}
+
+type Account @model {
+  id: ID!
+  name: String
+  simulation: String
+  taxAdvantaged: Int
+  contributionPercent: Float
+}
+
+# no @model directive because we do not want a Category table, i.e. Categories
+# are not singletons to be consistent between types. Like emplies on teams.
+type Category {
+  id: ID
+  name: String
+  value: Float
+}
+
+
+type Budget @model 
+@key(name: "budgetsBySimulationId", fields: ["simulation"], queryField: "budgetsBySimulationId") {
+  id: ID!
+  name: String
+  startAge: Int
+  endAge: Int
+  categories: [Category]
+  simulation: String
+  type: CategoryTypes
+}
+
+type Event @model {
+  id: ID!
+  name: String
+  age: Int
+  account: String
+  category: Category
+  simulation: String
+  type: CategoryTypes
+}
+
+type Allocations {
+    equities: String!
+    bonds: String!
+    cash: String!
+}
+
+enum GlidePath {
+    Evenly
+    Quickly
+    Slowly
+}
+
+type AssetAllocation {
+  startAllocations: Allocations!
+  endAllocations: Allocations
+  glidePath: GlidePath
+}
+
+type Inputs @model {
+  id: ID!
+  age: Int!
+  firstSignIn: Boolean!
+  assetAllocation: AssetAllocation!
+  simulation: String!
+}
+
+type Assets @model {
+  id: ID!
+  ticker: String
+  quantity: Float
+  hasIndexData: Int
+  account: String
+  isCurrency: Int
+  simulation: String
+}
+
+type Simulation @model 
+@key(name: "simulationsByUser", fields: ["user"], queryField: "simulationsByUser") {
+  id: ID!
+  name: String
+  selected: Int
+  simulationData: String
+  successPercent: String
+  lastComputed: AWSDateTime
+  user: String
+  status: SimulationStatus
+}
