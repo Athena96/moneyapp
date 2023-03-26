@@ -20,7 +20,13 @@ export function simulate(
   oneTime: Map<number,number>): MonteCarloData {
   
     console.log('RUN MY SIM FROM LIB')
-  
+    console.log(`period: ${period}`)
+    console.log(`startingBalance: ${startingBalance}`)
+    console.log(`startAge: ${startAge}`)
+    console.log(`annualContribution: ${JSON.stringify(annualContribution)}`)
+    console.log(`oneTime:`)
+    console.log(oneTime)
+
     const successCountByAge = new Array(period).fill(0)
     const simulationData: number[][] = new Array(SIMS)
     for (let i = 0; i < SIMS; i++) {

@@ -15,6 +15,8 @@ import { Simulation } from '../../model/Base/Simulation';
 import { Event } from '../../model/Base/Event';
 import { EventDataAccess } from '../../utilities/EventDataAccess';
 import { InputDataAccess } from '../../utilities/InputDataAccess';
+import { BudgetDataAccess } from '../../utilities/BudgetDataAccess';
+import { getRecurringContribWithdrawlTimeline, getOneTimeContribWithdrawlTimeline } from '../../utilities/helpers';
 interface DataViewProps {
     user: string;
     simulation: Simulation | undefined;
@@ -22,7 +24,9 @@ interface DataViewProps {
 }
 
 interface IState {
-    eventsMap: Map<number,Event[]>;
+    eventsMap: Map<number, Event[]>;
+    budgetsMap: Map<number, number>;
+    oneTimeMap: Map<number, number>;
     startAge: number;
 }
 
@@ -32,6 +36,8 @@ class DataView extends React.Component<DataViewProps, IState> {
         super(props);
         this.state = {
             eventsMap: new Map(),
+            budgetsMap: new Map(),
+            oneTimeMap: new Map(),
             startAge: 0
         }
         this.componentDidMount = this.componentDidMount.bind(this);
@@ -39,13 +45,20 @@ class DataView extends React.Component<DataViewProps, IState> {
     }
 
     async componentDidMount() {
+
+        // get Budgets and Events
+        // create year by year contrib/withdrawl of recurring and one time contrib/withdrawl
+        // add in table
+
         const simId = this.props.simulation!.getKey();
         const events = await EventDataAccess.fetchEventsForSelectedSim(simId);
+        const budgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(simId);
         const defaultInputs = await InputDataAccess.fetchInputsForSelectedSim(simId);
         const startAge = defaultInputs.age
+        console.log(budgets)
 
         // build events map
-        const eventsMap = new Map()
+        const eventsMap = new Map<number, Event[]>()
         for (const event of events) {
             if (!eventsMap.has(event.age)) {
                 eventsMap.set(event.age, [])
@@ -53,7 +66,12 @@ class DataView extends React.Component<DataViewProps, IState> {
             eventsMap.get(event.age)!.push(event)
         }
 
-        this.setState({ eventsMap, startAge});
+
+        const budgetsMap = getRecurringContribWithdrawlTimeline(startAge, budgets);
+        console.log(budgetsMap)
+        const oneTimeMap = getOneTimeContribWithdrawlTimeline(startAge, events);
+
+        this.setState({ eventsMap, startAge, budgetsMap, oneTimeMap });
     }
 
     render() {
@@ -68,16 +86,19 @@ class DataView extends React.Component<DataViewProps, IState> {
                             <TableRow>
                                 <TableCell>Age</TableCell>
                                 <TableCell align="center">Balance</TableCell>
-
+                                <TableCell align="center">Recurring +/-</TableCell>
+                                <TableCell align="center">One Time +/-</TableCell>
                                 <TableCell align="left">Events</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {this.props.balanceData.map((row: number, i: number) => {
-            
-                                    const eventsAtRow = this.state.eventsMap.get(i + this.state.startAge) || []
-                                    return (
-                                        <TableRow
+                                const currentAge = i + this.state.startAge
+                                const eventsAtRow = this.state.eventsMap.get(currentAge) || []
+                                const recurringContribWithdrawl = this.state.budgetsMap.get(currentAge) || 0.0
+                                const oneTimeContribWithdrawl = this.state.oneTimeMap.get(currentAge) || 0.0
+                                return (
+                                    <TableRow
                                         style={{ backgroundColor: 'white' }}
                                         key={`${i + this.state.startAge}`}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -85,8 +106,10 @@ class DataView extends React.Component<DataViewProps, IState> {
                                         <TableCell component="th" scope="row">
                                             {`${i + this.state.startAge}`}
                                         </TableCell>
-    
+
                                         <TableCell align="center">${Number(row).toFixed(2)}</TableCell>
+                                        <TableCell align="center">${recurringContribWithdrawl.toFixed(2)} (/month ${(recurringContribWithdrawl/12.0).toFixed(2)})</TableCell>
+                                        <TableCell align="center">${oneTimeContribWithdrawl.toFixed(2)}</TableCell>
 
                                         {/* <TableCell align="center">{row.taxBal}</TableCell>
                                                 <TableCell align="center">{row.sum}</TableCell> */}
@@ -95,8 +118,8 @@ class DataView extends React.Component<DataViewProps, IState> {
                                             return <Link to={`/event/${e.getKey()}`}>{e.name === "" || e.name === "..." ? `${pm}$${e.category!.value} | ` : `${e.name} ${pm}$${e.category!.value} | `}</Link>
                                         })}</TableCell>
                                     </TableRow>
-                                    )
-                        })}
+                                )
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>

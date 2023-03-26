@@ -6,6 +6,12 @@ const Settings_1 = require("./utils/Settings");
 const Utils_1 = require("./utils/Utils");
 function simulate(period, annualContribution, startingBalance, startAge, oneTime) {
     console.log('RUN MY SIM FROM LIB');
+    console.log(`period: ${period}`);
+    console.log(`startingBalance: ${startingBalance}`);
+    console.log(`startAge: ${startAge}`);
+    console.log(`annualContribution: ${JSON.stringify(annualContribution)}`);
+    console.log(`oneTime:`);
+    console.log(oneTime);
     const successCountByAge = new Array(period).fill(0);
     const simulationData = new Array(Settings_1.SIMS);
     for (let i = 0; i < Settings_1.SIMS; i++) {

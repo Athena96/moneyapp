@@ -54,12 +54,12 @@ class SetupView extends React.Component<SetupViewProps, IState> {
 
                 },
                 {
-                    label: 'Add Expenses',
+                    label: 'Add Withdrawals',
                     description: <><ExpensesView user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },
                 {
-                    label: 'Add Incomes',
+                    label: 'Add Contributions',
                     description: <><IncomesView user={this.props.user} simulation={this.props.simulation} /></>,
 
                 },

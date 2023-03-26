@@ -18,10 +18,6 @@ const getProjection = (startingBalance, returns, incomesAndExpenses) => {
     const projection = [];
     let currVal = startingBalance;
     for (let i = 0; i < returns.length; i++) {
-        if (i === 0) {
-            projection.push(currVal + incomesAndExpenses[i]);
-            continue;
-        }
         currVal = currVal > 0 ? currVal + currVal * returns[i] + incomesAndExpenses[i] : 0.0;
         projection.push(currVal);
     }

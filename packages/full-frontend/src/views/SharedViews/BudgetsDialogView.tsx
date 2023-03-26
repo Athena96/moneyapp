@@ -124,7 +124,7 @@ class BudgetDialogView extends React.Component<BudgetDialogViewProps, BudgetDial
         const isMobile = window.innerWidth <= 390;
         return (
             <>
-                <DialogTitle>Recurring {this.props.type === CategoryTypes.Expense ? "Expense" : "Income"}</DialogTitle>
+                <DialogTitle>Recurring {this.props.type === CategoryTypes.Expense ? "Withdrawal" : "Income"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>

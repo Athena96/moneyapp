@@ -168,6 +168,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
 
     render() {
         if (this.props.simulation && this.state.budgets) {
+            const type = this.props.type === CategoryTypes.Expense ? "Withdrawals" : "Contributions";
             return (
                 <Box>
                     <Dialog open={this.state.recurringDialogOpen} onClose={this.closeDialog}>
@@ -179,7 +180,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                     </Dialog>
 
                     <Box>
-                        <h1>{this.props.type}s</h1>
+                        <h1>{type}</h1>
                         <br />
                         <Accordion>
                             <AccordionSummary
@@ -187,7 +188,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
                             >
-                                <Typography><b>Recurring {this.props.type}</b><br />${this.getAvgMonthlyBudgets(this.state.budgets)} / month</Typography>
+                                <Typography><b>Recurring {type}</b><br />${this.getAvgMonthlyBudgets(this.state.budgets)} / month</Typography>
 
 
                             </AccordionSummary>
@@ -236,7 +237,7 @@ class BudgetsEventsView extends React.Component<BudgetsEventsViewProps, BudgetsE
                                 aria-controls="panel2a-content"
                                 id="panel2a-header"
                             >
-                                <Typography><b>One-time {this.props.type}</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
+                                <Typography><b>One-time {type}</b><br />${this.getEventsTotal(this.state.events)} total</Typography>
 
                             </AccordionSummary>
                             <AccordionDetails>

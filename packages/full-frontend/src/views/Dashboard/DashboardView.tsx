@@ -2,7 +2,8 @@ import * as React from 'react';
 
 import {
   getMonteCarloProjection,
-  MonteCarloRowData
+  getStartingBalance,
+  StockClient
 } from '../../utilities/helpers';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
@@ -19,11 +20,12 @@ import { Tick } from 'chart.js';
 import { Simulation } from '../../model/Base/Simulation';
 import Box from '@mui/material/Box';
 // import CircularProgress from '@mui/material/CircularProgress';
-import AssetViewComponent from './components/AssetViewComponent';
 
 import { MonteCarloData } from "montecarlo-lib"
 
 import DataView from './DataView';
+import { AssetDataAccess } from '../../utilities/AssetDataAccess';
+
 interface DashboardViewProps {
   user: string;
   simulation: Simulation | undefined;
@@ -35,21 +37,23 @@ interface IState {
   lastComputed: number | null;
   successPercent: string;
   simulationButtonLoading: boolean;
-  chartDataRaw: MonteCarloRowData[] | undefined;
   timeout: number;
   balanceData: number[]
+  startingBalance: number;
 }
+
+const stockClient = new StockClient();
 
 class DashboardView extends React.Component<DashboardViewProps, IState> {
 
   constructor(props: DashboardViewProps) {
     super(props);
     this.state = {
-      chartDataRaw: undefined,
       selectedTab: 1,
       chartData: null,
       lastComputed: null,
       successPercent: "0.0",
+      startingBalance: 0.0,
       timeout: 5000,
       simulationButtonLoading: false,
       balanceData: []
@@ -69,10 +73,12 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
   }
 
   async handleTriggerSimulation() {
-    const monteCarloData = await getMonteCarloProjection(this.props.simulation!.getKey())
+    const assets = await AssetDataAccess.fetchAssetsForSelectedSim(this.props.simulation!.getKey());
+    const startingBalance = await getStartingBalance(assets, stockClient)
+    const monteCarloData = await getMonteCarloProjection(this.props.simulation!.getKey(), startingBalance)
     const successPercentString = `${monteCarloData.successPercent.toFixed(2)}`
     const chartData = this.generateGraphData(monteCarloData);
-    this.setState({ chartData, successPercent: successPercentString, balanceData: monteCarloData.medianLine })
+    this.setState({ chartData, successPercent: successPercentString, startingBalance: startingBalance, balanceData: monteCarloData.medianLine })
   }
 
   generateGraphData(simulationData: MonteCarloData) {
@@ -90,7 +96,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       //   key: 'maxBalance'
       // },
       {
-        name: 'Average of all Scenarios Brok',
+        name: 'Average of all Scenarios',
         color: moneyGreen,
         key: 'assumedAvgBalanceBrok'
       },
@@ -139,26 +145,8 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     return chartData;
   }
 
-  getMax() {
-    if (this.state.chartDataRaw) {
-      let max = 0.0
-      for (const dir of this.state.chartDataRaw || []) {
-        const tax = parseFloat(dir.assumedAvgBalanceTax);
-        const brok = parseFloat(dir.assumedAvgBalanceBrok);
-        const maxBetweenAccnts = Math.max(tax, brok);
-        if (maxBetweenAccnts > max) {
-          max = maxBetweenAccnts;
-        }
-      }
-      let nextMill = Math.round((max + 1000000) / 1000000) * 1000000;
-      return Math.round(nextMill);
-    }
-    return 0;
-  }
-
   render() {
     const isMobile = window.innerWidth <= 399;
-    // const max = this.getMax();
     const options = {
       scales: {
         y: {
@@ -200,11 +188,13 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         <Box >
           {this.state.chartData ? <>
             <h1 >Dashboard</h1>
-
+            
             <Stack direction={isMobile ? 'column' : 'row'} spacing={2}>
+
               <Paper variant="outlined" sx={{ width: isMobile ? '100%' : '75%', p: 2, }} >
                 <h3 style={{ color: black, width: 'min-width' }}>Chance of Success <Tooltip title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}><InfoIcon /></Tooltip></h3>
                 <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
+                <small style={{ color: 'black' }}><b>Starting Balance</b>: ${this.state.startingBalance.toLocaleString()}</small>
                 <Paper  >
                   {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
                   <Line data={this.state.chartData} options={options} />
@@ -215,11 +205,10 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
                 </Paper >
 
               </Paper>
-              <Paper variant="outlined" sx={{ width: isMobile ? '100%' : '25%', marginLeft: '10px', p: 2, }} >
-                <AssetViewComponent simulationId={this.props.simulation.id} />
-              </Paper>
+         
 
             </Stack>
+            
             <DataView user={this.props.user} simulation={this.props.simulation} balanceData={this.state.balanceData} />
 
 

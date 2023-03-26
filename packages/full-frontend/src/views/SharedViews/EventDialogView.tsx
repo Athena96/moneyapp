@@ -81,7 +81,7 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
     render() {
         return (
             <>
-                <DialogTitle>One-time {this.props.type === CategoryTypes.Expense ? "Expense" : "Income"}</DialogTitle>
+                <DialogTitle>One-time {this.props.type === CategoryTypes.Expense ? "Withdrawal" : "Income"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                     </DialogContentText>

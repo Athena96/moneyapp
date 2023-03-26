@@ -37,8 +37,8 @@ class Main extends React.Component<InputsViewProps, IState> {
     return (
       <Switch>
         <Route exact path="/" render={(props) => this.props.input && this.props.input.firstSignIn && this.props.input.firstSignIn === true ? <SetupView user={this.props.user} simulation={this.props.simulation} /> : <DashboardView user={this.props.user} simulation={this.props.simulation} />} />
-        <Route path="/expenses" render={(props) => <ExpensesView user={this.props.user} simulation={this.props.simulation} />} />
-        <Route path="/incomes" render={(props) => <IncomesView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/withdrawals" render={(props) => <ExpensesView user={this.props.user} simulation={this.props.simulation} />} />
+        <Route path="/contributions" render={(props) => <IncomesView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/assets" render={(props) => <AssetsView user={this.props.user} simulation={this.props.simulation} />} />
         <Route path="/setup" render={(props) => <SetupView user={this.props.user}  simulation={this.props.simulation} />} />
         <Route path="/settings" render={(props) => <SettingsView user={this.props.user} simulation={this.props.simulation} />} />

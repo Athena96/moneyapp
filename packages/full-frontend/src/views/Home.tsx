@@ -395,7 +395,7 @@ class Home extends React.Component<IProps, IState> {
                 </ListItemButton>
               </Link>
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/expenses`}>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/withdrawals`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -412,12 +412,12 @@ class Home extends React.Component<IProps, IState> {
                   >
                     <RemoveCircleOutlineIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Expenses'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Withdrawals'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
               </Link>
 
 
-              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/incomes`}>
+              <Link style={{ color: 'black', textDecoration: 'none' }} to={`/contributions`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -435,7 +435,7 @@ class Home extends React.Component<IProps, IState> {
 
                     <AddCircleOutlineIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Incomes'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Contributions'} sx={{ opacity: this.state.open ? 1 : 0 }} />
                 </ListItemButton>
               </Link>
 
