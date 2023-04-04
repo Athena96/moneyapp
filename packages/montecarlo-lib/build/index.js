@@ -4,43 +4,40 @@ exports.simulate = void 0;
 const MonteCarlo_1 = require("./services/MonteCarlo");
 const Settings_1 = require("./utils/Settings");
 const Utils_1 = require("./utils/Utils");
-function simulate(period, annualContribution, startingBalance, startAge, oneTime) {
+function simulate(mean, variance, annualContribution, numberOfYears, startingBalance, numberOfSimulations, startAge, oneTime) {
     console.log('RUN MY SIM FROM LIB');
-    console.log(`period: ${period}`);
+    console.log(`period: ${numberOfYears}`);
     console.log(`startingBalance: ${startingBalance}`);
     console.log(`startAge: ${startAge}`);
     console.log(`annualContribution: ${JSON.stringify(annualContribution)}`);
     console.log(`oneTime:`);
     console.log(oneTime);
-    const successCountByAge = new Array(period).fill(0);
+    // const successCountByAge = new Array(numberOfYears).fill(0)
+    let successCount = 0;
     const simulationData = new Array(Settings_1.SIMS);
-    for (let i = 0; i < Settings_1.SIMS; i++) {
+    for (let i = 0; i < numberOfSimulations; i++) {
         // generate distributions of returns
-        const stockDistributionOfReturns = (0, MonteCarlo_1.getNormalDistributionOfReturns)(Settings_1.VTI_MEAN, Settings_1.VTI_VARIANCE, period);
-        const bondDistributionOfReturns = (0, MonteCarlo_1.getNormalDistributionOfReturns)(Settings_1.BND_MEAN, Settings_1.BND_VARIANCE, period);
-        const blendedReturns = (0, Utils_1.joinDistributionsOfReturns)([stockDistributionOfReturns, bondDistributionOfReturns], [Settings_1.STOCK_P, Settings_1.BOND_P]);
-        const effectiveDistOfReturns = (0, Utils_1.adjustForFees)(blendedReturns, Settings_1.FEES, Settings_1.INFLATION);
+        const distributionOfReturns = (0, MonteCarlo_1.getNormalDistributionOfReturns)(mean, variance, numberOfYears);
+        const effectiveDistOfReturns = (0, Utils_1.adjustForFees)(distributionOfReturns, Settings_1.FEES, Settings_1.INFLATION);
         // setup income and expenses
-        const incomesAndExpenses = (0, Utils_1.getIncomesAndExpenses)(period, annualContribution, startAge, oneTime);
+        const incomesAndExpenses = (0, Utils_1.getIncomesAndExpenses)(numberOfYears, annualContribution, startAge, oneTime);
         // generate projection
-        const projection = (0, MonteCarlo_1.getProjection)(startingBalance, effectiveDistOfReturns, incomesAndExpenses);
+        const projection = (0, MonteCarlo_1.calculateFutureValue)(startingBalance, effectiveDistOfReturns, incomesAndExpenses);
         // save data for median
         simulationData[i] = [];
         for (let id = 0; id < projection.length; id++) {
             simulationData[i].push(projection[id]);
         }
-        // success percent by age
-        for (let y = 0; y < projection.length; y++) {
-            if (projection[y] > 0) {
-                successCountByAge[y] += 1;
-            }
+        // success percent
+        if (projection[projection.length - 1] > 0) {
+            successCount += 1;
         }
     }
     const twoFive = [];
     const medLine = [];
     const sevenFive = [];
     const nineFive = [];
-    for (let k = 0; k < period; k++) {
+    for (let k = 0; k < numberOfYears; k++) {
         const col = (0, Utils_1.getColumnFromMatrix)(simulationData, k);
         col.sort((a, b) => a - b);
         const adjCol = [];
@@ -56,21 +53,9 @@ function simulate(period, annualContribution, startingBalance, startAge, oneTime
         sevenFive.push(sf);
         nineFive.push(nf);
     }
-    const successPercentByAge = new Array(period).fill(0);
-    for (let k = 0; k < period; k++) {
-        successPercentByAge[k] = ((successCountByAge[k] / Settings_1.SIMS) * 100.0);
-    }
-    // return {
-    //   medianLine: medLine,
-    //   successPercentByAge: successPercentByAge,
-    //   twoFiveLine: twoFive,
-    //   sevenFiveLine: sevenFive,
-    //   nineFiveLine: nineFive,
-    //   medianBalanceAtRetireAge: medLine[retireDateIdx]
-    // }
     return {
         medianLine: medLine,
-        successPercent: successPercentByAge[successPercentByAge.length - 1]
+        successPercent: (successCount / Settings_1.SIMS) * 100.0
     };
 }
 exports.simulate = simulate;
