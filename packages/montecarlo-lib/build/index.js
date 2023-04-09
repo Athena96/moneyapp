@@ -5,7 +5,7 @@ const MonteCarlo_1 = require("./services/MonteCarlo");
 const Settings_1 = require("./utils/Settings");
 const Utils_1 = require("./utils/Utils");
 function simulate(mean, variance, annualContribution, numberOfYears, startingBalance, numberOfSimulations, startAge, oneTime) {
-    console.log('RUN MY SIM FROM LIB');
+    console.log("MonteCarloLib.simulate()");
     console.log(`period: ${numberOfYears}`);
     console.log(`startingBalance: ${startingBalance}`);
     console.log(`startAge: ${startAge}`);
@@ -18,7 +18,7 @@ function simulate(mean, variance, annualContribution, numberOfYears, startingBal
     for (let i = 0; i < numberOfSimulations; i++) {
         // generate distributions of returns
         const distributionOfReturns = (0, MonteCarlo_1.getNormalDistributionOfReturns)(mean, variance, numberOfYears);
-        const effectiveDistOfReturns = (0, Utils_1.adjustForFees)(distributionOfReturns, Settings_1.FEES, Settings_1.INFLATION);
+        const effectiveDistOfReturns = (0, Utils_1.adjustForFees)(distributionOfReturns, Settings_1.FEES);
         // setup income and expenses
         const incomesAndExpenses = (0, Utils_1.getIncomesAndExpenses)(numberOfYears, annualContribution, startAge, oneTime);
         // generate projection
@@ -55,7 +55,7 @@ function simulate(mean, variance, annualContribution, numberOfYears, startingBal
     }
     return {
         medianLine: medLine,
-        successPercent: (successCount / Settings_1.SIMS) * 100.0
+        successPercent: (successCount / Settings_1.SIMS) * 100.0,
     };
 }
 exports.simulate = simulate;

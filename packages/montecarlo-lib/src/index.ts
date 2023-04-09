@@ -1,14 +1,6 @@
-import {
-  getNormalDistributionOfReturns,
-  calculateFutureValue,
-} from "./services/MonteCarlo";
-import { FEES, INFLATION, SIMS } from "./utils/Settings";
-import {
-  adjustForFees,
-  getColumnFromMatrix,
-  getIncomesAndExpenses,
-  getPercentile,
-} from "./utils/Utils";
+import { getNormalDistributionOfReturns, calculateFutureValue } from "./services/MonteCarlo";
+import { FEES, SIMS } from "./utils/Settings";
+import { adjustForFees, getColumnFromMatrix, getIncomesAndExpenses, getPercentile } from "./utils/Utils";
 
 export type AnnualExpensesIncome = {
   startAge: number;
@@ -31,7 +23,7 @@ export function simulate(
   oneTime: Map<number, number>
 ): MonteCarloData {
   console.log("MonteCarloLib.simulate()");
-  
+
   console.log(`period: ${numberOfYears}`);
   console.log(`startingBalance: ${startingBalance}`);
   console.log(`startAge: ${startAge}`);
@@ -44,31 +36,14 @@ export function simulate(
   const simulationData: number[][] = new Array(SIMS);
   for (let i = 0; i < numberOfSimulations; i++) {
     // generate distributions of returns
-    const distributionOfReturns = getNormalDistributionOfReturns(
-      mean,
-      variance,
-      numberOfYears
-    );
-    const effectiveDistOfReturns = adjustForFees(
-      distributionOfReturns,
-      FEES,
-      INFLATION
-    );
+    const distributionOfReturns = getNormalDistributionOfReturns(mean, variance, numberOfYears);
+    const effectiveDistOfReturns = adjustForFees(distributionOfReturns, FEES);
 
     // setup income and expenses
-    const incomesAndExpenses = getIncomesAndExpenses(
-      numberOfYears,
-      annualContribution,
-      startAge,
-      oneTime
-    );
+    const incomesAndExpenses = getIncomesAndExpenses(numberOfYears, annualContribution, startAge, oneTime);
 
     // generate projection
-    const projection = calculateFutureValue(
-      startingBalance,
-      effectiveDistOfReturns,
-      incomesAndExpenses
-    );
+    const projection = calculateFutureValue(startingBalance, effectiveDistOfReturns, incomesAndExpenses);
 
     // save data for median
     simulationData[i] = [];

@@ -68,6 +68,8 @@ type AssetAllocation {
 type Inputs @model {
   id: ID!
   age: Int!
+  annualAssetReturnPercent: Float
+  annualInflationPercent: Float
   firstSignIn: Boolean!
   assetAllocation: AssetAllocation!
   simulation: String!

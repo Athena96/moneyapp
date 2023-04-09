@@ -34,25 +34,19 @@ export class StockClient {
 
   getQuotes = async (stock: Asset): Promise<number> => {
     return new Promise((resolve, reject) => {
-      this.finnhubClient.quote(
-        stock.ticker,
-        (error: any, data: any, response: any) => {
-          if (data && data.c) {
-            const value = data.c;
-            resolve(Number(value));
-          } else {
-            reject("err getQuotes");
-          }
+      this.finnhubClient.quote(stock.ticker, (error: any, data: any, response: any) => {
+        if (data && data.c) {
+          const value = data.c;
+          resolve(Number(value));
+        } else {
+          reject("err getQuotes");
         }
-      );
+      });
     });
   };
 }
 
-export const getOneTimeContribWithdrawlTimeline = (
-  startAge: number,
-  events: Event[]
-): Map<number, number> => {
+export const getOneTimeContribWithdrawlTimeline = (startAge: number, events: Event[]): Map<number, number> => {
   const oneTimeContribWithDrawlMap = new Map<number, number>();
   for (let i = startAge; i <= END_AGE; i += 1) {
     const activeEvents = getActiveEvents(i, events);
@@ -62,10 +56,7 @@ export const getOneTimeContribWithdrawlTimeline = (
   return oneTimeContribWithDrawlMap;
 };
 
-export const getRecurringContribWithdrawlTimeline = (
-  startAge: number,
-  budgets: Budget[]
-): Map<number, number> => {
+export const getRecurringContribWithdrawlTimeline = (startAge: number, budgets: Budget[]): Map<number, number> => {
   const recurringContribWithDrawlMap = new Map<number, number>();
   for (let i = startAge; i <= END_AGE; i += 1) {
     const activeBudgets = getActiveBudgets(i, budgets);
@@ -128,9 +119,7 @@ export const getIncomeExpenseFromBuget = (budget: Budget) => {
   return v;
 };
 
-export const getAnnualSpendingIncome = (
-  budgets: Budget[]
-): AnnualExpensesIncome[] => {
+export const getAnnualSpendingIncome = (budgets: Budget[]): AnnualExpensesIncome[] => {
   const expIncome = [];
   for (const budget of budgets) {
     expIncome.push({
@@ -154,10 +143,7 @@ export const convertEventsToMap = (events: Event[]) => {
   return m;
 };
 
-export const getStartingBalance = async (
-  assets: Asset[],
-  stockClient: StockClient
-) => {
+export const getStartingBalance = async (assets: Asset[], stockClient: StockClient) => {
   let startingBalance = 0.0;
   for (const asset of assets) {
     if (asset.hasIndexData) {
@@ -178,16 +164,11 @@ export const getMonteCarloProjection = async (
   events: Event[]
 ) => {
   const st_datafetch = new Date();
-  const defaultInputs = await InputDataAccess.fetchInputsForSelectedSim(
-    simulation
-  );
+  const defaultInputs = await InputDataAccess.fetchInputsForSelectedSim(simulation);
   const ed_datafetch = new Date();
-  console.log(
-    `DATA Fetch TIME: ${ed_datafetch.getTime() - st_datafetch.getTime()}`
-  );
+  console.log(`DATA Fetch TIME: ${ed_datafetch.getTime() - st_datafetch.getTime()}`);
 
-  const annualExpenseList: AnnualExpensesIncome[] =
-    getAnnualSpendingIncome(budgets);
+  const annualExpenseList: AnnualExpensesIncome[] = getAnnualSpendingIncome(budgets);
 
   const st_stbal = new Date();
   const ed_stbal = new Date();
@@ -197,12 +178,12 @@ export const getMonteCarloProjection = async (
   const period = END_AGE - defaultInputs.age;
   const startAge = defaultInputs.age;
   const oneTime = convertEventsToMap(events);
-  const VTI_VARIANCE: number = 248.6929; // https://www.portfoliovisualizer.com/monte-carlo-simulation#analysisResults
-  const VTI_MEAN: number = 11.77; // https://www.portfoliovisualizer.com/monte-carlo-simulation#analysisResults
+  const sp500Variance: number = 248.6929; // https://www.portfoliovisualizer.com/monte-carlo-simulation#analysisResults
+  const inflationAdjustedMean = defaultInputs.annualAssetReturnPercent - defaultInputs.annualInflationPercent;
   const st_sim = new Date();
   const monteCarloData = simulate(
-    VTI_MEAN,
-    VTI_VARIANCE,
+    inflationAdjustedMean,
+    sp500Variance,
     annualExpenseList,
     period,
     startingBalance,

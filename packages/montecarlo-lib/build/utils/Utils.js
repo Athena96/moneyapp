@@ -36,10 +36,10 @@ const joinDistributionsOfReturns = (distributions, percents) => {
     return effectiveReturns;
 };
 exports.joinDistributionsOfReturns = joinDistributionsOfReturns;
-const adjustForFees = (returns, fees, inflation) => {
+const adjustForFees = (returns, fees) => {
     const adjustedReturns = [];
     for (let i = 0; i < returns.length; i++) {
-        adjustedReturns.push(Number((returns[i] - fees - inflation).toFixed(3)));
+        adjustedReturns.push(Number((returns[i] - fees).toFixed(3)));
     }
     return adjustedReturns;
 };

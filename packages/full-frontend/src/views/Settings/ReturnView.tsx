@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import { InputDataAccess } from "../../utilities/InputDataAccess";
 import { Input } from "../../model/Base/Input";
 
-interface AgeViewProps {
+interface ReturnViewProps {
   user: string;
   simulation: Simulation | undefined;
 }
@@ -20,8 +20,8 @@ interface IState {
   input: Input | undefined;
 }
 
-class AgeView extends React.Component<AgeViewProps, IState> {
-  constructor(props: AgeViewProps) {
+class ReturnView extends React.Component<ReturnViewProps, IState> {
+  constructor(props: ReturnViewProps) {
     super(props);
 
     this.state = {
@@ -50,16 +50,16 @@ class AgeView extends React.Component<AgeViewProps, IState> {
     if (this.props.simulation) {
       return (
         <Box>
-          <h2>Age</h2>
+          <h2>Annual Asset Return Percent</h2>
           <Card variant="outlined" style={{ marginTop: "15px", width: "100%" }}>
             <CardContent>
               <Stack direction="column" spacing={2}>
                 <input
                   type="text"
-                  value={this.state.input?.age}
+                  value={this.state.input?.annualAssetReturnPercent}
                   onChange={(e) => {
                     const st = this.state.input!;
-                    st.age = Number(e.target.value);
+                    st.annualAssetReturnPercent = Number(e.target.value);
                     this.setState({ input: st });
                   }}
                 />
@@ -76,4 +76,4 @@ class AgeView extends React.Component<AgeViewProps, IState> {
     }
   }
 }
-export default AgeView;
+export default ReturnView;

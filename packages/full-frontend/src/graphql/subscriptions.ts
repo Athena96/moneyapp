@@ -160,6 +160,8 @@ export const onCreateInputs = /* GraphQL */ `
     onCreateInputs {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {
@@ -185,6 +187,8 @@ export const onUpdateInputs = /* GraphQL */ `
     onUpdateInputs {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {
@@ -210,6 +214,8 @@ export const onDeleteInputs = /* GraphQL */ `
     onDeleteInputs {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {

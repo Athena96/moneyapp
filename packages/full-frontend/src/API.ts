@@ -230,6 +230,8 @@ export type DeleteEventInput = {
 export type CreateInputsInput = {
   id?: string | null,
   age: number,
+  annualAssetReturnPercent?: number | null,
+  annualInflationPercent?: number | null,
   firstSignIn: boolean,
   assetAllocation: AssetAllocationInput,
   simulation: string,
@@ -256,6 +258,8 @@ export enum GlidePath {
 
 export type ModelInputsConditionInput = {
   age?: ModelIntInput | null,
+  annualAssetReturnPercent?: ModelFloatInput | null,
+  annualInflationPercent?: ModelFloatInput | null,
   firstSignIn?: ModelBooleanInput | null,
   simulation?: ModelStringInput | null,
   and?: Array< ModelInputsConditionInput | null > | null,
@@ -274,6 +278,8 @@ export type Inputs = {
   __typename: "Inputs",
   id: string,
   age: number,
+  annualAssetReturnPercent?: number | null,
+  annualInflationPercent?: number | null,
   firstSignIn: boolean,
   assetAllocation: AssetAllocation,
   simulation: string,
@@ -298,6 +304,8 @@ export type Allocations = {
 export type UpdateInputsInput = {
   id: string,
   age?: number | null,
+  annualAssetReturnPercent?: number | null,
+  annualInflationPercent?: number | null,
   firstSignIn?: boolean | null,
   assetAllocation?: AssetAllocationInput | null,
   simulation?: string | null,
@@ -492,6 +500,8 @@ export type ModelEventConnection = {
 export type ModelInputsFilterInput = {
   id?: ModelIDInput | null,
   age?: ModelIntInput | null,
+  annualAssetReturnPercent?: ModelFloatInput | null,
+  annualInflationPercent?: ModelFloatInput | null,
   firstSignIn?: ModelBooleanInput | null,
   simulation?: ModelStringInput | null,
   and?: Array< ModelInputsFilterInput | null > | null,
@@ -764,6 +774,8 @@ export type CreateInputsMutation = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",
@@ -797,6 +809,8 @@ export type UpdateInputsMutation = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",
@@ -830,6 +844,8 @@ export type DeleteInputsMutation = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",
@@ -1133,6 +1149,8 @@ export type GetInputsQuery = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",
@@ -1169,6 +1187,8 @@ export type ListInputsQuery = {
       __typename: "Inputs",
       id: string,
       age: number,
+      annualAssetReturnPercent?: number | null,
+      annualInflationPercent?: number | null,
       firstSignIn: boolean,
       assetAllocation:  {
         __typename: "AssetAllocation",
@@ -1496,6 +1516,8 @@ export type OnCreateInputsSubscription = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",
@@ -1524,6 +1546,8 @@ export type OnUpdateInputsSubscription = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",
@@ -1552,6 +1576,8 @@ export type OnDeleteInputsSubscription = {
     __typename: "Inputs",
     id: string,
     age: number,
+    annualAssetReturnPercent?: number | null,
+    annualInflationPercent?: number | null,
     firstSignIn: boolean,
     assetAllocation:  {
       __typename: "AssetAllocation",

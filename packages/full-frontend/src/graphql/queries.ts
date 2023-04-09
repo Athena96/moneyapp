@@ -130,6 +130,8 @@ export const getInputs = /* GraphQL */ `
     getInputs(id: $id) {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {
@@ -160,6 +162,8 @@ export const listInputs = /* GraphQL */ `
       items {
         id
         age
+        annualAssetReturnPercent
+        annualInflationPercent
         firstSignIn
         assetAllocation {
           glidePath

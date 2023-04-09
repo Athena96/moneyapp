@@ -1,10 +1,6 @@
 import gaussian from "gaussian";
 
-export const getNormalDistributionOfReturns = (
-  mean: number,
-  variance: number,
-  size: number
-) => {
+export const getNormalDistributionOfReturns = (mean: number, variance: number, size: number) => {
   const distribution = gaussian(mean, variance);
   let sample = distribution.random(size);
   for (let i = 0; i < sample.length; i++) {
@@ -21,10 +17,7 @@ export const calculateFutureValue = (
   const projection: number[] = [];
   let futureValue = startingBalance;
   for (let i = 0; i < annualInterestRates.length; i++) {
-    futureValue =
-      futureValue +
-      futureValue * annualInterestRates[i] +
-      annualIncomesAndExpenses[i];
+    futureValue = futureValue + futureValue * annualInterestRates[i] + annualIncomesAndExpenses[i];
     projection.push(futureValue);
   }
   return projection;

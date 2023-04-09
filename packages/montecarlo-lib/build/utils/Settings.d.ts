@@ -2,8 +2,4 @@ export declare const STOCK_P: number;
 export declare const BOND_P: number;
 export declare const SIMS: number;
 export declare const VTI_VARIANCE: number;
-export declare const VTI_MEAN: number;
-export declare const BND_VARIANCE: number;
-export declare const BND_MEAN: number;
-export declare const INFLATION: number;
 export declare const FEES: number;

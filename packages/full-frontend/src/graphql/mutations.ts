@@ -190,6 +190,8 @@ export const createInputs = /* GraphQL */ `
     createInputs(input: $input, condition: $condition) {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {
@@ -218,6 +220,8 @@ export const updateInputs = /* GraphQL */ `
     updateInputs(input: $input, condition: $condition) {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {
@@ -246,6 +250,8 @@ export const deleteInputs = /* GraphQL */ `
     deleteInputs(input: $input, condition: $condition) {
       id
       age
+      annualAssetReturnPercent
+      annualInflationPercent
       firstSignIn
       assetAllocation {
         startAllocations {
