@@ -1,10 +1,6 @@
 import * as React from "react";
 
-import {
-  getMonteCarloProjection,
-  getStartingBalance,
-  StockClient,
-} from "../../utilities/helpers";
+import { getMonteCarloProjection, getStartingBalance, StockClient } from "../../utilities/helpers";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import Tooltip from "@mui/material/Tooltip";
@@ -23,6 +19,7 @@ import { Event } from "../../model/Base/Event";
 import Box from "@mui/material/Box";
 
 import { MonteCarloData } from "montecarlo-lib";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import DataView from "./DataView";
 import { AssetDataAccess } from "../../utilities/AssetDataAccess";
@@ -78,15 +75,9 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
   async handleTriggerSimulation() {
     const simulationId = this.props.simulation!.getKey();
-    const assets = await AssetDataAccess.fetchAssetsForSelectedSim(
-      simulationId
-    );
-    const mybudgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(
-      simulationId
-    );
-    const myEvents = await EventDataAccess.fetchEventsForSelectedSim(
-      simulationId
-    );
+    const assets = await AssetDataAccess.fetchAssetsForSelectedSim(simulationId);
+    const mybudgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(simulationId);
+    const myEvents = await EventDataAccess.fetchEventsForSelectedSim(simulationId);
 
     const startingBalance = await getStartingBalance(assets, stockClient);
     const monteCarloData = await getMonteCarloProjection(
@@ -176,11 +167,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
           min: 0,
           max: 10_000_000,
           ticks: {
-            callback: function (
-              tickValue: string | number,
-              index: number,
-              ticks: Tick[]
-            ) {
+            callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
               if ((tickValue as number) >= 1000000) {
                 return "$" + (tickValue as number) / 1000000 + " M";
               } else if ((tickValue as number) <= -1000000) {
@@ -217,10 +204,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
               <h1>Dashboard</h1>
 
               <Stack direction={isMobile ? "column" : "row"} spacing={2}>
-                <Paper
-                  variant="outlined"
-                  sx={{ width: isMobile ? "100%" : "75%", p: 2 }}
-                >
+                <Paper variant="outlined" sx={{ width: isMobile ? "100%" : "75%", p: 2 }}>
                   <h3 style={{ color: black, width: "min-width" }}>
                     Chance of Success{" "}
                     <Tooltip
@@ -229,22 +213,16 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
                       <InfoIcon />
                     </Tooltip>
                   </h3>
-                  <h2 style={{ color: moneyGreenBoldText }}>
-                    {this.state.successPercent}%
-                  </h2>
+                  <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
                   <small style={{ color: "black" }}>
-                    <b>Starting Balance</b>: $
-                    {this.state.startingBalance.toLocaleString()}
+                    <b>Starting Balance</b>: ${this.state.startingBalance.toLocaleString()}
                   </small>
                   <Paper>
                     {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
                     <Line data={this.state.chartData} options={options} />
                     {this.state.simulationButtonLoading ? (
                       <Box>
-                        <small>
-                          Running 1,000 different Monte Carlo Simulations, this
-                          may take a moment...{" "}
-                        </small>
+                        <small>Running 1,000 different Monte Carlo Simulations, this may take a moment... </small>
                       </Box>
                     ) : (
                       <IconButton
@@ -270,9 +248,11 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
               />
             </>
           ) : (
-            <>
-              <></>
-            </>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+              <div style={{ textAlign: "center" }}>
+                <CircularProgress />
+              </div>
+            </div>
           )}
         </Box>
       );
