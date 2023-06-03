@@ -189,7 +189,8 @@ export const getMonteCarloProjection = async (
     startingBalance,
     10000,
     startAge,
-    oneTime
+    oneTime,
+    new Date()
   );
   const ed_sim = new Date();
   console.log(`SIM TIME: ${ed_sim.getTime() - st_sim.getTime()}`);

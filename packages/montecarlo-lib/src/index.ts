@@ -20,7 +20,8 @@ export function simulate(
   startingBalance: number,
   numberOfSimulations: number,
   startAge: number,
-  oneTime: Map<number, number>
+  oneTime: Map<number, number>,
+  currentDate: Date
 ): MonteCarloData {
   console.log("MonteCarloLib.simulate()");
 
@@ -30,6 +31,8 @@ export function simulate(
   console.log(`annualContribution: ${JSON.stringify(annualContribution)}`);
   console.log(`oneTime:`);
   console.log(oneTime);
+  const current_year_progress = (currentDate.getMonth()+1) / 12.0;
+  console.log(`current_year_progress: ${current_year_progress}`);
 
   // const successCountByAge = new Array(numberOfYears).fill(0)
   let successCount = 0;
@@ -43,7 +46,7 @@ export function simulate(
     const incomesAndExpenses = getIncomesAndExpenses(numberOfYears, annualContribution, startAge, oneTime);
 
     // generate projection
-    const projection = calculateFutureValue(startingBalance, effectiveDistOfReturns, incomesAndExpenses);
+    const projection = calculateFutureValue(startingBalance, effectiveDistOfReturns, incomesAndExpenses, current_year_progress);
 
     // save data for median
     simulationData[i] = [];

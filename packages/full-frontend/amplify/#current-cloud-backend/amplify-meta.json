@@ -1,0 +1,86 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-moneyapp-dev-132217-authRole",
+      "UnauthRoleArn": "arn:aws:iam::173916683421:role/amplify-moneyapp-dev-132217-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::173916683421:role/amplify-moneyapp-dev-132217-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-moneyapp-dev-132217-deployment",
+      "UnauthRoleName": "amplify-moneyapp-dev-132217-unauthRole",
+      "StackName": "amplify-moneyapp-dev-132217",
+      "StackId": "arn:aws:cloudformation:us-west-2:173916683421:stack/amplify-moneyapp-dev-132217/cec2bb30-1be2-11ec-892e-0af9e19d1971",
+      "AmplifyAppId": "duo61fto7pybu"
+    }
+  },
+  "api": {
+    "moneyappapi": {
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 365,
+              "description": "moneyapp api key"
+            },
+            "authenticationType": "API_KEY"
+          }
+        },
+        "GraphQLAPIIdOutput": "s3aq7ikxjbecpn4jn4c63v67pi",
+        "GraphQLAPIEndpointOutput": "https://iixxbx54anettnxz7b7ebqpin4.appsync-api.us-west-2.amazonaws.com/graphql",
+        "GraphQLAPIKeyOutput": "da2-5isyg7l4yngbpjmvyalimtv2ye"
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync",
+      "lastPushTimeStamp": "2023-04-10T04:00:06.234Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-moneyapp-dev-132217-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apimoneyappapi"
+      },
+      "lastPushDirHash": "bf6Ksv2Ft9v8FeV3Ut4PetqTjUk="
+    }
+  },
+  "auth": {
+    "moneyapp4d4136e1": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "output": {
+        "CreatedSNSRole": "arn:aws:iam::173916683421:role/sns4d4136e1132217-dev",
+        "UserPoolId": "us-west-2_13hsr5Ccs",
+        "AppClientIDWeb": "7de5evsb12mkg4p6ictb44qans",
+        "AppClientID": "4rs9h4375d0atm7h8klfj19skf",
+        "IdentityPoolId": "us-west-2:1dbb41ed-b950-409a-86df-09a5fdfcb386",
+        "UserPoolArn": "arn:aws:cognito-idp:us-west-2:173916683421:userpool/us-west-2_13hsr5Ccs",
+        "IdentityPoolName": "moneyapp4d4136e1_identitypool_4d4136e1__dev",
+        "UserPoolName": "moneyapp4d4136e1_userpool_4d4136e1"
+      },
+      "lastPushTimeStamp": "2023-04-10T04:00:06.234Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-moneyapp-dev-132217-deployment/amplify-cfn-templates/auth/moneyapp4d4136e1-cloudformation-template.json",
+        "logicalId": "authmoneyapp4d4136e1"
+      },
+      "lastPushDirHash": "Riq6ygD/44FoJgF/nj8zGLH27bY="
+    }
+  }
+}

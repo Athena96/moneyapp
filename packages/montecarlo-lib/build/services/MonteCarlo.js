@@ -14,11 +14,17 @@ const getNormalDistributionOfReturns = (mean, variance, size) => {
     return sample;
 };
 exports.getNormalDistributionOfReturns = getNormalDistributionOfReturns;
-const calculateFutureValue = (startingBalance, annualInterestRates, annualIncomesAndExpenses) => {
+const calculateFutureValue = (startingBalance, annualInterestRates, annualIncomesAndExpenses, current_year_progress) => {
+    const remaining_year_progress = 1.0 - current_year_progress;
     const projection = [];
     let futureValue = startingBalance;
     for (let i = 0; i < annualInterestRates.length; i++) {
-        futureValue = futureValue + futureValue * annualInterestRates[i] + annualIncomesAndExpenses[i];
+        if (i === 0) {
+            futureValue = futureValue + futureValue * annualInterestRates[i] + annualIncomesAndExpenses[i] * remaining_year_progress;
+        }
+        else {
+            futureValue = futureValue + futureValue * annualInterestRates[i] + annualIncomesAndExpenses[i];
+        }
         projection.push(futureValue);
     }
     return projection;
