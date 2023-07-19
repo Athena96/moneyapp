@@ -146,20 +146,20 @@ class BudgetDetailView extends React.Component<BudgetDetailProps, IState> {
               <DatePicker
                 label="Start Date"
                 value={this.state.startAge}
-                onChange={(newValue) => {
+                onChange={(newValue: any) => {
                   this.setState({ startAge: newValue } as any);
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params: any) => <TextField {...params} />}
               />
             </LocalizationProvider>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="End Date"
                 value={this.state.endAge}
-                onChange={(newValue) => {
+                onChange={(newValue: any) => {
                   this.setState({ endAge: newValue } as any);
                 }}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params: any) => <TextField {...params} />}
               />
             </LocalizationProvider>
 
