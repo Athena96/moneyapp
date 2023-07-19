@@ -67,7 +67,7 @@ type AssetAllocation {
 
 type Inputs @model {
   id: ID!
-  age: Int!
+  birthday: String!
   annualAssetReturnPercent: Float
   annualInflationPercent: Float
   firstSignIn: Boolean!

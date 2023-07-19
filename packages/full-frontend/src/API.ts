@@ -229,7 +229,7 @@ export type DeleteEventInput = {
 
 export type CreateInputsInput = {
   id?: string | null,
-  age: number,
+  birthday: string,
   annualAssetReturnPercent?: number | null,
   annualInflationPercent?: number | null,
   firstSignIn: boolean,
@@ -257,7 +257,7 @@ export enum GlidePath {
 
 
 export type ModelInputsConditionInput = {
-  age?: ModelIntInput | null,
+  birthday?: ModelStringInput | null,
   annualAssetReturnPercent?: ModelFloatInput | null,
   annualInflationPercent?: ModelFloatInput | null,
   firstSignIn?: ModelBooleanInput | null,
@@ -277,7 +277,7 @@ export type ModelBooleanInput = {
 export type Inputs = {
   __typename: "Inputs",
   id: string,
-  age: number,
+  birthday: string,
   annualAssetReturnPercent?: number | null,
   annualInflationPercent?: number | null,
   firstSignIn: boolean,
@@ -303,7 +303,7 @@ export type Allocations = {
 
 export type UpdateInputsInput = {
   id: string,
-  age?: number | null,
+  birthday?: string | null,
   annualAssetReturnPercent?: number | null,
   annualInflationPercent?: number | null,
   firstSignIn?: boolean | null,
@@ -499,7 +499,7 @@ export type ModelEventConnection = {
 
 export type ModelInputsFilterInput = {
   id?: ModelIDInput | null,
-  age?: ModelIntInput | null,
+  birthday?: ModelStringInput | null,
   annualAssetReturnPercent?: ModelFloatInput | null,
   annualInflationPercent?: ModelFloatInput | null,
   firstSignIn?: ModelBooleanInput | null,
@@ -773,7 +773,7 @@ export type CreateInputsMutation = {
   createInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,
@@ -808,7 +808,7 @@ export type UpdateInputsMutation = {
   updateInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,
@@ -843,7 +843,7 @@ export type DeleteInputsMutation = {
   deleteInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,
@@ -1148,7 +1148,7 @@ export type GetInputsQuery = {
   getInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,
@@ -1186,7 +1186,7 @@ export type ListInputsQuery = {
     items:  Array< {
       __typename: "Inputs",
       id: string,
-      age: number,
+      birthday: string,
       annualAssetReturnPercent?: number | null,
       annualInflationPercent?: number | null,
       firstSignIn: boolean,
@@ -1515,7 +1515,7 @@ export type OnCreateInputsSubscription = {
   onCreateInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,
@@ -1545,7 +1545,7 @@ export type OnUpdateInputsSubscription = {
   onUpdateInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,
@@ -1575,7 +1575,7 @@ export type OnDeleteInputsSubscription = {
   onDeleteInputs?:  {
     __typename: "Inputs",
     id: string,
-    age: number,
+    birthday: string,
     annualAssetReturnPercent?: number | null,
     annualInflationPercent?: number | null,
     firstSignIn: boolean,

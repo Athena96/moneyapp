@@ -14,6 +14,9 @@
     "categories": {
       "auth": {
         "moneyapp4d4136e1": {}
+      },
+      "api": {
+        "moneyappapi": {}
       }
     }
   }

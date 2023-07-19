@@ -159,7 +159,7 @@ export const onCreateInputs = /* GraphQL */ `
   subscription OnCreateInputs {
     onCreateInputs {
       id
-      age
+      birthday
       annualAssetReturnPercent
       annualInflationPercent
       firstSignIn
@@ -186,7 +186,7 @@ export const onUpdateInputs = /* GraphQL */ `
   subscription OnUpdateInputs {
     onUpdateInputs {
       id
-      age
+      birthday
       annualAssetReturnPercent
       annualInflationPercent
       firstSignIn
@@ -213,7 +213,7 @@ export const onDeleteInputs = /* GraphQL */ `
   subscription OnDeleteInputs {
     onDeleteInputs {
       id
-      age
+      birthday
       annualAssetReturnPercent
       annualInflationPercent
       firstSignIn

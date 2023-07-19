@@ -11,7 +11,7 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import AgeView from "./AgeView";
+import BirthdayView from "./BirthdayView";
 import ReturnView from "./ReturnView";
 import InflationView from "./InflationView";
 
@@ -57,7 +57,7 @@ class SettingsView extends React.Component<SettingsViewProps, IState> {
           <h1>Settings</h1>
 
           <Divider />
-          <AgeView user={this.props.user} simulation={this.props.simulation} />
+          <BirthdayView user={this.props.user} simulation={this.props.simulation} />
           <ReturnView user={this.props.user} simulation={this.props.simulation} />
           <InflationView user={this.props.user} simulation={this.props.simulation} />
 

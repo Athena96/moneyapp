@@ -18,6 +18,7 @@ import { InputDataAccess } from "../../utilities/InputDataAccess";
 import {
   getRecurringContribWithdrawlTimeline,
   getOneTimeContribWithdrawlTimeline,
+  calculateAge,
 } from "../../utilities/helpers";
 import { Budget } from "../../model/Base/Budget";
 interface DataViewProps {
@@ -57,7 +58,7 @@ class DataView extends React.Component<DataViewProps, IState> {
     const defaultInputs = await InputDataAccess.fetchInputsForSelectedSim(
       simId
     );
-    const startAge = defaultInputs.age;
+    const startAge = calculateAge(defaultInputs.birthday)
 
     // build events map
     const eventsMap = new Map<number, Event[]>();

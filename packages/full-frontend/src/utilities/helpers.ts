@@ -157,6 +157,31 @@ export const getStartingBalance = async (assets: Asset[], stockClient: StockClie
   return startingBalance;
 };
 
+/**
+ * Calculates the age of a person given their birthdate.
+ *
+ * @param birthdate - The birthdate of the person in "YYYY-MM-DD" format.
+ * @returns The age of the person in years, based on today's date.
+ *
+ * @example
+ * ```typescript
+ * const age = calculateAge("2000-01-01");  // If today's date is 2023-01-01, returns 23
+ * ```
+ */
+export const calculateAge = (birthdate: string): number => {
+  const birthDateObj = new Date(birthdate);
+  const today = new Date();
+  let age = today.getFullYear() - birthDateObj.getFullYear();
+  const monthDifference = today.getMonth() - birthDateObj.getMonth();
+
+  // Adjust age if birth month hasn't occurred this year or if it's the birth month but the day hasn't occurred
+  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObj.getDate())) {
+      age--;
+  }
+
+  return age;
+}
+
 export const getMonteCarloProjection = async (
   simulation: string,
   startingBalance: number,
@@ -175,8 +200,8 @@ export const getMonteCarloProjection = async (
 
   console.log(`ST BAL TIME: ${ed_stbal.getTime() - st_stbal.getTime()}`);
 
-  const period = END_AGE - defaultInputs.age;
-  const startAge = defaultInputs.age;
+  const currAge = calculateAge(defaultInputs.birthday)
+  const period = END_AGE - currAge;
   const oneTime = convertEventsToMap(events);
   const sp500Variance: number = 248.6929; // https://www.portfoliovisualizer.com/monte-carlo-simulation#analysisResults
   const inflationAdjustedMean = defaultInputs.annualAssetReturnPercent - defaultInputs.annualInflationPercent;
@@ -188,7 +213,7 @@ export const getMonteCarloProjection = async (
     period,
     startingBalance,
     10000,
-    startAge,
+    currAge,
     oneTime,
     new Date()
   );

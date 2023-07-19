@@ -11,7 +11,7 @@ import Box from "@mui/material/Box";
 import { InputDataAccess } from "../../utilities/InputDataAccess";
 import { Input } from "../../model/Base/Input";
 
-interface AgeViewProps {
+interface BirthdayViewProps {
   user: string;
   simulation: Simulation | undefined;
 }
@@ -20,8 +20,8 @@ interface IState {
   input: Input | undefined;
 }
 
-class AgeView extends React.Component<AgeViewProps, IState> {
-  constructor(props: AgeViewProps) {
+class BirthdayView extends React.Component<BirthdayViewProps, IState> {
+  constructor(props: BirthdayViewProps) {
     super(props);
 
     this.state = {
@@ -47,19 +47,24 @@ class AgeView extends React.Component<AgeViewProps, IState> {
   }
 
   render() {
-    if (this.props.simulation) {
+    if (this.props.simulation && this.state.input) {
+
+      console.log('tst');
+      // console.log( this.state.input.birthday);
+      console.log( this.state.input.birthday)
+
       return (
         <Box>
-          <h2>Age</h2>
+          <h2>Birthday</h2>
           <Card variant="outlined" style={{ marginTop: "15px", width: "100%" }}>
             <CardContent>
               <Stack direction="column" spacing={2}>
                 <input
-                  type="text"
-                  value={this.state.input?.age}
+                  type="date"
+                  value={this.state.input.birthday}
                   onChange={(e) => {
                     const st = this.state.input!;
-                    st.age = Number(e.target.value);
+                    st.birthday = e.target.value
                     this.setState({ input: st });
                   }}
                 />
@@ -76,4 +81,4 @@ class AgeView extends React.Component<AgeViewProps, IState> {
     }
   }
 }
-export default AgeView;
+export default BirthdayView;

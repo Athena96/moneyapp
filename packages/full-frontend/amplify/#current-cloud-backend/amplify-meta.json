@@ -31,12 +31,12 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync",
-      "lastPushTimeStamp": "2023-04-10T04:00:06.234Z",
+      "lastPushTimeStamp": "2023-07-19T03:49:50.780Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-moneyapp-dev-132217-deployment/amplify-cfn-templates/api/cloudformation-template.json",
         "logicalId": "apimoneyappapi"
       },
-      "lastPushDirHash": "bf6Ksv2Ft9v8FeV3Ut4PetqTjUk="
+      "lastPushDirHash": "pg+RZsFAbfa9yntlCBhYLPkj3ng="
     }
   },
   "auth": {
@@ -49,8 +49,8 @@
           "SMS"
         ],
         "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
-          "passwordPolicyMinLength": 8
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
         },
         "signupAttributes": [
           "EMAIL"
@@ -75,12 +75,11 @@
         "IdentityPoolName": "moneyapp4d4136e1_identitypool_4d4136e1__dev",
         "UserPoolName": "moneyapp4d4136e1_userpool_4d4136e1"
       },
-      "lastPushTimeStamp": "2023-04-10T04:00:06.234Z",
+      "lastPushTimeStamp": "2023-07-19T03:49:48.456Z",
       "providerMetadata": {
         "s3TemplateURL": "https://s3.amazonaws.com/amplify-moneyapp-dev-132217-deployment/amplify-cfn-templates/auth/moneyapp4d4136e1-cloudformation-template.json",
         "logicalId": "authmoneyapp4d4136e1"
-      },
-      "lastPushDirHash": "Riq6ygD/44FoJgF/nj8zGLH27bY="
+      }
     }
   }
 }

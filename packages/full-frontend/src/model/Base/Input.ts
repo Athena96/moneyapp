@@ -3,7 +3,7 @@ import { AssetAllocation } from "./AssetAllocation";
 
 export class Input implements Key {
   id: string;
-  age: number;
+  birthday: string;
   firstSignIn: boolean;
   assetAllocation: AssetAllocation;
   annualAssetReturnPercent: number;
@@ -12,7 +12,7 @@ export class Input implements Key {
 
   constructor(
     id: string,
-    age: number,
+    birthday: string,
     firstSignIn: boolean,
     assetAllocation: AssetAllocation,
     simulation: string,
@@ -20,7 +20,7 @@ export class Input implements Key {
     annualInflationPercent: number
   ) {
     this.id = id;
-    this.age = age;
+    this.birthday = birthday;
     this.firstSignIn = firstSignIn;
     this.assetAllocation = assetAllocation;
     this.simulation = simulation;

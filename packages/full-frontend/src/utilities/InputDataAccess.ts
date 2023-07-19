@@ -13,7 +13,7 @@ export const myListInputs = /* GraphQL */ `
     listInputs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        age
+        birthday
         firstSignIn
         annualAssetReturnPercent
         annualInflationPercent
@@ -45,7 +45,7 @@ export type MyListInputsQuery = {
     items: Array<{
       __typename: "Inputs";
       id: string;
-      age: number;
+      birthday: string;
       firstSignIn: boolean;
       assetAllocation: {
         __typename: "AssetAllocation";
@@ -120,7 +120,7 @@ export class InputDataAccess {
 
           selectedInput = new Input(
             input.id!,
-            input.age,
+            input.birthday,
             input.firstSignIn,
             assetAllocations,
             input.simulation!,

@@ -195,7 +195,7 @@ class Home extends React.Component<IProps, IState> {
 
       inputSettings = new Input(
         inputId,
-        0,
+        "1999-01-01",
         true,
         assetAllocation,
         simid,

@@ -18,7 +18,7 @@ import StepContent from '@mui/material/StepContent';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import AgeView from './Settings/AgeView';
+import BirthdayView from './Settings/BirthdayView';
 import AssetAllocationView from './Settings/AssetAllocationView';
 import { InputDataAccess } from '../utilities/InputDataAccess';
 
@@ -42,7 +42,7 @@ class SetupView extends React.Component<SetupViewProps, IState> {
             steps: [
                 {
                     label: 'Add your Birthday',
-                    description: <><AgeView user={this.props.user} simulation={this.props.simulation} /></>,
+                    description: <><BirthdayView user={this.props.user} simulation={this.props.simulation} /></>,
                 },
                 {
                     label: 'Add Asset Allocation',

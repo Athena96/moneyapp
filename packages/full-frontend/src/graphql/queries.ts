@@ -129,7 +129,7 @@ export const getInputs = /* GraphQL */ `
   query GetInputs($id: ID!) {
     getInputs(id: $id) {
       id
-      age
+      birthday
       annualAssetReturnPercent
       annualInflationPercent
       firstSignIn
@@ -161,7 +161,7 @@ export const listInputs = /* GraphQL */ `
     listInputs(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        age
+        birthday
         annualAssetReturnPercent
         annualInflationPercent
         firstSignIn
