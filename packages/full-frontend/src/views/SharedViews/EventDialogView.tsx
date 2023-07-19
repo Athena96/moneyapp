@@ -16,8 +16,6 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
 interface EventDialogViewProps {
   user: string;
@@ -118,7 +116,6 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
             <br />
             <Stack direction="row" spacing={2}>
               {this.props.event && (
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <TextField
                     label={"age"}
                     id="outlined-basic"
@@ -126,7 +123,6 @@ class EventDialogView extends React.Component<EventDialogViewProps, EventDialogV
                     onChange={(e) => this.handleOneTimeDateChange(Number(e.target.value))}
                     value={this.state.eventToSave.age}
                   ></TextField>
-                </LocalizationProvider>
               )}
             </Stack>
           </Stack>
