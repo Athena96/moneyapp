@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { getMonteCarloProjection, getStartingBalance, StockClient } from "../../utilities/helpers";
+import { calculateAge, getMonteCarloProjection, getStartingBalance, StockClient } from "../../utilities/helpers";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import Tooltip from "@mui/material/Tooltip";
@@ -25,6 +25,7 @@ import DataView from "./DataView";
 import { AssetDataAccess } from "../../utilities/AssetDataAccess";
 import { BudgetDataAccess } from "../../utilities/BudgetDataAccess";
 import { EventDataAccess } from "../../utilities/EventDataAccess";
+import { InputDataAccess } from "../../utilities/InputDataAccess";
 
 interface DashboardViewProps {
   user: string;
@@ -41,6 +42,7 @@ interface IState {
   budgets: Budget[];
   events: Event[];
   startingBalance: number;
+  startingAge: number;
 }
 
 const stockClient = new StockClient();
@@ -58,6 +60,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       balanceData: [],
       budgets: [],
       events: [],
+      startingAge: 0,
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
@@ -66,6 +69,11 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
   }
 
   async componentDidMount() {
+    const simId = this.props.simulation!.getKey();
+    const defaultInputs = await InputDataAccess.fetchInputsForSelectedSim(
+      simId
+    );
+    this.setState({startingAge: calculateAge(defaultInputs.birthday)})
     await this.handleTriggerSimulation();
   }
 
@@ -130,7 +138,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
     // add date labels
     simulationData.medianLine.forEach((dataRow, i) => {
-      chartData.labels.push(`${i}`);
+      chartData.labels.push(`${i+this.state.startingAge}`);
     });
 
     let j = 0;
