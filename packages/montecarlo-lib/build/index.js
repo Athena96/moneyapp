@@ -23,6 +23,7 @@ function simulate(mean, variance, annualContribution, numberOfYears, startingBal
         const effectiveDistOfReturns = (0, Utils_1.adjustForFees)(distributionOfReturns, Settings_1.FEES);
         // setup income and expenses
         const incomesAndExpenses = (0, Utils_1.getIncomesAndExpenses)(numberOfYears, annualContribution, startAge, oneTime);
+        // console.log(`incomesAndExpenses: ${JSON.stringify(incomesAndExpenses)}`);
         // generate projection
         const projection = (0, MonteCarlo_1.calculateFutureValue)(startingBalance, effectiveDistOfReturns, incomesAndExpenses, current_year_progress);
         // save data for median

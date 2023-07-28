@@ -23,16 +23,7 @@ export function simulate(
   oneTime: Map<number, number>,
   currentDate: Date
 ): MonteCarloData {
-  console.log("MonteCarloLib.simulate()");
-
-  console.log(`period: ${numberOfYears}`);
-  console.log(`startingBalance: ${startingBalance}`);
-  console.log(`startAge: ${startAge}`);
-  console.log(`annualContribution: ${JSON.stringify(annualContribution)}`);
-  console.log(`oneTime:`);
-  console.log(oneTime);
   const current_year_progress = (currentDate.getMonth()+1) / 12.0;
-  console.log(`current_year_progress: ${current_year_progress}`);
 
   // const successCountByAge = new Array(numberOfYears).fill(0)
   let successCount = 0;

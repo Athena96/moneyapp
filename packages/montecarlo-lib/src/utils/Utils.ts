@@ -71,10 +71,14 @@ export const getIncomesAndExpenses = (
   for (let i = 0; i < timeline; i++) {
     const currAge = startingAge + i;
     const oneTimeExpensesIncome = oneTime.get(currAge) || 0.0;
-    let sum = 0.0;
-    for (const incomeExp of incomeExpList)
-      if (currAge >= incomeExp.startAge && currAge <= incomeExp.endAge)
-        sum += Number((incomeExp.annualExpensesIncome + oneTimeExpensesIncome).toFixed(2));
+
+    let sum = oneTimeExpensesIncome
+    for (const incomeExp of incomeExpList) {
+      if (currAge >= incomeExp.startAge && currAge <= incomeExp.endAge) {
+        sum += Number((incomeExp.annualExpensesIncome).toFixed(2));
+      }
+    }
+
     incomesAndExpenses.push(sum);
   }
   return incomesAndExpenses;
