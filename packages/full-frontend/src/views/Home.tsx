@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import { Simulation } from "../model/Base/Simulation";
-import { SimulationDataAccess } from "../utilities/SimulationDataAccess";
+
 
 import "../App.css";
 import Main from "./Main";
@@ -11,11 +10,7 @@ import Amplify, { Auth, API } from "aws-amplify";
 import awsExports from "../aws-exports";
 import { Link } from "react-router-dom";
 
-import SimulationView from "./SimulationView";
-import { SimulationStatus } from "../API";
-import { Input } from "../model/Base/Input";
-import { AssetAllocation } from "../model/Base/AssetAllocation";
-import { Allocations } from "../model/Base/Allocations";
+
 
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 
@@ -51,7 +46,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { DEFAULT_INFLATION_PERCENT, DEFAULT_RETURN_PERCENT, InputDataAccess } from "../utilities/InputDataAccess";
+// import { DEFAULT_INFLATION_PERCENT, DEFAULT_RETURN_PERCENT, InputDataAccess } from "../utilities/InputDataAccess";
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -123,7 +118,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" 
   }),
 }));
 
-Amplify.configure(awsExports);
+
 
 interface IProps {
   hideSignIn: () => void;
@@ -134,12 +129,12 @@ interface IProps {
 interface IState {
   selectedTab: number;
   user: string | undefined;
-  simulation: Simulation | undefined;
-  simulations: Simulation[];
+  scenarioId: string | undefined;
+  simulations: [];
   open: boolean;
   showScenario: boolean;
   profileOpen: boolean;
-  input: Input | undefined;
+  // input: Input | undefined;
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -147,13 +142,13 @@ class Home extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       selectedTab: 0,
-      user: undefined,
-      simulation: undefined,
+      user: "jaredfranzone@gmail.com",
+      scenarioId: "s1",
       open: false,
       showScenario: false,
       simulations: [],
       profileOpen: false,
-      input: undefined,
+
     };
 
     this.render = this.render.bind(this);
@@ -170,43 +165,46 @@ class Home extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
+
+
+    console.log('componentDidMount Home');
     this.props.hideSignIn();
 
     if (!this.props.signedIn) {
       return;
     }
 
-    let simulation = undefined;
-    let inputSettings = undefined;
-    const user = await Auth.currentAuthenticatedUser();
-    const email: string = user.attributes.email;
-    const simid = new Date().getTime().toString();
-    const inputId = (new Date().getTime() + 1).toString();
+    // let simulation = undefined;
+    // let inputSettings = undefined;
+    // const user = await Auth.currentAuthenticatedUser();
+    // const email: string = user.attributes.email;
+    // const simid = new Date().getTime().toString();
+    // const inputId = (new Date().getTime() + 1).toString();
 
-    simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    if (!simulation) {
-      simulation = new Simulation(simid, "Default Scenario", 1, "[]", "", new Date(), email, SimulationStatus.Done);
-      await SimulationDataAccess.createSimulation(simulation);
-      const assetAllocation: AssetAllocation = new AssetAllocation(
-        new Allocations("80.0", "16.0", "4.0"),
-        undefined,
-        undefined
-      );
+    // simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
+    // if (!simulation) {
+    //   simulation = new Simulation(simid, "Default Scenario", 1, "[]", "", new Date(), email, SimulationStatus.Done);
+    //   await SimulationDataAccess.createSimulation(simulation);
+    //   const assetAllocation: AssetAllocation = new AssetAllocation(
+    //     new Allocations("80.0", "16.0", "4.0"),
+    //     undefined,
+    //     undefined
+    //   );
 
-      inputSettings = new Input(
-        inputId,
-        "1999-01-01",
-        true,
-        assetAllocation,
-        simid,
-        DEFAULT_RETURN_PERCENT,
-        DEFAULT_INFLATION_PERCENT
-      );
-      await InputDataAccess.createInput(inputSettings);
-    }
+    //   inputSettings = new Input(
+    //     inputId,
+    //     "1999-01-01",
+    //     true,
+    //     assetAllocation,
+    //     simid,
+    //     DEFAULT_RETURN_PERCENT,
+    //     DEFAULT_INFLATION_PERCENT
+    //   );
+    //   await InputDataAccess.createInput(inputSettings);
+    // }
 
-    this.setState({ user: email, simulation: simulation, simulations: [simulation], input: inputSettings });
-    await SimulationDataAccess.fetchSimulationsForUser(this, this.state.user!);
+    // this.setState({ user: email, simulation: simulation, simulations: [simulation], input: inputSettings });
+    // await SimulationDataAccess.fetchSimulationsForUser(this, this.state.user!);
   }
 
   handleDrawerOpen() {
@@ -230,23 +228,23 @@ class Home extends React.Component<IProps, IState> {
   }
 
   async handleSimulationChange(event: SelectChangeEvent) {
-    const selectedSimulationName = event.target.value as string;
-    if (selectedSimulationName !== "#add-new-simulation#") {
-      let sims = this.state.simulations;
+    // const selectedSimulationName = event.target.value as string;
+    // if (selectedSimulationName !== "#add-new-simulation#") {
+    //   let sims = this.state.simulations;
 
-      for (const simulation of sims) {
-        if (simulation.name === selectedSimulationName) {
-          simulation.selected = 1;
-          this.setState({ simulation: simulation });
-        } else {
-          simulation.selected = 0;
-        }
-        await SimulationDataAccess.updateSimulation(simulation);
-      }
+    //   for (const simulation of sims) {
+    //     if (simulation.name === selectedSimulationName) {
+    //       simulation.selected = 1;
+    //       this.setState({ simulation: simulation });
+    //     } else {
+    //       simulation.selected = 0;
+    //     }
+    //     await SimulationDataAccess.updateSimulation(simulation);
+    //   }
 
-      this.setState({ simulations: sims });
-      window.location.reload();
-    }
+    //   this.setState({ simulations: sims });
+    //   window.location.reload();
+    // }
   }
 
   async handleSignOut() {
@@ -289,12 +287,12 @@ class Home extends React.Component<IProps, IState> {
   }
 
   render() {
-    if (this.state.user && this.state.simulations) {
+    if (this.state.user && this.state.scenarioId) {
       return (
         <Box sx={{ display: "flex" }}>
-          <Dialog open={this.state.showScenario} onClose={this.closeDialog}>
-            {this.state.simulation && <SimulationView user={this.state.user} simulation={this.state.simulation} />}
-          </Dialog>
+          {/* <Dialog open={this.state.showScenario} onClose={this.closeDialog}>
+            {this.state.scenarioId && <SimulationView user={this.state.user} simulation={this.state.scenarioId} />}
+          </Dialog> */}
 
           <AppBar position="fixed" sx={{ bgcolor: moneyGreen }}>
             <Toolbar>
@@ -328,18 +326,18 @@ class Home extends React.Component<IProps, IState> {
                   style={{ color: "white" }}
                   labelId="demo-select-small"
                   id="demo-select-small"
-                  value={this.state.simulation!.name}
+                  value={this.state.scenarioId}
                   label="simulation"
                   onChange={this.handleSimulationChange}
                 >
-                  {this.state.simulations &&
+                  {/* {this.state.simulations &&
                     this.state.simulations.map((sim: Simulation, z: number) => {
                       return (
                         <MenuItem key={z} value={`${sim.name}`}>
                           {sim.name}
                         </MenuItem>
                       );
-                    })}
+                    })} */}
                   <MenuItem key={"#add-new-simulation#`"} value={`#add-new-simulation#`}>
                     <Button variant="outlined" onClick={this.scenarioSwitch}>
                       Create/Edit/Delete Scenarios
@@ -549,7 +547,7 @@ class Home extends React.Component<IProps, IState> {
           </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
-            <Main user={this.state.user} simulation={this.state.simulation} input={this.state.input!} />
+            <Main user={this.state.user}  />
           </Box>
         </Box>
       );

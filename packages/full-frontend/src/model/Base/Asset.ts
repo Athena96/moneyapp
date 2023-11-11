@@ -1,34 +1,56 @@
-
-import { Key } from "../Interfaces/KeyInterface";
-
-export class Asset implements Key {
-    id: string;
+export  class Asset {
+  id: string;
+  scenarioDataId: string;
+    type: string;
     ticker: string;
     quantity: number;
+    price: number;
     hasIndexData: number;
-    isCurrency: number;
-    simulation: string;
-
-
-    constructor(id: string, ticker: string, quantity: number, hasIndexData: number, isCurrency: number, simulation: string) {
-        this.id = id;
-        this.ticker = ticker;
-        this.quantity = quantity
-        this.hasIndexData = hasIndexData;
-        this.isCurrency = isCurrency;
-        this.simulation = simulation
-    }
-
-    setQuantity(quantity: string) {
-        this.quantity = Number(parseFloat(quantity).toFixed(10));
-    }
-
-    printAsset() {
-        console.log(JSON.stringify(this));
+  
+    constructor(
+      scenarioDataId: string = '',
+      id: string = '',
+      type: string = '',
+      ticker: string = '',
+      quantity: number = 0.0,
+      price: number = 0.0,
+      hasIndexData: number = 1
+    ) {
+      this.scenarioDataId = scenarioDataId;
+      this.id = id;
+      this.type = type;
+      this.ticker = ticker;
+      this.quantity = quantity;
+      this.price = price;
+      this.hasIndexData = hasIndexData;
     }
   
-    getKey() {
-        return this.id;
+    static fromJson(json: { [key: string]: any }): Asset {
+      return new Asset(
+        json.scenarioDataId,
+        json.id,
+        json.type,
+        json.ticker,
+        parseFloat(json.quantity),
+        parseFloat(json.price),
+        parseInt(json.hasIndexData, 10)
+      );
     }
-
-}
+  
+    static computeTotalAssetValue(assets: Asset[]): number {
+      let total = 0.0;
+      for (const asset of assets) {
+        if (asset.hasIndexData === 1) {
+          total += asset.quantity * asset.price;
+        } else {
+          total += asset.price;
+        }
+      }
+      return total;
+    }
+  
+    toString(): string {
+      return `Asset(id: ${this.id}, simulationId: ${this.scenarioDataId}, type: ${this.type}, ticker: ${this.ticker}, quantity: ${this.quantity}, price: ${this.price}, hasIndexData: ${this.hasIndexData})`;
+    }
+  }
+  

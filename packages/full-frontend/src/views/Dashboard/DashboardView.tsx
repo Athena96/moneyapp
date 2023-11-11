@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import { calculateAge, getMonteCarloProjection, getStartingBalance, StockClient } from "../../utilities/helpers";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 import Tooltip from "@mui/material/Tooltip";
@@ -13,39 +12,37 @@ import "../../App.css";
 import { Line } from "react-chartjs-2";
 import { moneyGreenBoldText, black } from "../../utilities/constants";
 import { Tick } from "chart.js";
-import { Simulation } from "../../model/Base/Simulation";
-import { Budget } from "../../model/Base/Budget";
-import { Event } from "../../model/Base/Event";
+import { Recurring } from "../../model/Base/Recurring";
+
 import Box from "@mui/material/Box";
 
 import { MonteCarloData } from "montecarlo-lib";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import DataView from "./DataView";
-import { AssetDataAccess } from "../../utilities/AssetDataAccess";
-import { BudgetDataAccess } from "../../utilities/BudgetDataAccess";
-import { EventDataAccess } from "../../utilities/EventDataAccess";
-import { InputDataAccess } from "../../utilities/InputDataAccess";
+import { DataView } from "./DataView";
+import { ScenarioData } from "../../model/Base/ScenarioData";
+import { ScenarioDataService } from "../../services/scenario_data_service";
+import { Asset } from "../../model/Base/Asset";
+import { calculateAge, getMonteCarloProjection } from "../../utilities/helpers";
+
 
 interface DashboardViewProps {
   user: string;
-  simulation: Simulation | undefined;
+  scenarioId: string;
 }
 
 interface IState {
   selectedTab: number;
   chartData: any | null;
-  lastComputed: number | null;
   successPercent: string;
+  startingBalance: number;
   simulationButtonLoading: boolean;
   balanceData: number[];
-  budgets: Budget[];
-  events: Event[];
-  startingBalance: number;
   startingAge: number;
+
+  scenarioData: ScenarioData | undefined;
 }
 
-const stockClient = new StockClient();
 
 class DashboardView extends React.Component<DashboardViewProps, IState> {
   constructor(props: DashboardViewProps) {
@@ -53,14 +50,13 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     this.state = {
       selectedTab: 1,
       chartData: null,
-      lastComputed: null,
       successPercent: "0.0",
       startingBalance: 0.0,
       simulationButtonLoading: false,
       balanceData: [],
-      budgets: [],
-      events: [],
       startingAge: 0,
+      scenarioData: undefined,
+
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.render = this.render.bind(this);
@@ -69,31 +65,28 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
   }
 
   async componentDidMount() {
-    const simId = this.props.simulation!.getKey();
-    const defaultInputs = await InputDataAccess.fetchInputsForSelectedSim(
-      simId
-    );
-    this.setState({startingAge: calculateAge(defaultInputs.birthday)})
-    await this.handleTriggerSimulation();
+    const scenarioData = await ScenarioDataService.getScenarioData(this.props.scenarioId);
+    this.setState({ scenarioData, startingAge: calculateAge(scenarioData.settings.birthday.toISOString()) });
+    await this.handleTriggerSimulation(scenarioData);
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
     this.setState({ selectedTab: newValue });
   }
 
-  async handleTriggerSimulation() {
-    const simulationId = this.props.simulation!.getKey();
-    const assets = await AssetDataAccess.fetchAssetsForSelectedSim(simulationId);
-    const mybudgets = await BudgetDataAccess.fetchBudgetsForSelectedSim(simulationId);
-    const myEvents = await EventDataAccess.fetchEventsForSelectedSim(simulationId);
-
-    const startingBalance = await getStartingBalance(assets, stockClient);
+  async handleTriggerSimulation(scenarioData: ScenarioData) {
+    const assets = scenarioData.assets;
+    const myrecurrings = scenarioData.recurrings;
+    const settings = scenarioData.settings;
+    const startingBalance = Asset.computeTotalAssetValue(assets);
+    console.log("startingBalance: $", startingBalance);
     const monteCarloData = await getMonteCarloProjection(
-      this.props.simulation!.getKey(),
+      this.props.scenarioId,
       startingBalance,
-      mybudgets,
-      myEvents
+      myrecurrings,
+      settings
     );
+    console.log("monteCarloData: ", JSON.stringify(monteCarloData));
     const successPercentString = `${monteCarloData.successPercent.toFixed(2)}`;
     const chartData = this.generateGraphData(monteCarloData);
     this.setState({
@@ -101,12 +94,10 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       successPercent: successPercentString,
       startingBalance: startingBalance,
       balanceData: monteCarloData.medianLine,
-      events: myEvents,
-      budgets: mybudgets,
     });
   }
 
-  generateGraphData(simulationData: MonteCarloData) {
+  generateGraphData(monteCarloData: MonteCarloData) {
     var chartData: any = {
       labels: [],
       datasets: [],
@@ -137,8 +128,8 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     ];
 
     // add date labels
-    simulationData.medianLine.forEach((dataRow, i) => {
-      chartData.labels.push(`${i+this.state.startingAge}`);
+    monteCarloData.medianLine.forEach((dataRow, i) => {
+      chartData.labels.push(`${i + this.state.startingAge}`);
     });
 
     let j = 0;
@@ -151,7 +142,8 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         pointRadius: 1,
       });
       // eslint-disable-next-line no-loop-func
-      simulationData.medianLine.forEach((dataRow, i) => {
+
+      monteCarloData.medianLine.forEach((dataRow, i) => {
         if (name.key === "maxBalance") {
           // chartData.datasets[j].data.push(Number(dataRow.maxBalance.replace('$', '')))
         } else if (name.key === "avgBalance") {
@@ -173,7 +165,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       scales: {
         y: {
           min: 0,
-          max: 10_000_000,
+
           ticks: {
             callback: function (tickValue: string | number, index: number, ticks: Tick[]) {
               if ((tickValue as number) >= 1000000) {
@@ -204,70 +196,67 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
     // add more quote data: https://finnhub.io/docs/api/quote
 
-    if (this.props.simulation) {
+    if (this.state.scenarioData && this.state.chartData) {
       return (
         <Box>
-          {this.state.chartData ? (
-            <>
-              <h1>Dashboard</h1>
 
-              <Stack direction={isMobile ? "column" : "row"} spacing={2}>
-                <Paper variant="outlined" sx={{ width: isMobile ? "100%" : "75%", p: 2 }}>
-                  <h3 style={{ color: black, width: "min-width" }}>
-                    Chance of Success{" "}
-                    <Tooltip
-                      title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}
+          <>
+            <h1>Dashboard</h1>
+
+            <Stack direction={isMobile ? "column" : "row"} spacing={2}>
+              <Paper variant="outlined" sx={{ width: isMobile ? "100%" : "75%", p: 2 }}>
+                <h3 style={{ color: black, width: "min-width" }}>
+                  Chance of Success{" "}
+                  <Tooltip
+                    title={`Calculated using Monte Carlo, running 1,000 different simulations. This is the probability that you won't run out of money before you die.`}
+                  >
+                    <InfoIcon />
+                  </Tooltip>
+                </h3>
+                <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
+                <small style={{ color: "black" }}>
+                  <b>Starting Balance</b>: ${this.state.startingBalance.toLocaleString()}
+                </small>
+                <Paper>
+                  {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
+                  <Line data={this.state.chartData} options={options} />
+                  {this.state.simulationButtonLoading ? (
+                    <Box>
+                      <small>Running 1,000 different Monte Carlo Simulations, this may take a moment... </small>
+                    </Box>
+                  ) : (
+                    <IconButton
+                      onClick={() => this.handleTriggerSimulation(this.state.scenarioData as ScenarioData)}
+                      color="primary"
+                      aria-label="upload picture"
+                      component="span"
                     >
-                      <InfoIcon />
-                    </Tooltip>
-                  </h3>
-                  <h2 style={{ color: moneyGreenBoldText }}>{this.state.successPercent}%</h2>
-                  <small style={{ color: "black" }}>
-                    <b>Starting Balance</b>: ${this.state.startingBalance.toLocaleString()}
-                  </small>
-                  <Paper>
-                    {/* https://apexcharts.com/react-chart-demos/line-charts/zoomable-timeseries/ */}
-                    <Line data={this.state.chartData} options={options} />
-                    {this.state.simulationButtonLoading ? (
-                      <Box>
-                        <small>Running 1,000 different Monte Carlo Simulations, this may take a moment... </small>
-                      </Box>
-                    ) : (
-                      <IconButton
-                        onClick={this.handleTriggerSimulation}
-                        color="primary"
-                        aria-label="upload picture"
-                        component="span"
-                      >
-                        <RefreshIcon />
-                      </IconButton>
-                    )}
-                    <br />
-                  </Paper>
+                      <RefreshIcon />
+                    </IconButton>
+                  )}
+                  <br />
                 </Paper>
-              </Stack>
+              </Paper>
+            </Stack>
 
-              <DataView
-                user={this.props.user}
-                simulation={this.props.simulation}
-                balanceData={this.state.balanceData}
-                budgets={this.state.budgets}
-                events={this.state.events}
-              />
-            </>
-          ) : (
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-              <div style={{ textAlign: "center" }}>
-                <CircularProgress />
-              </div>
-            </div>
-          )}
+            <DataView
+            // user={this.props.user}
+            // simulation={this.props.simulation}
+            // balanceData={this.state.balanceData}
+            // recurrings={this.state.recurrings}
+            // onetimes={this.state.onetimes}
+            />
+          </>
+
         </Box>
       );
     } else {
+      console.log("loading");
       return (
-        <div style={{ textAlign: "center" }}>
-          <p>no data</p>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+          <div style={{ textAlign: "center" }}>
+            <CircularProgress />
+          </div>
         </div>
       );
     }

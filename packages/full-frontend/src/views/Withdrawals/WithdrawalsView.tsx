@@ -1,28 +1,25 @@
-
 import React, { useState, useEffect } from 'react';
 import { Recurring } from '../../model/Base/Recurring';
 import { RecurringService } from '../../services/recurring_service';
 import { Button, CircularProgress } from '@mui/material';
 import { RecurringsOneTimesView } from '../SharedViews/RecurringsOneTimesView';
 import { ChargeType } from '../../model/Base/ChargeType';
-import WithdrawalFormDialog from '../Withdrawals/WithdrawalFormDialog';
+import WithdrawalFormDialog from './WithdrawalFormDialog';
 
-
-
-interface IncomesViewProps {
+interface WithdrawalsViewProps {
     user: string;
     scenarioId: string;
 }
 
-interface IncomesViewState {
+interface WithdrawalsViewState {
     data: Recurring[] | undefined;
     isDialogOpen: boolean;
     slectedRecurring: Recurring | null;
 }
 
-class IncomesView extends React.Component<IncomesViewProps, IncomesViewState> {
+class WithdrawalsView extends React.Component<WithdrawalsViewProps, WithdrawalsViewState> {
 
-    constructor(props: IncomesViewProps) {
+    constructor(props: WithdrawalsViewProps) {
         super(props);
         this.state = {
             data: undefined,
@@ -35,7 +32,7 @@ class IncomesView extends React.Component<IncomesViewProps, IncomesViewState> {
         const data: Recurring[] = [];
         const recurrings = await RecurringService.listRecurring(this.props.scenarioId);
         data.push(...recurrings);
-        const filteredData = data.filter((d: Recurring) => d.chargeType === ChargeType.INCOME);
+        const filteredData = data.filter((d: Recurring) => d.chargeType === ChargeType.EXPENSE);
         this.setState({ data: filteredData });
     }
 
@@ -46,29 +43,34 @@ class IncomesView extends React.Component<IncomesViewProps, IncomesViewState> {
             this.setState({ data: newRecurrings });
         }
     }
+
     handleEdit = (recurring: Recurring) => {
+        console.log("handleEdit");
         this.setState({
             slectedRecurring: recurring,
             isDialogOpen: true
         })
     }
+
     handleAdd = () => {
         this.setState({
             slectedRecurring: null,
             isDialogOpen: true
         })
     }
+
     closeDialog = () => {
         this.setState({
             isDialogOpen: false
         })
     }
+
     saveRecurring = async (recurring: Recurring) => {
         if (this.state.slectedRecurring) {
-            await RecurringService.updateRecurring(recurring, ChargeType.INCOME);
+            await RecurringService.updateRecurring(recurring, ChargeType.EXPENSE);
             this.setState({ data: this.state.data?.map(r => (r.id === recurring.id ? recurring : r)) })
         } else {
-            await RecurringService.addRecurring(recurring, ChargeType.INCOME);
+            await RecurringService.addRecurring(recurring, ChargeType.EXPENSE);
             this.setState({ data: [...this.state.data || [], recurring] })
         }
     }
@@ -98,7 +100,6 @@ class IncomesView extends React.Component<IncomesViewProps, IncomesViewState> {
             )
         }
     }
-
 }
 
-export default IncomesView;
+export default WithdrawalsView;

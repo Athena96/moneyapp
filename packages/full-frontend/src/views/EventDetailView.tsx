@@ -1,43 +1,50 @@
-import * as React from 'react';
+// import * as React from 'react';
 
-import { Event } from '../model/Base/Event';
-import EventDialogView from './SharedViews/EventDialogView';
-import { Simulation } from '../model/Base/Simulation';
-import { EventDataAccess } from '../utilities/EventDataAccess';
+// import { OneTime } from '../model/Base/OneTime';
+// import OneTimeDialogView from './SharedViews/OneTimeDialogView';
+// import { Simulation } from '../model/Base/Simulation';
+// import { OneTimeDataAccess } from '../utilities/OneTimeDataAccess';
 
-interface EventDetailProps {
-  user: string;
-  simulation: Simulation | undefined;
-}
+// interface OneTimeDetailProps {
+//   user: string;
+//   simulation: Simulation | undefined;
+// }
 
-interface IState {
-  event: Event | undefined;
-}
+// interface IState {
+//   event: OneTime | undefined;
+// }
 
-class EventDetailView extends React.Component<EventDetailProps, IState> {
-  constructor(props: EventDetailProps) {
-    super(props);
-    this.state = {
-      event: undefined
+// class OneTimeDetailView extends React.Component<OneTimeDetailProps, IState> {
+//   constructor(props: OneTimeDetailProps) {
+//     super(props);
+//     this.state = {
+//       event: undefined
+//     }
+//     this.componentDidMount = this.componentDidMount.bind(this);
+//   }
+
+//   async componentDidMount() {
+//     const eventId = window.location.pathname.split('/')[2];
+//     const eventToEdit = await OneTimeDataAccess.getOneTime(eventId);
+//     this.setState({ event: eventToEdit });
+//   }
+
+//   render() {
+//     return (
+//       <div>
+//           { this.props.simulation && 
+//           this.state.event && 
+//           <OneTimeDialogView user={this.props.user} simulation={this.props.simulation} event={this.state.event} type={this.state.event.type} /> }
+//       </div>
+//     );
+//   }
+// }
+
+// export default OneTimeDetailView;
+import React from "react";
+
+export class OneTimeDetailView extends React.Component {
+    render() {
+        return (<></>)
     }
-    this.componentDidMount = this.componentDidMount.bind(this);
-  }
-
-  async componentDidMount() {
-    const eventId = window.location.pathname.split('/')[2];
-    const eventToEdit = await EventDataAccess.getEvent(eventId);
-    this.setState({ event: eventToEdit });
-  }
-
-  render() {
-    return (
-      <div>
-          { this.props.simulation && 
-          this.state.event && 
-          <EventDialogView user={this.props.user} simulation={this.props.simulation} event={this.state.event} type={this.state.event.type} /> }
-      </div>
-    );
-  }
 }
-
-export default EventDetailView;

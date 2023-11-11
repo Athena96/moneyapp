@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './App.css';
 
-import { Amplify } from "aws-amplify";
+import { Amplify, JS } from "aws-amplify";
 import {
   AmplifyProvider,
   Authenticator,
@@ -18,7 +18,6 @@ import { moneyGreen } from './utilities/constants';
 
 const isMobile = window.innerWidth <= 390;
 
-Amplify.configure(aws_exports);
 
 interface IProps {
 }
@@ -49,9 +48,12 @@ class App extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
+    console.log('here');
     let user;
     try {
       user = await Auth.currentAuthenticatedUser();
+      // console.log('user ' + JSON.stringify(user));
+
     } catch (e) {
       user = null;
     }
@@ -71,6 +73,8 @@ class App extends React.Component<IProps, IState> {
   }
 
   render() {
+    console.log('this.state.signedIn ' + this.state.signedIn);
+
     return (
       <div>
         <div >
@@ -111,7 +115,7 @@ class App extends React.Component<IProps, IState> {
                       return (
                         <>
                           <Container >
-                            <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} signedIn={this.state.signedIn} />
+                            <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} signedIn={this.state.signedIn}  />
                           </Container>
                         </>
                       )
