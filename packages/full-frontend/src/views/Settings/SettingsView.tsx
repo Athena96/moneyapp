@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Settings } from "../../model/Base/Settings";
 import { SettingsService } from "../../services/settings_service";
+import { Button, Card } from "@mui/material";
 
 interface SettingsViewProps {
     user: string;
@@ -36,7 +37,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ user, scenarioId }) => {
     };
 
     return (
-        <div>
+        <Card variant="outlined" style={{ padding: '15px' }}>
             <label>
                 Birthday:
                 <input
@@ -63,11 +64,12 @@ const SettingsView: React.FC<SettingsViewProps> = ({ user, scenarioId }) => {
                     onChange={e => setSettings({ ...settings, annualInflationPercent: parseFloat(e.target.value) })}
                 />
             </label>
-
+            <br />
             <div className="modal-actions">
-                <button onClick={handleSave}>Save</button>
+                <Button style={{ width: "100%" }}  variant="outlined" onClick={handleSave}>Save</Button>
             </div>
-        </div>
+        </Card>
+
     )
 }
 export default SettingsView;
