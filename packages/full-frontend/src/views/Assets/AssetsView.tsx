@@ -37,7 +37,6 @@ const AssetsView: React.FC<AssetsViewProps> = ({ user, scenarioId }) => {
     };
 
     const handleEdit = (asset: Asset) => {
-        
         setSelectedAsset(asset)
         setIsDialogOpen(true)
     }
@@ -65,14 +64,14 @@ const AssetsView: React.FC<AssetsViewProps> = ({ user, scenarioId }) => {
         <Box>
             <h1>Assets</h1>
             <Button disabled={isLoading} style={{ width: "100%" }} onClick={handleAdd} variant="outlined">add assets +</Button>
-            {isLoading && 
-            <>
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                    <div style={{ textAlign: "center" }}>
-                        <CircularProgress />
+            {isLoading &&
+                <>
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                        <div style={{ textAlign: "center" }}>
+                            <CircularProgress />
+                        </div>
                     </div>
-                </div>
-            </>}
+                </>}
             {assets.map((asset: Asset, i: number) => {
                 return (
                     <Card key={i} variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
