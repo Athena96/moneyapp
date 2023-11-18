@@ -46,6 +46,8 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { ScenarioService } from "../services/scenario_service";
+import { Scenario } from "../model/Base/Scenario";
 // import { DEFAULT_INFLATION_PERCENT, DEFAULT_RETURN_PERCENT, InputDataAccess } from "../utilities/InputDataAccess";
 
 const drawerWidth = 175;
@@ -129,8 +131,8 @@ interface IProps {
 interface IState {
   selectedTab: number;
   user: string | undefined;
-  scenarioId: string | undefined;
-  simulations: [];
+  activeScenario: Scenario | undefined;
+  scenarios: Scenario[];
   open: boolean;
   showScenario: boolean;
   profileOpen: boolean;
@@ -142,11 +144,11 @@ class Home extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       selectedTab: 0,
-      user: "jaredfranzone@gmail.com",
-      scenarioId: "s1",
+      user: undefined,
+      activeScenario: undefined,
       open: false,
       showScenario: false,
-      simulations: [],
+      scenarios: [],
       profileOpen: false,
 
     };
@@ -158,53 +160,35 @@ class Home extends React.Component<IProps, IState> {
     this.handleSignOut = this.handleSignOut.bind(this);
     this.scenarioSwitch = this.scenarioSwitch.bind(this);
     this.closeDialog = this.closeDialog.bind(this);
-    this.handleSimulationChange = this.handleSimulationChange.bind(this);
+    this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleProfileOpen = this.handleProfileOpen.bind(this);
     this.profileClose = this.profileClose.bind(this);
     this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
   }
 
   async componentDidMount() {
-
-
-    console.log('componentDidMount Home');
     this.props.hideSignIn();
 
     if (!this.props.signedIn) {
       return;
     }
 
-    // let simulation = undefined;
-    // let inputSettings = undefined;
-    // const user = await Auth.currentAuthenticatedUser();
-    // const email: string = user.attributes.email;
-    // const simid = new Date().getTime().toString();
-    // const inputId = (new Date().getTime() + 1).toString();
+    // get signed in user
+    const user = await Auth.currentAuthenticatedUser();
+    const email = user.attributes.email as string;
 
-    // simulation = await SimulationDataAccess.fetchSelectedSimulationForUser(this, email);
-    // if (!simulation) {
-    //   simulation = new Simulation(simid, "Default Scenario", 1, "[]", "", new Date(), email, SimulationStatus.Done);
-    //   await SimulationDataAccess.createSimulation(simulation);
-    //   const assetAllocation: AssetAllocation = new AssetAllocation(
-    //     new Allocations("80.0", "16.0", "4.0"),
-    //     undefined,
-    //     undefined
-    //   );
+    // get user's active scenario
+    const scenarios = await ScenarioService.listScenarios();
+    const activeScenario = scenarios.find((scenario) => scenario.active === 1);
 
-    //   inputSettings = new Input(
-    //     inputId,
-    //     "1999-01-01",
-    //     true,
-    //     assetAllocation,
-    //     simid,
-    //     DEFAULT_RETURN_PERCENT,
-    //     DEFAULT_INFLATION_PERCENT
-    //   );
-    //   await InputDataAccess.createInput(inputSettings);
-    // }
-
-    // this.setState({ user: email, simulation: simulation, simulations: [simulation], input: inputSettings });
-    // await SimulationDataAccess.fetchSimulationsForUser(this, this.state.user!);
+    // set state
+    if (activeScenario && email) {
+      this.setState({ 
+        activeScenario,
+        user: email, 
+        scenarios 
+      });
+    }
   }
 
   handleDrawerOpen() {
@@ -227,7 +211,8 @@ class Home extends React.Component<IProps, IState> {
     this.setState({ showScenario: false });
   }
 
-  async handleSimulationChange(event: SelectChangeEvent) {
+  async handleScenarioChange(event: SelectChangeEvent) {
+    alert("not implemented");
     // const selectedSimulationName = event.target.value as string;
     // if (selectedSimulationName !== "#add-new-simulation#") {
     //   let sims = this.state.simulations;
@@ -287,7 +272,7 @@ class Home extends React.Component<IProps, IState> {
   }
 
   render() {
-    if (this.state.user && this.state.scenarioId) {
+    if (this.state.user && this.state.activeScenario) {
       return (
         <Box sx={{ display: "flex" }}>
           {/* <Dialog open={this.state.showScenario} onClose={this.closeDialog}>
@@ -326,18 +311,18 @@ class Home extends React.Component<IProps, IState> {
                   style={{ color: "white" }}
                   labelId="demo-select-small"
                   id="demo-select-small"
-                  value={this.state.scenarioId}
+                  value={this.state.activeScenario.title}
                   label="simulation"
-                  onChange={this.handleSimulationChange}
+                  onChange={this.handleScenarioChange}
                 >
-                  {/* {this.state.simulations &&
-                    this.state.simulations.map((sim: Simulation, z: number) => {
+                  {this.state.scenarios &&
+                    this.state.scenarios.map((scenario: Scenario, z: number) => {
                       return (
-                        <MenuItem key={z} value={`${sim.name}`}>
-                          {sim.name}
+                        <MenuItem key={z} value={`${scenario.title}`}>
+                          {scenario.title}
                         </MenuItem>
                       );
-                    })} */}
+                    })}
                   <MenuItem key={"#add-new-simulation#`"} value={`#add-new-simulation#`}>
                     <Button variant="outlined" onClick={this.scenarioSwitch}>
                       Create/Edit/Delete Scenarios
@@ -547,7 +532,7 @@ class Home extends React.Component<IProps, IState> {
           </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <DrawerHeader />
-            <Main user={this.state.user}  />
+            <Main user={this.state.user} scenarioId={this.state.activeScenario.scenarioId} />
           </Box>
         </Box>
       );

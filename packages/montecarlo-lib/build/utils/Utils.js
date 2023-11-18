@@ -69,8 +69,6 @@ const getIncomesAndExpenses = (timeline, incomeExpList, startingAge, oneTime) =>
         for (const incomeExp of incomeExpList) {
             if (currAge >= incomeExp.startAge && currAge <= incomeExp.endAge) {
                 sum += Number((incomeExp.annualExpensesIncome).toFixed(2));
-                // console.log(`incomeExp: ${JSON.stringify(incomeExp)}`);
-                // console.log(`sum: ${sum}`);
             }
         }
         incomesAndExpenses.push(sum);

@@ -56,17 +56,7 @@ export const getMonteCarloProjection = async (
   recurrings: Recurring[],
   settings: Settings,
 ) => {
-  const st_datafetch = new Date();
-  const ed_datafetch = new Date();
-  console.log(`DATA Fetch TIME: ${ed_datafetch.getTime() - st_datafetch.getTime()}`);
-
   const annualExpenseList: AnnualExpensesIncome[] = getAnnualSpendingIncome(recurrings);
-
-  const st_stbal = new Date();
-  const ed_stbal = new Date();
-
-  console.log(`ST BAL TIME: ${ed_stbal.getTime() - st_stbal.getTime()}`);
-
   const currAge = calculateAge(settings.birthday.toISOString())
   const period = END_AGE - currAge;
   const oneTime = new Map<number, number>();

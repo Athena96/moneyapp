@@ -10,6 +10,7 @@ import SettingsView from './Settings/SettingsView';
 
 interface InputsViewProps {
   user: string;
+  scenarioId: string;
 }
 
 interface IState {
@@ -32,11 +33,11 @@ class Main extends React.Component<InputsViewProps, IState> {
   render() {
     return (
       <Switch>
-        <Route exact path="/" render={(props) => <DashboardView user={this.props.user} scenarioId={"s1"} />} />
-        <Route path="/withdrawals" render={(props) => <WithdrawalsView user={this.props.user} scenarioId={"s1"} />} />
-        <Route path="/contributions" render={(props) => <IncomesView user={this.props.user} scenarioId={"s1"} />} />
-        <Route path="/assets" render={(props) => <AssetsView user={this.props.user} scenarioId={"s1"} />} />
-        <Route path="/settings" render={(props) => <SettingsView user={this.props.user} scenarioId={"s1"} />} />
+        <Route exact path="/" render={(props) => <DashboardView user={this.props.user} scenarioId={this.props.scenarioId} />} />
+        <Route path="/withdrawals" render={(props) => <WithdrawalsView user={this.props.user} scenarioId={this.props.scenarioId} />} />
+        <Route path="/contributions" render={(props) => <IncomesView user={this.props.user} scenarioId={this.props.scenarioId} />} />
+        <Route path="/assets" render={(props) => <AssetsView user={this.props.user} scenarioId={this.props.scenarioId} />} />
+        <Route path="/settings" render={(props) => <SettingsView user={this.props.user} scenarioId={this.props.scenarioId} />} />
       </Switch>
     );
   }

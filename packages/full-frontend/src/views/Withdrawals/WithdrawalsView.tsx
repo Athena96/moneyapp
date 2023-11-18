@@ -45,7 +45,6 @@ class WithdrawalsView extends React.Component<WithdrawalsViewProps, WithdrawalsV
     }
 
     handleEdit = (recurring: Recurring) => {
-        console.log("handleEdit");
         this.setState({
             slectedRecurring: recurring,
             isDialogOpen: true

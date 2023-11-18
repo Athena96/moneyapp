@@ -79,14 +79,12 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     const myrecurrings = scenarioData.recurrings;
     const settings = scenarioData.settings;
     const startingBalance = Asset.computeTotalAssetValue(assets);
-    console.log("startingBalance: $", startingBalance);
     const monteCarloData = await getMonteCarloProjection(
       this.props.scenarioId,
       startingBalance,
       myrecurrings,
       settings
     );
-    console.log("monteCarloData: ", JSON.stringify(monteCarloData));
     const successPercentString = `${monteCarloData.successPercent.toFixed(2)}`;
     const chartData = this.generateGraphData(monteCarloData);
     this.setState({
@@ -251,7 +249,6 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
         </Box>
       );
     } else {
-      console.log("loading");
       return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
           <div style={{ textAlign: "center" }}>

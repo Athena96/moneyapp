@@ -5,15 +5,7 @@ const MonteCarlo_1 = require("./services/MonteCarlo");
 const Settings_1 = require("./utils/Settings");
 const Utils_1 = require("./utils/Utils");
 function simulate(mean, variance, annualContribution, numberOfYears, startingBalance, numberOfSimulations, startAge, oneTime, currentDate) {
-    console.log("MonteCarloLib.simulate()");
-    console.log(`period: ${numberOfYears}`);
-    console.log(`startingBalance: ${startingBalance}`);
-    console.log(`startAge: ${startAge}`);
-    console.log(`annualContribution: ${JSON.stringify(annualContribution)}`);
-    console.log(`oneTime:`);
-    console.log(oneTime);
     const current_year_progress = (currentDate.getMonth() + 1) / 12.0;
-    console.log(`current_year_progress: ${current_year_progress}`);
     // const successCountByAge = new Array(numberOfYears).fill(0)
     let successCount = 0;
     const simulationData = new Array(Settings_1.SIMS);
@@ -23,7 +15,6 @@ function simulate(mean, variance, annualContribution, numberOfYears, startingBal
         const effectiveDistOfReturns = (0, Utils_1.adjustForFees)(distributionOfReturns, Settings_1.FEES);
         // setup income and expenses
         const incomesAndExpenses = (0, Utils_1.getIncomesAndExpenses)(numberOfYears, annualContribution, startAge, oneTime);
-        // console.log(`incomesAndExpenses: ${JSON.stringify(incomesAndExpenses)}`);
         // generate projection
         const projection = (0, MonteCarlo_1.calculateFutureValue)(startingBalance, effectiveDistOfReturns, incomesAndExpenses, current_year_progress);
         // save data for median

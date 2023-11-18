@@ -48,12 +48,9 @@ class App extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
-    console.log('here');
     let user;
     try {
       user = await Auth.currentAuthenticatedUser();
-      // console.log('user ' + JSON.stringify(user));
-
     } catch (e) {
       user = null;
     }
@@ -73,8 +70,6 @@ class App extends React.Component<IProps, IState> {
   }
 
   render() {
-    console.log('this.state.signedIn ' + this.state.signedIn);
-
     return (
       <div>
         <div >

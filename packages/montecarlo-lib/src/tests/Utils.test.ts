@@ -1,6 +1,6 @@
 
-import { AnnualExpensesIncome } from '../src';
-import { getIncomesAndExpenses } from '../src/utils/Utils';
+import { AnnualExpensesIncome } from '..';
+import { getIncomesAndExpenses } from '../utils/Utils';
 
 describe('getIncomesAndExpenses', () => {
   it('should calculate incomes and expenses correctly', () => {

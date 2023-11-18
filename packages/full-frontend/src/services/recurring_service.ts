@@ -18,7 +18,6 @@ export class RecurringService {
 
   // static addRecurring function
   static async addRecurring(recurring: Recurring, chargeType: ChargeType): Promise<void> {
-    console.log("recurring: " + JSON.stringify(recurring))
     await API.post('Endpoint', '/addRecurring', {
       body: {
         "scenarioDataId": recurring.scenarioDataId,
@@ -33,8 +32,6 @@ export class RecurringService {
 
   // updateRecurring function
   static async updateRecurring(recurring: Recurring, chargeType: ChargeType): Promise<void> {
-    
-    console.log("recurring: " + JSON.stringify(recurring))
     await API.put('Endpoint', '/updateRecurring', {
       body: {
         "scenarioDataId": recurring.scenarioDataId,
@@ -50,7 +47,6 @@ export class RecurringService {
 
   // static deleteRecurring function
   static async deleteRecurring(recurring: Recurring): Promise<void> {
-    console.log("recurring: " + JSON.stringify(recurring))
     await API.del('Endpoint', '/deleteRecurring', {
       body: {
         "scenarioDataId": recurring.scenarioDataId,
