@@ -86,7 +86,7 @@ class WithdrawalsView extends React.Component<WithdrawalsViewProps, WithdrawalsV
         } else {
             return (
                 <div>
-                    <Button variant="outlined" style={{ width: '100%', marginBottom: '20px' }} onClick={this.handleAdd}>Add Withdrawal</Button>
+                    <Button variant="outlined" style={{ width: '100%', marginBottom: '20px' }} disabled={this.state.data === undefined} onClick={this.handleAdd}>Add Withdrawal</Button>
                     <RecurringsOneTimesView user={this.props.user} scenarioId={this.props.scenarioId} data={this.state.data} onEdit={this.handleEdit} onDelete={this.handleDelete} />
                     <WithdrawalFormDialog
                         user={this.props.user}

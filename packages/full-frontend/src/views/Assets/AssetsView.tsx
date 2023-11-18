@@ -7,6 +7,7 @@ import '../../App.css';
 import AssetFormDialog from './AssetFormDialog';
 import Paper from '@mui/material/Paper';
 import { formatCurrency } from '../../utilities/helpers';
+import { is } from 'date-fns/locale';
 
 interface AssetsViewProps {
     user: string;
@@ -60,19 +61,19 @@ const AssetsView: React.FC<AssetsViewProps> = ({ user, scenarioId }) => {
         }
     }
 
-    return (
-        <Box>
-            <h1>Assets</h1>
-            <Button disabled={isLoading} style={{ width: "100%" }} onClick={handleAdd} variant="outlined">add assets +</Button>
-            {isLoading &&
-                <>
-                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                        <div style={{ textAlign: "center" }}>
-                            <CircularProgress />
-                        </div>
-                    </div>
-                </>}
+    if (isLoading) {
+        return (
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <div style={{ textAlign: "center" }}>
+                <CircularProgress />
+            </div>
+        </div>
+        )
+    }
 
+    return (
+        <div>
+            <Button variant="outlined" style={{ width: '100%', marginBottom: '20px' }} disabled={isLoading} onClick={handleAdd}>add assets</Button>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
@@ -108,7 +109,6 @@ const AssetsView: React.FC<AssetsViewProps> = ({ user, scenarioId }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-
             <AssetFormDialog
                 user={user}
                 scenarioId={scenarioId}
@@ -117,7 +117,8 @@ const AssetsView: React.FC<AssetsViewProps> = ({ user, scenarioId }) => {
                 onSave={saveAsset}
                 initialAsset={selectedAsset || undefined}
             />
-        </Box>
+        </div>
+
     );
 };
 
