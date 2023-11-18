@@ -35,6 +35,7 @@ import {
   IconButton,
   Toolbar,
   Box,
+  CircularProgress,
 } from "@mui/material";
 
 import BarChartIcon from "@mui/icons-material/BarChart";
@@ -537,7 +538,13 @@ class Home extends React.Component<IProps, IState> {
         </Box>
       );
     } else {
-      return <></>;
+      return (
+         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <div style={{ textAlign: "center" }}>
+                <CircularProgress />
+            </div>
+        </div>
+      )
     }
   }
 }
