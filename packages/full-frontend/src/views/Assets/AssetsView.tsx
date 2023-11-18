@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Asset } from '../../model/Base/Asset';
-import { Button, Box, Stack, Card, CircularProgress } from '@mui/material';
-import AssetComponent from './AssetComponent';
+import { Button, Box, CircularProgress, TableContainer, 
+    Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import { AssetService } from '../../services/asset_service';
 import '../../App.css';
 import AssetFormDialog from './AssetFormDialog';
-import EditAssetDialog from './EditAssetDialog';
-import { set } from 'date-fns';
+import Paper from '@mui/material/Paper';
+import { formatCurrency } from '../../utilities/helpers';
 
 interface AssetsViewProps {
     user: string;
@@ -72,23 +72,46 @@ const AssetsView: React.FC<AssetsViewProps> = ({ user, scenarioId }) => {
                         </div>
                     </div>
                 </>}
-            {assets.map((asset: Asset, i: number) => {
-                return (
-                    <Card key={i} variant="outlined" style={{ marginTop: '15px', width: '100%' }}>
-                        <AssetComponent
-                            key={i}
-                            asset={asset}
-                        />
-                        <Button style={{ margin: "10px" }} variant="outlined" onClick={() => handleDelete(asset)}>Delete</Button>
-                        <Button style={{ margin: "10px" }} variant="contained" onClick={() => handleEdit(asset)}>Edit</Button>
-                    </Card>
-                );
-            })}
+
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Ticker</TableCell>
+                            <TableCell align="right">Type</TableCell>
+                            <TableCell align="right">Quantity</TableCell>
+                            <TableCell align="right">Price</TableCell>
+                            <TableCell align="right">Value</TableCell>
+                            <TableCell align="center">Action</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {assets.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {row.ticker}
+                                </TableCell>
+                                <TableCell align="right">{row.hasIndexData === 1 ? "stock" : "custom"}</TableCell>
+                                <TableCell align="right">{row.quantity}</TableCell>
+                                <TableCell align="right">{formatCurrency(row.price)}</TableCell>
+                                <TableCell align="right">{formatCurrency(row.hasIndexData === 1 ? row.price * row.quantity : row.quantity)}</TableCell>
+
+                                <TableCell align="center">
+                                    <Button onClick={() => handleEdit(row)}>Edit</Button>
+                                    <Button onClick={() => handleDelete(row)}>Delete</Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
             <AssetFormDialog
                 user={user}
                 scenarioId={scenarioId}
-
                 isOpen={isDialogOpen}
                 onClose={closeDialog}
                 onSave={saveAsset}
