@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {INVEST_LINK, moneyGreen} from '../utilities/constants';
-import main from '../images/main.png';
+
 import Paper from '@mui/material/Paper';
 
 interface LearnMoreViewProps {
@@ -48,7 +48,7 @@ class LearnMoreView extends React.Component<LearnMoreViewProps, IState> {
 
         {/* <Card variant="outlined"> */}
         <Paper elevation={3} style={{borderRadius: '10px'}} >
-          <img src={main} alt="main" style={{borderRadius: '10px', width: '100%'}} />
+          <img src={require('../images/Main.png')} alt="main" style={{borderRadius: '10px', width: '100%'}} />
 
         </Paper>
 
