@@ -1,20 +1,18 @@
 import * as React from 'react';
 import './App.css';
 
-import { Amplify, JS } from "aws-amplify";
 import {
   AmplifyProvider,
   Authenticator,
-} from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
-import theme from "./theme";
+} from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import theme from './theme';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import aws_exports from "./aws-exports";
 import Home from './views/Home';
-import { Auth } from 'aws-amplify';
+import {Auth} from 'aws-amplify';
 import SignInView from './views/SignInView';
-import { moneyGreen } from './utilities/constants';
+import {moneyGreen} from './utilities/constants';
 
 const isMobile = window.innerWidth <= 390;
 
@@ -28,14 +26,12 @@ interface IState {
 }
 
 class App extends React.Component<IProps, IState> {
-
   constructor(props: IProps) {
-
     super(props);
     this.state = {
       selectedTab: 2,
-      signedIn: false
-    }
+      signedIn: false,
+    };
 
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -44,7 +40,7 @@ class App extends React.Component<IProps, IState> {
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
-    this.setState({ selectedTab: newValue });
+    this.setState({selectedTab: newValue});
   }
 
   async componentDidMount() {
@@ -55,18 +51,18 @@ class App extends React.Component<IProps, IState> {
       user = null;
     }
     if (user) {
-      this.setState({ signedIn: true })
+      this.setState({signedIn: true});
     } else {
-      this.setState({ signedIn: false })
+      this.setState({signedIn: false});
     }
   }
 
   hideSignIn() {
-    this.setState({ signedIn: true })
+    this.setState({signedIn: true});
   }
 
   hideShowSignIn() {
-    this.setState({ signedIn: false })
+    this.setState({signedIn: false});
   }
 
   render() {
@@ -76,28 +72,34 @@ class App extends React.Component<IProps, IState> {
           {
             !this.state.signedIn ? <>
               <Stack direction={isMobile ? 'column' : 'row'} spacing={2}>
-                <div style={{ textAlign: 'center', marginTop: isMobile ? '0px' : '175px', marginLeft: isMobile ? '0px' : '30px' }}>
-                  
-                  {isMobile && <h1 style={{ color: moneyGreen }}>Money Tomorrow</h1>}
+                <div style={{
+                  textAlign: 'center',
+                  marginTop: isMobile ? '0px' : '175px',
+                  marginLeft: isMobile ? '0px' : '30px'}}>
 
-                  <p style={{ color: moneyGreen, textAlign: 'center' }}><b>Sign in to your Account</b></p>
+                  {isMobile && <h1 style={{color: moneyGreen}}>Money Tomorrow</h1>}
+
+                  <p style={{color: moneyGreen, textAlign: 'center'}}><b>Sign in to your Account</b></p>
                   <AmplifyProvider theme={theme}>
                     <Authenticator >
-                      {({ signOut, user }) => {
+                      {({signOut, user}) => {
                         return (
                           <>
                             <Container >
-                              <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} signedIn={this.state.signedIn} />
+                              <Home
+                                hideSignIn={this.hideSignIn}
+                                hideShowSignIn={this.hideShowSignIn}
+                                signedIn={this.state.signedIn} />
                             </Container>
                           </>
-                        )
+                        );
                       }
                       }
                     </Authenticator>
                   </AmplifyProvider>
                 </div>
 
-                {isMobile && <hr style={{ margin: '20px' }} />}
+                {isMobile && <hr style={{margin: '20px'}} />}
                 <div >
                   {!this.state.signedIn && <SignInView />}
                 </div>
@@ -106,14 +108,16 @@ class App extends React.Component<IProps, IState> {
               <>
                 <AmplifyProvider theme={theme}>
                   <Authenticator >
-                    {({ signOut, user }) => {
+                    {({signOut, user}) => {
                       return (
                         <>
                           <Container >
-                            <Home hideSignIn={this.hideSignIn} hideShowSignIn={this.hideShowSignIn} signedIn={this.state.signedIn}  />
+                            <Home hideSignIn={this.hideSignIn}
+                              hideShowSignIn={this.hideShowSignIn}
+                              signedIn={this.state.signedIn} />
                           </Container>
                         </>
-                      )
+                      );
                     }
                     }
                   </Authenticator>

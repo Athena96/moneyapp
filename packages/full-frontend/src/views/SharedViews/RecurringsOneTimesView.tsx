@@ -6,9 +6,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Recurring } from '../../model/Base/Recurring';
-import { ChargeType } from '../../model/Base/ChargeType';
-import { formatCurrency } from '../../utilities/helpers';
+import {Recurring} from '../../model/Base/Recurring';
+import {ChargeType} from '../../model/Base/ChargeType';
+import {formatCurrency} from '../../utilities/helpers';
 import Button from '@mui/material/Button';
 
 interface RecurringsOneTimesViewProps {
@@ -19,10 +19,15 @@ interface RecurringsOneTimesViewProps {
   onDelete: (recurring: Recurring) => void;
 }
 
-export const RecurringsOneTimesView: React.FC<RecurringsOneTimesViewProps> = ({ user, scenarioId, data, onEdit, onDelete }) => {
+export const RecurringsOneTimesView: React.FC<RecurringsOneTimesViewProps> = ({
+  user,
+  scenarioId,
+  data,
+  onEdit,
+  onDelete}) => {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{minWidth: 650}} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Title</TableCell>
@@ -37,7 +42,7 @@ export const RecurringsOneTimesView: React.FC<RecurringsOneTimesViewProps> = ({ 
           {data.map((row) => (
             <TableRow
               key={row.id}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              sx={{'&:last-child td, &:last-child th': {border: 0}}}
             >
               <TableCell component="th" scope="row">
                 {row.title}
@@ -46,7 +51,7 @@ export const RecurringsOneTimesView: React.FC<RecurringsOneTimesViewProps> = ({ 
               <TableCell align="right">{row.startAge === row.endAge ? '-' : row.endAge}</TableCell>
               <TableCell align="right">{formatCurrency(row.amount)}</TableCell>
               <TableCell align="right">
-                {row.chargeType === ChargeType.EXPENSE ? "Expense" : "Income"}
+                {row.chargeType === ChargeType.EXPENSE ? 'Expense' : 'Income'}
               </TableCell>
               <TableCell align="center">
                 <Button onClick={() => onEdit(row)}>Edit</Button>
@@ -57,5 +62,5 @@ export const RecurringsOneTimesView: React.FC<RecurringsOneTimesViewProps> = ({ 
         </TableBody>
       </Table>
     </TableContainer>
-  )
-}
+  );
+};

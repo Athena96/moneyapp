@@ -1,5 +1,4 @@
-import { ChargeType } from "./ChargeType";
-
+import {ChargeType} from './ChargeType';
 
 
 export class Recurring {
@@ -13,14 +12,14 @@ export class Recurring {
   amount: number;
 
   constructor(
-    scenarioDataId: string = '',
-    id: string = '',
-    type: string = '',
-    title: string = '',
-    startAge: number = 0,
-    endAge: number = 0,
-    chargeType: ChargeType = ChargeType.EXPENSE,
-    amount: number = 0.0
+      scenarioDataId: string = '',
+      id: string = '',
+      type: string = '',
+      title: string = '',
+      startAge: number = 0,
+      endAge: number = 0,
+      chargeType: ChargeType = ChargeType.EXPENSE,
+      amount: number = 0.0,
   ) {
     this.scenarioDataId = scenarioDataId;
     this.type = type;
@@ -34,18 +33,26 @@ export class Recurring {
 
   static fromJson(json: any): Recurring {
     return new Recurring(
-      json['scenarioDataId'].toString(),
-      json['id'].toString(),
-      json['type'].toString(),
-      json['title'].toString(),
-      parseInt(json['startAge'].toString(), 10),
-      parseInt(json['endAge'].toString(), 10),
-      json['chargeType'] === "EXPENSE" ? ChargeType.EXPENSE : ChargeType.INCOME,
-      parseFloat(json['amount'].toString())
+        json['scenarioDataId'].toString(),
+        json['id'].toString(),
+        json['type'].toString(),
+        json['title'].toString(),
+        parseInt(json['startAge'].toString(), 10),
+        parseInt(json['endAge'].toString(), 10),
+      json['chargeType'] === 'EXPENSE' ? ChargeType.EXPENSE : ChargeType.INCOME,
+      parseFloat(json['amount'].toString()),
     );
   }
 
   toString(): string {
-    return `Recurring(id: ${this.id}, simulationId: ${this.scenarioDataId}, type: ${this.type}, title: ${this.title}, startAge: ${this.startAge}, endAge: ${this.endAge}, chargeType: ${this.chargeType}, amount: ${this.amount})`;
+    return `Recurring(
+      id: ${this.id}, 
+      simulationId: ${this.scenarioDataId}, 
+      type: ${this.type}, 
+      title: ${this.title}, 
+      startAge: ${this.startAge}, 
+      endAge: ${this.endAge}, 
+      chargeType: ${this.chargeType}, 
+      amount: ${this.amount})`;
   }
 }

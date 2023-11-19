@@ -1,6 +1,6 @@
-import { Asset } from "./Asset";
-import { Recurring } from "./Recurring";
-import { Settings } from "./Settings";
+import {Asset} from './Asset';
+import {Recurring} from './Recurring';
+import {Settings} from './Settings';
 
 export class ScenarioData {
   settings: Settings;
@@ -8,9 +8,9 @@ export class ScenarioData {
   recurrings: Recurring[];
 
   constructor(
-    settings: Settings,
-    assets: Asset[],
-    recurrings: Recurring[],
+      settings: Settings,
+      assets: Asset[],
+      recurrings: Recurring[],
   ) {
     this.settings = settings;
     this.assets = assets;

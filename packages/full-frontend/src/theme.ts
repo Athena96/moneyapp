@@ -1,34 +1,34 @@
-import { Theme } from "@aws-amplify/ui-react";
-import { moneyGreen } from "./utilities/constants";
+import {Theme} from '@aws-amplify/ui-react';
+import {moneyGreen} from './utilities/constants';
 
 const theme: Theme = {
-  name: "cra-my-theme",
-  
+  name: 'cra-my-theme',
+
   tokens: {
-  
+
     colors: {
       border: {
 
         primary: {
-          value: moneyGreen
+          value: moneyGreen,
         },
         secondary: {
-          value: moneyGreen
+          value: moneyGreen,
         },
       },
       font: {
 
         active: {
-          value: moneyGreen
+          value: moneyGreen,
 
         },
 
         primary: {
-          value: moneyGreen
+          value: moneyGreen,
         },
         secondary: {
-          value: moneyGreen
-        }
+          value: moneyGreen,
+        },
       },
       // brand: {
       //   primary: {
@@ -43,48 +43,48 @@ const theme: Theme = {
 
       button: {
         // this will affect the font weight of all button variants
-        fontWeight: { value: moneyGreen },
+        fontWeight: {value: moneyGreen},
         // style the primary variation
         primary: {
-          backgroundColor: { value: moneyGreen },
+          backgroundColor: {value: moneyGreen},
           _hover: {
-            backgroundColor: { value: moneyGreen },
+            backgroundColor: {value: moneyGreen},
           },
         },
       },
 
 
-tabs: {
-  item: {
-    _focus: {
-      color: {
-        value: moneyGreen
-      },
-    },
-    _hover: {
-      color: {
-        value: 'grey'
-      },
-    },
-    _active: {
-      color: {
-        value: moneyGreen
-      },
-    },
-    _inactive: {
-      color: {
-        value: moneyGreen
-      },
-    },
-    _disabled: {
-      color: {
-        value: moneyGreen
+      tabs: {
+        item: {
+          _focus: {
+            color: {
+              value: moneyGreen,
+            },
+          },
+          _hover: {
+            color: {
+              value: 'grey',
+            },
+          },
+          _active: {
+            color: {
+              value: moneyGreen,
+            },
+          },
+          _inactive: {
+            color: {
+              value: moneyGreen,
+            },
+          },
+          _disabled: {
+            color: {
+              value: moneyGreen,
+            },
+          },
+        },
       },
     },
   },
-},
-    }
-  }
 
 };
 

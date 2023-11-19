@@ -1,21 +1,18 @@
-import * as React from "react";
+import * as React from 'react';
 
 
+import '../App.css';
+import Main from './Main';
+import {moneyGreen} from '../utilities/constants';
 
-import "../App.css";
-import Main from "./Main";
-import { moneyGreen } from "../utilities/constants";
-
-import Amplify, { Auth, API } from "aws-amplify";
-import awsExports from "../aws-exports";
-import { Link } from "react-router-dom";
+import {Auth, API} from 'aws-amplify';
+import {Link} from 'react-router-dom';
 
 
+import {styled, Theme, CSSObject} from '@mui/material/styles';
 
-import { styled, Theme, CSSObject } from "@mui/material/styles";
-
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
 
 import {
   FormControl,
@@ -24,7 +21,6 @@ import {
   Select,
   SelectChangeEvent,
   Menu,
-  Dialog,
   ListItemText,
   ListItemIcon,
   ListItemButton,
@@ -36,49 +32,48 @@ import {
   Toolbar,
   Box,
   CircularProgress,
-} from "@mui/material";
+} from '@mui/material';
 
-import BarChartIcon from "@mui/icons-material/BarChart";
-import LocalAtmIcon from "@mui/icons-material/LocalAtm";
-import SettingsIcon from "@mui/icons-material/Settings";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import { ScenarioService } from "../services/scenario_service";
-import { Scenario } from "../model/Base/Scenario";
-// import { DEFAULT_INFLATION_PERCENT, DEFAULT_RETURN_PERCENT, InputDataAccess } from "../utilities/InputDataAccess";
+import BarChartIcon from '@mui/icons-material/BarChart';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import {ScenarioService} from '../services/scenario_service';
+import {Scenario} from '../model/Base/Scenario';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
-  transition: theme.transitions.create("width", {
+  transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
-  overflowX: "hidden",
+  overflowX: 'hidden',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create("width", {
+  transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  overflowX: "hidden",
+  overflowX: 'hidden',
   width: `calc(${theme.spacing(isMobile ? 0 : 7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
+  [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(isMobile ? 0 : 8)} + 1px)`,
   },
 });
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
+const DrawerHeader = styled('div')(({theme}) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
@@ -89,38 +84,37 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({theme, open}) => ({
   zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
+  transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
+    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(({ theme, open }) => ({
+const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(({theme, open}) => ({
   width: drawerWidth,
   flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
   ...(open && {
     ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
+    '& .MuiDrawer-paper': openedMixin(theme),
   }),
   ...(!open && {
     ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
+    '& .MuiDrawer-paper': closedMixin(theme),
   }),
 }));
-
 
 
 interface IProps {
@@ -184,36 +178,36 @@ class Home extends React.Component<IProps, IState> {
 
     // set state
     if (activeScenario && email) {
-      this.setState({ 
+      this.setState({
         activeScenario,
-        user: email, 
-        scenarios 
+        user: email,
+        scenarios,
       });
     }
   }
 
   handleDrawerOpen() {
     const currVal = this.state.open;
-    this.setState({ open: !currVal });
+    this.setState({open: !currVal});
   }
 
   handleChange(event: React.SyntheticEvent, newValue: number) {
-    this.setState({ selectedTab: newValue });
+    this.setState({selectedTab: newValue});
   }
   newTab(newValue: number) {
-    this.setState({ selectedTab: newValue });
+    this.setState({selectedTab: newValue});
   }
 
   scenarioSwitch() {
-    this.setState({ showScenario: true });
+    this.setState({showScenario: true});
   }
 
   closeDialog() {
-    this.setState({ showScenario: false });
+    this.setState({showScenario: false});
   }
 
   async handleScenarioChange(event: SelectChangeEvent) {
-    alert("not implemented");
+    alert('not implemented');
     // const selectedSimulationName = event.target.value as string;
     // if (selectedSimulationName !== "#add-new-simulation#") {
     //   let sims = this.state.simulations;
@@ -238,62 +232,61 @@ class Home extends React.Component<IProps, IState> {
       this.props.hideShowSignIn();
       await Auth.signOut();
     } catch (error) {
-      console.error("error signing out: ", error);
+      console.error('error signing out: ', error);
     }
   }
 
   async handleDeleteAccount() {
     if (
       window.confirm(
-        "Are you sure you want to Delete your account? This will delete all of your data and cannot be undone. You can still return at any time and create a new account in the future."
+          'Are you sure you want to Delete your account? This will delete all of'+
+          'your data and cannot be undone. You can still return'+
+          'at any time and create a new account in the future.',
       )
     ) {
       try {
         const email = this.state.user;
-        API.del("apiCall", "/router", {
+        API.del('apiCall', '/router', {
           queryStringParameters: {
             email,
-            command: "DeleteAccount",
+            command: 'DeleteAccount',
           },
         });
         await Auth.signOut();
       } catch (error) {
-        console.error("error signing out: ", error);
+        console.error('error signing out: ', error);
       }
     }
   }
 
   handleProfileOpen() {
     const curr = this.state.profileOpen;
-    this.setState({ profileOpen: !curr });
+    this.setState({profileOpen: !curr});
   }
 
   profileClose() {
-    this.setState({ profileOpen: false });
+    this.setState({profileOpen: false});
   }
 
   render() {
     if (this.state.user && this.state.activeScenario) {
       return (
-        <Box sx={{ display: "flex" }}>
-          {/* <Dialog open={this.state.showScenario} onClose={this.closeDialog}>
-            {this.state.scenarioId && <SimulationView user={this.state.user} simulation={this.state.scenarioId} />}
-          </Dialog> */}
+        <Box sx={{display: 'flex'}}>
 
-          <AppBar position="fixed" sx={{ bgcolor: moneyGreen }}>
+          <AppBar position="fixed" sx={{bgcolor: moneyGreen}}>
             <Toolbar>
               <IconButton
                 edge="start"
                 color="default"
                 aria-label="open drawer"
-                sx={{ mr: 2 }}
+                sx={{mr: 2}}
                 onClick={this.handleDrawerOpen}
               >
                 <MenuIcon />
               </IconButton>
               {!isMobile && (
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  <Link style={{ color: "white", textDecoration: "none" }} to="/">
+                <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                  <Link style={{color: 'white', textDecoration: 'none'}} to="/">
                     Money Tomorrow
                   </Link>
                 </Typography>
@@ -304,12 +297,16 @@ class Home extends React.Component<IProps, IState> {
               </Button> */}
 
               <FormControl
-                style={{ maxWidth: isMobile ? "200px" : "400px", position: "absolute", right: "50px", color: "white" }}
+                style={{
+                  maxWidth: isMobile ? '200px' : '400px',
+                  position: 'absolute',
+                  right: '50px',
+                  color: 'white'}}
                 size="small"
               >
                 <InputLabel id="demo-select-small">scenario</InputLabel>
                 <Select
-                  style={{ color: "white" }}
+                  style={{color: 'white'}}
                   labelId="demo-select-small"
                   id="demo-select-small"
                   value={this.state.activeScenario.title}
@@ -324,7 +321,7 @@ class Home extends React.Component<IProps, IState> {
                         </MenuItem>
                       );
                     })}
-                  <MenuItem key={"#add-new-simulation#`"} value={`#add-new-simulation#`}>
+                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}>
                     <Button variant="outlined" onClick={this.scenarioSwitch}>
                       Create/Edit/Delete Scenarios
                       <AddCircleIcon />
@@ -341,7 +338,7 @@ class Home extends React.Component<IProps, IState> {
                 edge="start"
                 color="default"
                 aria-label="open drawer"
-                style={{ color: "white", position: "absolute", right: "10px" }}
+                style={{color: 'white', position: 'absolute', right: '10px'}}
                 onClick={this.handleProfileOpen}
               >
                 <AccountCircle />
@@ -349,23 +346,23 @@ class Home extends React.Component<IProps, IState> {
               <Menu
                 id="menu-appbar"
                 anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
+                  vertical: 'top',
+                  horizontal: 'right',
                 }}
                 keepMounted
                 transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
+                  vertical: 'top',
+                  horizontal: 'right',
                 }}
                 open={this.state.profileOpen}
                 onClose={this.profileClose}
               >
                 <MenuItem>{this.state.user}</MenuItem>
-                <MenuItem sx={{ color: "red" }} onClick={this.handleDeleteAccount}>
+                <MenuItem sx={{color: 'red'}} onClick={this.handleDeleteAccount}>
                   Delete Account
                 </MenuItem>
                 <MenuItem>
-                  <Link style={{ color: "black", textDecoration: "none" }} to={`/about`}>
+                  <Link style={{color: 'black', textDecoration: 'none'}} to={`/about`}>
                     Learn More
                   </Link>
                 </MenuItem>
@@ -374,7 +371,7 @@ class Home extends React.Component<IProps, IState> {
               </Menu>
             </Toolbar>
           </AppBar>
-          <Drawer variant={"permanent"} open={this.state.open}>
+          <Drawer variant={'permanent'} open={this.state.open}>
             <DrawerHeader>
               <IconButton onClick={this.handleDrawerOpen}>
                 <ChevronLeftIcon />
@@ -383,87 +380,87 @@ class Home extends React.Component<IProps, IState> {
 
             <Divider />
             <List>
-              <Link style={{ color: "black", textDecoration: "none" }} to={`/`}>
+              <Link style={{color: 'black', textDecoration: 'none'}} to={`/`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: this.state.open ? "initial" : "center",
+                    justifyContent: this.state.open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: this.state.open ? 3 : "auto",
-                      justifyContent: "center",
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
                     }}
                   >
                     <BarChartIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Dashboard"} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Dashboard'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 
-              <Link style={{ color: "black", textDecoration: "none" }} to={`/withdrawals`}>
+              <Link style={{color: 'black', textDecoration: 'none'}} to={`/withdrawals`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: this.state.open ? "initial" : "center",
+                    justifyContent: this.state.open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: this.state.open ? 3 : "auto",
-                      justifyContent: "center",
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
                     }}
                   >
                     <RemoveCircleOutlineIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Withdrawals"} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Withdrawals'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 
-              <Link style={{ color: "black", textDecoration: "none" }} to={`/contributions`}>
+              <Link style={{color: 'black', textDecoration: 'none'}} to={`/contributions`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: this.state.open ? "initial" : "center",
+                    justifyContent: this.state.open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: this.state.open ? 3 : "auto",
-                      justifyContent: "center",
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
                     }}
                   >
                     <AddCircleOutlineIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Contributions"} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Contributions'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 
-              <Link style={{ color: "black", textDecoration: "none" }} to={`/assets`}>
+              <Link style={{color: 'black', textDecoration: 'none'}} to={`/assets`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: this.state.open ? "initial" : "center",
+                    justifyContent: this.state.open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: this.state.open ? 3 : "auto",
-                      justifyContent: "center",
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
                     }}
                   >
                     <LocalAtmIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Assets"} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Assets'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 
@@ -509,29 +506,29 @@ class Home extends React.Component<IProps, IState> {
                 </ListItemButton>
               </Link> */}
 
-              <Link style={{ color: "black", textDecoration: "none" }} to={`/settings`}>
+              <Link style={{color: 'black', textDecoration: 'none'}} to={`/settings`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: this.state.open ? "initial" : "center",
+                    justifyContent: this.state.open ? 'initial' : 'center',
                     px: 2.5,
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: this.state.open ? 3 : "auto",
-                      justifyContent: "center",
+                      mr: this.state.open ? 3 : 'auto',
+                      justifyContent: 'center',
                     }}
                   >
                     <SettingsIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"Settings"} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Settings'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
             </List>
           </Drawer>
-          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Box component="main" sx={{flexGrow: 1, p: 3}}>
             <DrawerHeader />
             <Main user={this.state.user} scenarioId={this.state.activeScenario.scenarioId} />
           </Box>
@@ -539,12 +536,12 @@ class Home extends React.Component<IProps, IState> {
       );
     } else {
       return (
-         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-            <div style={{ textAlign: "center" }}>
-                <CircularProgress />
-            </div>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+          <div style={{textAlign: 'center'}}>
+            <CircularProgress />
+          </div>
         </div>
-      )
+      );
     }
   }
 }

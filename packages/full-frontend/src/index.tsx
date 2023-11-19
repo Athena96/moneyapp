@@ -3,11 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Amplify, { Auth } from "aws-amplify";
-import awsExports from "./aws-exports";
-import { BrowserRouter } from 'react-router-dom';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { moneyGreen, moneyGreenLight } from './utilities/constants';
+import Amplify, {Auth} from 'aws-amplify';
+import {BrowserRouter} from 'react-router-dom';
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {moneyGreen, moneyGreenLight} from './utilities/constants';
 // Amplify.configure(awsExports);
 
 Amplify.configure({
@@ -20,12 +19,13 @@ Amplify.configure({
 
     // (optional) - Amazon Cognito Federated Identity Pool Region
     // Required only if it's different from Amazon Cognito Region
-    identityPoolRegion:'us-east-1',
+    identityPoolRegion: 'us-east-1',
 
     // (optional) - Amazon Cognito User Pool ID
-    userPoolId: "us-east-1_1vph21DjX",
+    userPoolId: 'us-east-1_1vph21DjX',
 
-    // (optional) - Amazon Cognito Web Client ID (26-char alphanumeric string, App client secret needs to be disabled)
+    // (optional) - Amazon Cognito Web Client ID
+    // (26-char alphanumeric string, App client secret needs to be disabled)
     userPoolWebClientId: '4frfkri1535dldem3bh3bgfvue',
 
     // (optional) - Enforce user authentication prior to accessing AWS resources or not
@@ -69,7 +69,8 @@ Amplify.configure({
     //   redirectSignIn: 'http://localhost:3000/',
     //   redirectSignOut: 'http://localhost:3000/',
     //   clientId: '1g0nnr4h99a3sd0vfs9',
-    //   responseType: 'code' // or 'token', note that REFRESH token will only be generated when the responseType is code
+    //   responseType: 'code' // or 'token', note that REFRESH
+    // token will only be generated when the responseType is code
     // }
   },
   API: {
@@ -78,31 +79,31 @@ Amplify.configure({
         name: 'Endpoint',
         endpoint: 'https://i1x4l94mh0.execute-api.us-east-1.amazonaws.com/prod',
         custom_header: async () => {
-          return { Authorization: `${(await Auth.currentSession()).getAccessToken().getJwtToken()}`}
+          return {Authorization: `${(await Auth.currentSession()).getAccessToken().getJwtToken()}`};
         },
-        
-      }
-    ]
-  }
+
+      },
+    ],
+  },
 });
 
 const theme = createTheme({
   palette: {
     secondary: {
-      main: moneyGreenLight
+      main: moneyGreenLight,
     },
     primary: {
-      main: moneyGreen
-    }
-  }
+      main: moneyGreen,
+    },
+  },
 });
 ReactDOM.render(
-  <BrowserRouter>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
-  </BrowserRouter>,
-  document.getElementById('root')
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>,
+    document.getElementById('root'),
 );
 
 // If you want to start measuring performance in your app, pass a function
