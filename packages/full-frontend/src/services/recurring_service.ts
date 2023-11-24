@@ -18,7 +18,7 @@ export class RecurringService {
   static async addRecurring(recurring: Recurring, chargeType: ChargeType): Promise<void> {
     await API.post('Endpoint', '/addRecurring', {
       body: {
-        'scenarioDataId': recurring.scenarioDataId,
+        'scenarioId': recurring.scenarioDataId.split('#')[1],
         'title': recurring.title,
         'startAge': recurring.startAge,
         'endAge': recurring.endAge,
@@ -32,7 +32,7 @@ export class RecurringService {
   static async updateRecurring(recurring: Recurring, chargeType: ChargeType): Promise<void> {
     await API.put('Endpoint', '/updateRecurring', {
       body: {
-        'scenarioDataId': recurring.scenarioDataId,
+        'scenarioId': recurring.scenarioDataId.split('#')[1],
         'type': recurring.type,
         'title': recurring.title,
         'startAge': recurring.startAge,
@@ -47,7 +47,7 @@ export class RecurringService {
   static async deleteRecurring(recurring: Recurring): Promise<void> {
     await API.del('Endpoint', '/deleteRecurring', {
       body: {
-        'scenarioDataId': recurring.scenarioDataId,
+        'scenarioId': recurring.scenarioDataId.split('#')[1],
         'type': recurring.type,
       },
     });
