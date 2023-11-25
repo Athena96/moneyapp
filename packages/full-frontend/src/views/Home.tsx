@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-
 import '../App.css';
 import Main from './Main';
 import {moneyGreen} from '../utilities/constants';
 
 import {Auth, API} from 'aws-amplify';
 import {Link} from 'react-router-dom';
-
 
 import {styled, Theme, CSSObject} from '@mui/material/styles';
 
@@ -19,21 +17,19 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   Menu,
   ListItemText,
   ListItemIcon,
   ListItemButton,
   List,
   Divider,
-  Button,
   Typography,
   IconButton,
   Toolbar,
   Box,
   CircularProgress,
 } from '@mui/material';
-
+import ForkRightIcon from '@mui/icons-material/ForkRight';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -41,7 +37,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import {ScenarioService} from '../services/scenario_service';
 import {Scenario} from '../model/Base/Scenario';
@@ -129,9 +125,7 @@ interface IState {
   activeScenario: Scenario | undefined;
   scenarios: Scenario[];
   open: boolean;
-  showScenario: boolean;
   profileOpen: boolean;
-  // input: Input | undefined;
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -142,7 +136,6 @@ class Home extends React.Component<IProps, IState> {
       user: undefined,
       activeScenario: undefined,
       open: false,
-      showScenario: false,
       scenarios: [],
       profileOpen: false,
 
@@ -153,9 +146,6 @@ class Home extends React.Component<IProps, IState> {
     this.newTab = this.newTab.bind(this);
     this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
-    this.scenarioSwitch = this.scenarioSwitch.bind(this);
-    this.closeDialog = this.closeDialog.bind(this);
-    this.handleScenarioChange = this.handleScenarioChange.bind(this);
     this.handleProfileOpen = this.handleProfileOpen.bind(this);
     this.profileClose = this.profileClose.bind(this);
     this.handleDeleteAccount = this.handleDeleteAccount.bind(this);
@@ -191,40 +181,24 @@ class Home extends React.Component<IProps, IState> {
     this.setState({open: !currVal});
   }
 
-  handleChange(event: React.SyntheticEvent, newValue: number) {
-    this.setState({selectedTab: newValue});
+  async handleChange(event: React.SyntheticEvent, scenario: Scenario) {
+    console.log(scenario);
+    console.log(event);
+
+    const activeScenario = await ScenarioService.getActiveScenario();
+    activeScenario.active = 0;
+    scenario.active = 1;
+    await ScenarioService.updateScenario(activeScenario);
+    await ScenarioService.updateScenario(scenario);
+
+    const updateScenarios = await ScenarioService.listScenarios();
+
+    this.setState({activeScenario: scenario, scenarios: updateScenarios});
+
+    window.location.reload();
   }
   newTab(newValue: number) {
     this.setState({selectedTab: newValue});
-  }
-
-  scenarioSwitch() {
-    this.setState({showScenario: true});
-  }
-
-  closeDialog() {
-    this.setState({showScenario: false});
-  }
-
-  async handleScenarioChange(event: SelectChangeEvent) {
-    alert('not implemented');
-    // const selectedSimulationName = event.target.value as string;
-    // if (selectedSimulationName !== "#add-new-simulation#") {
-    //   let sims = this.state.simulations;
-
-    //   for (const simulation of sims) {
-    //     if (simulation.name === selectedSimulationName) {
-    //       simulation.selected = 1;
-    //       this.setState({ simulation: simulation });
-    //     } else {
-    //       simulation.selected = 0;
-    //     }
-    //     await SimulationDataAccess.updateSimulation(simulation);
-    //   }
-
-    //   this.setState({ simulations: sims });
-    //   window.location.reload();
-    // }
   }
 
   async handleSignOut() {
@@ -239,9 +213,9 @@ class Home extends React.Component<IProps, IState> {
   async handleDeleteAccount() {
     if (
       window.confirm(
-          'Are you sure you want to Delete your account? This will delete all of'+
-          'your data and cannot be undone. You can still return'+
-          'at any time and create a new account in the future.',
+          'Are you sure you want to Delete your account? This will delete all of' +
+        'your data and cannot be undone. You can still return' +
+        'at any time and create a new account in the future.',
       )
     ) {
       try {
@@ -292,16 +266,13 @@ class Home extends React.Component<IProps, IState> {
                 </Typography>
               )}
 
-              {/* <Button variant="outlined" style={{ color: 'white' }} onClick={this.scenarioSwitch}>
-                <><small>Scenario</small>:{' '}<u>{this.state.simulation?.name}</u></>
-              </Button> */}
-
               <FormControl
                 style={{
                   maxWidth: isMobile ? '200px' : '400px',
                   position: 'absolute',
                   right: '50px',
-                  color: 'white'}}
+                  color: 'white',
+                }}
                 size="small"
               >
                 <InputLabel id="demo-select-small">scenario</InputLabel>
@@ -311,29 +282,20 @@ class Home extends React.Component<IProps, IState> {
                   id="demo-select-small"
                   value={this.state.activeScenario.title}
                   label="simulation"
-                  onChange={this.handleScenarioChange}
                 >
                   {this.state.scenarios &&
                     this.state.scenarios.map((scenario: Scenario, z: number) => {
                       return (
-                        <MenuItem key={z} value={`${scenario.title}`}>
+                        <MenuItem key={z}
+                          value={`${scenario.title}`}
+                          onClick={(e) => this.handleChange(e, scenario)}>
                           {scenario.title}
                         </MenuItem>
                       );
                     })}
-                  <MenuItem key={'#add-new-simulation#`'} value={`#add-new-simulation#`}>
-                    <Button variant="outlined" onClick={this.scenarioSwitch}>
-                      Create/Edit/Delete Scenarios
-                      <AddCircleIcon />
-                    </Button>
-                  </MenuItem>
+
                 </Select>
               </FormControl>
-
-              {/* <Button variant="outlined" style={{ color: 'white' }} onClick={this.handleSignOut}>
-                Sign Out
-              </Button> */}
-
               <IconButton
                 edge="start"
                 color="default"
@@ -464,7 +426,7 @@ class Home extends React.Component<IProps, IState> {
                 </ListItemButton>
               </Link>
 
-              {/* <Link style={{ color: 'black', textDecoration: 'none' }} to={`/scenarios`}>
+              <Link style={{color: 'black', textDecoration: 'none'}} to={`/scenarios`}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -479,32 +441,11 @@ class Home extends React.Component<IProps, IState> {
                       justifyContent: 'center',
                     }}
                   >
-                    <SignpostIcon />
+                    <ForkRightIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Scenarios'} sx={{ opacity: this.state.open ? 1 : 0 }} />
+                  <ListItemText primary={'Assets'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
-              </Link> */}
-
-              {/* <Link style={{ color: 'black', textDecoration: 'none' }} to={`/data`}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: this.state.open ? 'initial' : 'center',
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: this.state.open ? 3 : 'auto',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <TableChartIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={'Data'} sx={{ opacity: this.state.open ? 1 : 0 }} />
-                </ListItemButton>
-              </Link> */}
+              </Link>
 
               <Link style={{color: 'black', textDecoration: 'none'}} to={`/settings`}>
                 <ListItemButton

@@ -2,6 +2,7 @@
 import * as React from 'react';
 
 import AssetsView from './Assets/AssetsView';
+import ScenariosView from './Scenarios/ScenariosView';
 import {Switch, Route} from 'react-router-dom';
 import DashboardView from './Dashboard/DashboardView';
 import WithdrawalsView from './Withdrawals/WithdrawalsView';
@@ -40,6 +41,8 @@ class Main extends React.Component<InputsViewProps, IState> {
           <IncomesView user={this.props.user} scenarioId={this.props.scenarioId} />} />
         <Route path="/assets" render={(props) =>
           <AssetsView user={this.props.user} scenarioId={this.props.scenarioId} />} />
+        <Route path="/scenarios" render={(props) =>
+          <ScenariosView user={this.props.user} scenarioId={this.props.scenarioId} />} />
         <Route path="/settings" render={(props) =>
           <SettingsView user={this.props.user} scenarioId={this.props.scenarioId} />} />
       </Switch>

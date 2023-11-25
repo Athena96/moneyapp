@@ -1,10 +1,15 @@
 export class Scenario {
-  readonly email: string;
-  readonly active: number;
-  readonly scenarioId: string;
-  readonly title: string;
+  email: string;
+  active: number;
+  scenarioId: string;
+  title: string;
 
-  constructor(email: string, active: number, scenarioId: string, title: string) {
+  constructor(
+      email: string = '',
+      active: number = 0,
+      scenarioId: string = '',
+      title: string = '',
+  ) {
     this.email = email;
     this.active = active;
     this.scenarioId = scenarioId;
