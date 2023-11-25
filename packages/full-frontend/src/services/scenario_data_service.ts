@@ -14,6 +14,9 @@ export class ScenarioDataService {
     });
     const assets: Asset[] = response['assets'].map((json: any) => Asset.fromJson(json));
     const recurrings: Recurring[] = response['recurrings'].map((json: any) => Recurring.fromJson(json));
+    console.log(response);
+    console.log(scenarioId);
+
     const settings: Settings = Settings.fromJson(response['settings']);
     return new ScenarioData(settings, assets, recurrings);
   }

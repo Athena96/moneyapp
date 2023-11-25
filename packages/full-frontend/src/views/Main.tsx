@@ -8,6 +8,7 @@ import DashboardView from './Dashboard/DashboardView';
 import WithdrawalsView from './Withdrawals/WithdrawalsView';
 import IncomesView from './Incomes/IncomesView';
 import SettingsView from './Settings/SettingsView';
+import LearnMoreView from './LearnMoreView';
 
 interface InputsViewProps {
   user: string;
@@ -45,6 +46,8 @@ class Main extends React.Component<InputsViewProps, IState> {
           <ScenariosView user={this.props.user} scenarioId={this.props.scenarioId} />} />
         <Route path="/settings" render={(props) =>
           <SettingsView user={this.props.user} scenarioId={this.props.scenarioId} />} />
+        <Route path="/about" render={(props) =>
+          <LearnMoreView />} />
       </Switch>
     );
   }
