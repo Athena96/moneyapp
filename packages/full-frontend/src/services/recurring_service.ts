@@ -32,7 +32,7 @@ export class RecurringService {
   static async updateRecurring(recurring: Recurring, chargeType: ChargeType): Promise<void> {
     await API.put('Endpoint', '/updateRecurring', {
       body: {
-        'scenarioId': recurring.scenarioDataId.split('#')[1],
+        'scenarioDataId': recurring.scenarioDataId,
         'type': recurring.type,
         'title': recurring.title,
         'startAge': recurring.startAge,
