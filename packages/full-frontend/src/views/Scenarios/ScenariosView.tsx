@@ -7,7 +7,8 @@ import '../../App.css';
 import ScenarioFormDialog from './ScenarioFormDialog';
 import Paper from '@mui/material/Paper';
 import {Scenario} from '../../model/Base/Scenario';
-
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface ScenariosViewProps {
     user: string;
@@ -99,8 +100,8 @@ const ScenariosView: React.FC<ScenariosViewProps> = ({user, scenarioId}) => {
                   <TableCell align="right">{row.active === 1 ? 'active' : ''}</TableCell>
 
                   <TableCell align="center">
-                    <Button onClick={() => handleEdit(row)}>Edit</Button>
-                    <Button onClick={() => handleDelete(row)}>Delete</Button>
+                    <Button onClick={() => handleEdit(row)}><EditIcon/></Button>
+                    <Button onClick={() => handleDelete(row)}><DeleteIcon/></Button>
                   </TableCell>
                 </TableRow>
               );

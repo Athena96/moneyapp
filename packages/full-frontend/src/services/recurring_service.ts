@@ -47,7 +47,7 @@ export class RecurringService {
   static async deleteRecurring(recurring: Recurring): Promise<void> {
     await API.del('Endpoint', '/deleteRecurring', {
       body: {
-        'scenarioId': recurring.scenarioDataId.split('#')[1],
+        'scenarioDataId': recurring.scenarioDataId,
         'type': recurring.type,
       },
     });

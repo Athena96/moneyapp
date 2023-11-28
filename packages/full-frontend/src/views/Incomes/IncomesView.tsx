@@ -88,7 +88,7 @@ class IncomesView extends React.Component<IncomesViewProps, IncomesViewState> {
             style={{
               width: '100%',
               marginBottom: '20px'}}
-            onClick={this.handleAdd}>Add Withdrawal</Button>
+            onClick={this.handleAdd}>Add Income</Button>
           <RecurringsOneTimesView
             user={this.props.user}
             scenarioId={this.props.scenarioId}

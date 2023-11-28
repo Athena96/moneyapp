@@ -10,6 +10,8 @@ import {Recurring} from '../../model/Base/Recurring';
 import {ChargeType} from '../../model/Base/ChargeType';
 import {formatCurrency} from '../../utilities/helpers';
 import Button from '@mui/material/Button';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface RecurringsOneTimesViewProps {
   user: string;
@@ -54,8 +56,8 @@ export const RecurringsOneTimesView: React.FC<RecurringsOneTimesViewProps> = ({
                 {row.chargeType === ChargeType.EXPENSE ? 'Expense' : 'Income'}
               </TableCell>
               <TableCell align="center">
-                <Button onClick={() => onEdit(row)}>Edit</Button>
-                <Button onClick={() => onDelete(row)}>Delete</Button>
+                <Button onClick={() => onEdit(row)}><EditIcon/></Button>
+                <Button onClick={() => onDelete(row)}><DeleteIcon/></Button>
               </TableCell>
             </TableRow>
           ))}

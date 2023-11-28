@@ -2,11 +2,11 @@
 import React, {useEffect, useState} from 'react';
 import {Settings} from '../../model/Base/Settings';
 import {SettingsService} from '../../services/settings_service';
-import {Button, Card} from '@mui/material';
+import {Button, Card, CircularProgress} from '@mui/material';
 
 interface SettingsViewProps {
-    user: string;
-    scenarioId: string;
+  user: string;
+  scenarioId: string;
 }
 
 const SettingsView: React.FC<SettingsViewProps> = ({user, scenarioId}) => {
@@ -22,7 +22,15 @@ const SettingsView: React.FC<SettingsViewProps> = ({user, scenarioId}) => {
     fetchSettings();
   }, []);
 
-  if (loading) return (<div>Loading...</div>);
+  if (loading) {
+    return (
+      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+        <div style={{textAlign: 'center'}}>
+          <CircularProgress />
+        </div>
+      </div>
+    );
+  }
 
   if (!settings) return (<div>Settings not found</div>);
 
@@ -39,7 +47,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({user, scenarioId}) => {
   return (
     <Card variant="outlined" style={{padding: '15px'}}>
       <label>
-                Birthday:
+        Birthday:
         <input
           type="date"
           value={settings.birthday.toISOString().substr(0, 10)}
@@ -48,7 +56,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({user, scenarioId}) => {
       </label>
       <br />
       <label>
-                Return:
+        Return:
         <input
           type="number"
           value={settings.annualAssetReturnPercent}
@@ -57,7 +65,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({user, scenarioId}) => {
       </label>
       <br />
       <label>
-                Inflation:
+        Inflation:
         <input
           type="number"
           value={settings.annualInflationPercent}

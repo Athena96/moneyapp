@@ -7,6 +7,8 @@ import '../../App.css';
 import AssetFormDialog from './AssetFormDialog';
 import Paper from '@mui/material/Paper';
 import {formatCurrency} from '../../utilities/helpers';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface AssetsViewProps {
     user: string;
@@ -105,8 +107,8 @@ const AssetsView: React.FC<AssetsViewProps> = ({user, scenarioId}) => {
                   <TableCell align="right">{value}</TableCell>
 
                   <TableCell align="center">
-                    <Button onClick={() => handleEdit(row)}>Edit</Button>
-                    <Button onClick={() => handleDelete(row)}>Delete</Button>
+                    <Button onClick={() => handleEdit(row)}><EditIcon/></Button>
+                    <Button onClick={() => handleDelete(row)}><DeleteIcon/></Button>
                   </TableCell>
                 </TableRow>
               );
