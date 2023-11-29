@@ -101,6 +101,7 @@ class IncomesView extends React.Component<IncomesViewProps, IncomesViewState> {
             isOpen={this.state.isDialogOpen}
             onClose={this.closeDialog}
             onSave={this.saveRecurring}
+            type="Income"
             inititalRecurring={this.state.slectedRecurring || undefined} />
         </div>
       );

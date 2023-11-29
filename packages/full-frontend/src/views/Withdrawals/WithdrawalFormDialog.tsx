@@ -10,6 +10,7 @@ interface WithdrawalFormDialogProps {
     onClose: () => void;
     onSave: (recurring: Recurring) => void;
     inititalRecurring?: Recurring
+    type: string;
 }
 
 const WithdrawalFormDialog: React.FC<WithdrawalFormDialogProps> = ({
@@ -17,6 +18,7 @@ const WithdrawalFormDialog: React.FC<WithdrawalFormDialogProps> = ({
   user,
   scenarioId,
   inititalRecurring,
+  type,
   onClose,
   onSave}) => {
   const [recurring, setRecurring] = useState((inititalRecurring || new Recurring(`${user}#${scenarioId}`)));
@@ -36,7 +38,7 @@ const WithdrawalFormDialog: React.FC<WithdrawalFormDialogProps> = ({
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>Add Withdrawal</h2>
+        <h2>Add {type}</h2>
         <label>
                     Title:
           <input

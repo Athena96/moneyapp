@@ -104,6 +104,7 @@ WithdrawalsViewState> {
             user={this.props.user}
             scenarioId={this.props.scenarioId}
             isOpen={this.state.isDialogOpen}
+            type="Expense"
             onClose={this.closeDialog}
             onSave={this.saveRecurring}
             inititalRecurring={this.state.slectedRecurring || undefined} />

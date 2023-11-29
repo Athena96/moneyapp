@@ -182,9 +182,6 @@ class Home extends React.Component<IProps, IState> {
   }
 
   async handleChange(event: React.SyntheticEvent, scenario: Scenario) {
-    console.log(scenario);
-    console.log(event);
-
     const activeScenario = await ScenarioService.getActiveScenario();
     activeScenario.active = 0;
     scenario.active = 1;

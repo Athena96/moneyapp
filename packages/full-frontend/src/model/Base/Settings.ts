@@ -20,7 +20,6 @@ export class Settings {
   }
 
   static fromJson(json: any): Settings {
-    console.log(json);
     return new Settings(
         json['scenarioDataId'],
         json['type'],
