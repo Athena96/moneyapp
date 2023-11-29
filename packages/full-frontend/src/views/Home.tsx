@@ -380,7 +380,7 @@ class Home extends React.Component<IProps, IState> {
                   >
                     <RemoveCircleOutlineIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Withdrawals'} sx={{opacity: this.state.open ? 1 : 0}} />
+                  <ListItemText primary={'Expense'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 
@@ -401,7 +401,7 @@ class Home extends React.Component<IProps, IState> {
                   >
                     <AddCircleOutlineIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Contributions'} sx={{opacity: this.state.open ? 1 : 0}} />
+                  <ListItemText primary={'Income'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 
@@ -443,7 +443,7 @@ class Home extends React.Component<IProps, IState> {
                   >
                     <ForkRightIcon />
                   </ListItemIcon>
-                  <ListItemText primary={'Assets'} sx={{opacity: this.state.open ? 1 : 0}} />
+                  <ListItemText primary={'Scenarios'} sx={{opacity: this.state.open ? 1 : 0}} />
                 </ListItemButton>
               </Link>
 

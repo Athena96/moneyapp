@@ -93,7 +93,7 @@ WithdrawalsViewState> {
               width: '100%',
               marginBottom: '20px'}}
             disabled={this.state.data === undefined}
-            onClick={this.handleAdd}>Add Withdrawal</Button>
+            onClick={this.handleAdd}>Add Expense</Button>
           <RecurringsOneTimesView
             user={this.props.user}
             scenarioId={this.props.scenarioId}

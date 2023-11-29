@@ -23,6 +23,7 @@ import {ScenarioData} from '../../model/Base/ScenarioData';
 import {ScenarioDataService} from '../../services/scenario_data_service';
 import {Asset} from '../../model/Base/Asset';
 import {calculateAge, getMonteCarloProjection} from '../../utilities/helpers';
+import {Alert} from '@mui/material';
 
 
 interface DashboardViewProps {
@@ -194,19 +195,27 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
     // add more quote data: https://finnhub.io/docs/api/quote
 
     if (this.state.scenarioData && this.state.chartData) {
+      const haveNoRecurrings = this.state.scenarioData.recurrings.length === 0;
+      const haveNoAssets = this.state.scenarioData.assets.length === 0;
+
       return (
         <Box>
 
           <>
             <h1>Dashboard</h1>
 
+            {haveNoRecurrings &&
+            haveNoAssets &&
+            <Alert severity="info" sx={{width: isMobile ? '100%' : '75%', marginBottom: '20px'}}>
+              You have no assets or recurring income and expenses. Add some to see your chances of success.
+            </Alert>}
             <Stack direction={isMobile ? 'column' : 'row'} spacing={2}>
               <Paper variant="outlined" sx={{width: isMobile ? '100%' : '75%', p: 2}}>
                 <h3 style={{color: black, width: 'min-width'}}>
                   Chance of Success{' '}
                   <Tooltip
-                    title={`Calculated using Monte Carlo, running 1,000 different simulations.`+
-                    `This is the probability that you won't run out of money before you die.`}
+                    title={`Calculated using Monte Carlo, running 1,000 different simulations.` +
+                      `This is the probability that you won't run out of money before you die.`}
                   >
                     <InfoIcon />
                   </Tooltip>
@@ -236,6 +245,8 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
                   <br />
                 </Paper>
               </Paper>
+
+
             </Stack>
 
             <DataView
@@ -246,6 +257,7 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
             // onetimes={this.state.onetimes}
             />
           </>
+
 
         </Box>
       );
