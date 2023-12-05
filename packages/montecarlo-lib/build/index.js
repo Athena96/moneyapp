@@ -5,7 +5,9 @@ const MonteCarlo_1 = require("./services/MonteCarlo");
 const Settings_1 = require("./utils/Settings");
 const Utils_1 = require("./utils/Utils");
 function simulate(mean, variance, annualContribution, numberOfYears, startingBalance, numberOfSimulations, startAge, oneTime, currentDate) {
+    console.log("currentDate.getMonth() ", currentDate.getMonth());
     const current_year_progress = (currentDate.getMonth() + 1) / 12.0;
+    console.log("current_year_progress", current_year_progress);
     // const successCountByAge = new Array(numberOfYears).fill(0)
     let successCount = 0;
     const simulationData = new Array(Settings_1.SIMS);

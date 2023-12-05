@@ -18,12 +18,13 @@ import Box from '@mui/material/Box';
 import {MonteCarloData} from 'montecarlo-lib';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import {DataView} from './DataView';
+
 import {ScenarioData} from '../../model/Base/ScenarioData';
 import {ScenarioDataService} from '../../services/scenario_data_service';
 import {Asset} from '../../model/Base/Asset';
 import {calculateAge, getMonteCarloProjection} from '../../utilities/helpers';
 import {Alert} from '@mui/material';
+import DataTableView from './DataTableView';
 
 
 interface DashboardViewProps {
@@ -192,8 +193,6 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
       },
     };
 
-    // add more quote data: https://finnhub.io/docs/api/quote
-
     if (this.state.scenarioData && this.state.chartData) {
       const haveNoRecurrings = this.state.scenarioData.recurrings.length === 0;
       const haveNoAssets = this.state.scenarioData.assets.length === 0;
@@ -249,16 +248,14 @@ class DashboardView extends React.Component<DashboardViewProps, IState> {
 
             </Stack>
 
-            <DataView
-            // user={this.props.user}
-            // simulation={this.props.simulation}
-            // balanceData={this.state.balanceData}
-            // recurrings={this.state.recurrings}
-            // onetimes={this.state.onetimes}
+            <DataTableView
+              user={this.props.user}
+              scenarioId={this.props.scenarioId}
+              recurrings={this.state.scenarioData.recurrings}
+              medianLine={this.state.balanceData}
+              age = {this.state.startingAge}
             />
           </>
-
-
         </Box>
       );
     } else {

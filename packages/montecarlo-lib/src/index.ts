@@ -23,8 +23,10 @@ export function simulate(
   oneTime: Map<number, number>,
   currentDate: Date
 ): MonteCarloData {
-  const current_year_progress = (currentDate.getMonth()+1) / 12.0;
+  console.log("currentDate.getMonth() ", currentDate.getMonth());
 
+  const current_year_progress = (currentDate.getMonth()+1) / 12.0;
+  console.log("current_year_progress", current_year_progress);
   // const successCountByAge = new Array(numberOfYears).fill(0)
   let successCount = 0;
   const simulationData: number[][] = new Array(SIMS);

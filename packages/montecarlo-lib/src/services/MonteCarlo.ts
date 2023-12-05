@@ -20,7 +20,7 @@ export const calculateFutureValue = (
   let futureValue = startingBalance;
   for (let i = 0; i < annualInterestRates.length; i++) {
     if (i === 0) {
-      futureValue = futureValue + futureValue * annualInterestRates[i] + annualIncomesAndExpenses[i] * remaining_year_progress;
+      futureValue = futureValue + futureValue * (annualInterestRates[i] * remaining_year_progress) + annualIncomesAndExpenses[i] * remaining_year_progress;
     } else {
       futureValue = futureValue + futureValue * annualInterestRates[i] + annualIncomesAndExpenses[i];
     }
