@@ -4,7 +4,7 @@ import '../App.css';
 import Main from './Main';
 import {moneyGreen} from '../utilities/constants';
 
-import {Auth, API} from 'aws-amplify';
+import {Auth} from 'aws-amplify';
 import {Link} from 'react-router-dom';
 
 import {styled, Theme, CSSObject} from '@mui/material/styles';
@@ -41,6 +41,7 @@ import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import {ScenarioService} from '../services/scenario_service';
 import {Scenario} from '../model/Base/Scenario';
+import {AccountService} from '../services/account_service';
 
 const drawerWidth = 175;
 const isMobile = window.innerWidth <= 390;
@@ -126,6 +127,7 @@ interface IState {
   scenarios: Scenario[];
   open: boolean;
   profileOpen: boolean;
+  deleteAccountLoading: boolean;
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -138,6 +140,7 @@ class Home extends React.Component<IProps, IState> {
       open: false,
       scenarios: [],
       profileOpen: false,
+      deleteAccountLoading: false,
 
     };
 
@@ -216,13 +219,10 @@ class Home extends React.Component<IProps, IState> {
       )
     ) {
       try {
-        const email = this.state.user;
-        API.del('apiCall', '/router', {
-          queryStringParameters: {
-            email,
-            command: 'DeleteAccount',
-          },
-        });
+        this.setState({deleteAccountLoading: true});
+        await AccountService.deleteAccount();
+        this.setState({deleteAccountLoading: false});
+
         await Auth.signOut();
       } catch (error) {
         console.error('error signing out: ', error);
@@ -240,6 +240,16 @@ class Home extends React.Component<IProps, IState> {
   }
 
   render() {
+    if (this.state.deleteAccountLoading) {
+      return (
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
+          <div style={{textAlign: 'center'}}>
+            <CircularProgress />
+          </div>
+        </div>
+      );
+    }
+
     if (this.state.user && this.state.activeScenario) {
       return (
         <Box sx={{display: 'flex'}}>

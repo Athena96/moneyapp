@@ -79,7 +79,10 @@ Amplify.configure({
         name: 'Endpoint',
         endpoint: 'https://i1x4l94mh0.execute-api.us-east-1.amazonaws.com/prod',
         custom_header: async () => {
-          return {Authorization: `${(await Auth.currentSession()).getAccessToken().getJwtToken()}`};
+          return {
+            Authorization: `${(await Auth.currentSession()).getAccessToken().getJwtToken()}`,
+            IdToken: `${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
+          };
         },
 
       },
